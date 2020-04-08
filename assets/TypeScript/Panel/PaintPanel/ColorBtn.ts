@@ -28,7 +28,6 @@ export default class ColorBtn extends cc.Component {
         this.node.on(ScrollList.STATE_CHANGE, this.stateChange, this);
     }
     setData(colorId){
-        cc.log(colorId, Config.getColorDataByID(colorId));
         let color = Config.getColorDataByID(colorId).color;
         if(color.getA() === 0){
             this.sprite.node.color = cc.Color.WHITE;

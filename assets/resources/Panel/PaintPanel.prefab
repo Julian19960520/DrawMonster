@@ -485,8 +485,8 @@
     "_enabled": true,
     "alignMode": 1,
     "_target": null,
-    "_alignFlags": 33,
-    "_left": 0,
+    "_alignFlags": 9,
+    "_left": 20.339999999999918,
     "_right": 549.6600000000001,
     "_top": 18.586999999999932,
     "_bottom": 0,
@@ -498,7 +498,7 @@
     "_isAbsBottom": true,
     "_isAbsHorizontalCenter": true,
     "_isAbsVerticalCenter": true,
-    "_originalWidth": 0,
+    "_originalWidth": 70,
     "_originalHeight": 0,
     "_id": ""
   },
@@ -2467,7 +2467,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 154.482,
+      "x": 140.879,
       "y": -211.538,
       "z": 0
     },

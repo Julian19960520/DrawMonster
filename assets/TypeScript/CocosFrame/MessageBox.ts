@@ -1,7 +1,6 @@
 import Panel from "../CocosFrame/Panel";
 import SceneManager from "./SceneManager";
-import { AudioManager } from "./AudioManager";
-
+import { Sound } from "./Sound";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -40,18 +39,30 @@ export default class MessageBox extends Panel {
         this.cancelBtn.node.off("click", this.onCancelBtnClick, this);
     }
     private onOkBtnClick(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         if(this.onOk){
             this.onOk();
         }
         SceneManager.ins.popPanel();
     }
     private onCancelBtnClick(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         if(this.onCancel){
             this.onCancel();
         }
         SceneManager.ins.popPanel();
     }
-    
+    toOkStyle(text, onOk = null){
+        this.label.string = text;
+        this.onOk = onOk;
+        this.okBtn.node.active = true;
+        this.cancelBtn.node.active = false;
+    }
+    toOkCancelStyle(text, onOk=null, onCancel=null){
+        this.label.string = text;
+        this.onOk = onOk;
+        this.onCancel = onCancel;
+        this.okBtn.node.active = true;
+        this.cancelBtn.node.active = true;
+    }
 }

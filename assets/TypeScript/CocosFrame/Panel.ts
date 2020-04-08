@@ -1,7 +1,7 @@
 import PanelStack from "./PanelStack";
 import { DB } from "./DataBind";
 import SceneManager from "./SceneManager";
-import { AudioManager } from "./AudioManager";
+import { Sound } from "./Sound";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -46,7 +46,7 @@ export default class Panel extends DB.DataBindComponent {
         cc.tween(this.node).show().to(0.1,{scale:1}).call(callback).start();
     }
     private onCloseBtnClick(){
-        AudioManager.playSound("closeBtn");
+        Sound.play("closeBtn");
         if(this.closeCallback){
             this.closeCallback();
         }

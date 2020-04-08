@@ -7,14 +7,13 @@ import { crossPlatform } from "../../CocosFrame/dts";
 import { Util } from "../../CocosFrame/Util";
 import SceneManager from "../../CocosFrame/SceneManager";
 import MessageBox from "../../CocosFrame/MessageBox";
-import PreviewPanel from "../PreviewPanel/PreviewPanel";
 import ToggleGroup from "../../CustomUI/ToggleGroup";
 import Monster from "../../PlayScene/Monster";
 import { DB } from "../../CocosFrame/DataBind";
 import { Config } from "../../CocosFrame/Config";
 import Toggle from "../../CustomUI/Toggle";
 import { Game } from "../../Game";
-import { AudioManager } from "../../CocosFrame/AudioManager";
+import { Sound } from "../../CocosFrame/Sound";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -111,7 +110,7 @@ export default class PaintPanel extends Panel {
     }
     onMainToggleChange(idx, click){
         if(click){
-            AudioManager.playSound("clickBtn");
+            Sound.play("clickBtn");
         }
         this.paintGroup.active = idx==0;
         this.animGroup.active = idx==1;
@@ -122,42 +121,42 @@ export default class PaintPanel extends Panel {
     }
     onToggleStateChage(b, click){
         if(click){
-            AudioManager.playSound("clickBtn");
+            Sound.play("clickBtn");
         }
         this.colliderSizePreview.active = b;
     }
     onActionToggleChange(idx,click){
         if(click){
-            AudioManager.playSound("clickBtn");
+            Sound.play("clickBtn");
         }
         this.monster.playAnima(`action${idx+1}`);
     }
 
     selectColorChild(item, data){
-        // AudioManager.playSound("clickBtn");
+        // Sound.play("clickBtn");
         this.pencilColor = Config.getColorDataByID(data).color;
     }
     onPencilTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.highLightBtn(this.pencilBtn);
         this.state = State.Pencil;
     }
     onEraserTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.highLightBtn(this.eraserBtn);
         this.state = State.Eraser;
     }
     onBucketTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.highLightBtn(this.bucketBtn);
         this.state = State.Bucket;
     }
     onRevertTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.graphics.revert();
     }
     onClearTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
             messageBox.label.string = "是否清空画布？";
             messageBox.onOk = ()=>{
@@ -172,12 +171,17 @@ export default class PaintPanel extends Panel {
     }
     saveCallback = null;
     onSaveBtnTap(){
-        AudioManager.playSound("clickBtn");
+        if(this.graphics.opStack.length<5){
+            SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
+                messageBox.toOkStyle("多画几笔吧")
+            });
+            return;
+        }
+        Sound.play("clickBtn");
         crossPlatform.getOpenDataContext().postMessage({
             type:"hello"
         });
         let path = Game.savePixels(this.graphics.pixels);
-        cc.log("path", path)
         if(this.saveCallback){
             this.saveCallback(path);
         }
@@ -196,7 +200,7 @@ export default class PaintPanel extends Panel {
         }
     }
     onSizeChange(size){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.graphics.lineWidth = size;
     }
     private pencilColor:cc.Color = null;

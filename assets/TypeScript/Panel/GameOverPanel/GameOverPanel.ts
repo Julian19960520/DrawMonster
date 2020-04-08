@@ -18,7 +18,7 @@ import { Util } from "../../CocosFrame/Util";
 import { Config } from "../../CocosFrame/Config";
 import PaintPanel from "../PaintPanel/PaintPanel";
 import { Game } from "../../Game";
-import { AudioManager } from "../../CocosFrame/AudioManager";
+import { Sound } from "../../CocosFrame/Sound";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -92,8 +92,6 @@ export default class GameOverPanel extends Panel {
         }
     }
     closeAnim(callback){
-        console.log("asfd");
-        console.log(this.wxShareBtn);
         if(this.wxShareBtn){
             this.wxShareBtn.hide();
         }
@@ -103,14 +101,14 @@ export default class GameOverPanel extends Panel {
         this.timeLabel.string = `时间：${data.time}秒`;
     }
     onHomeBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         let  playScene = SceneManager.ins.findScene(PlayScene);
         if(playScene){
             playScene.savelyExit();
         }
     }
     onRetryBtnTap(){
-        AudioManager.playSound("gameStartBtn");
+        Sound.play("gameStartBtn");
         SceneManager.ins.popPanel();
         let  playScene = SceneManager.ins.findScene(PlayScene);
         if(playScene){
@@ -118,7 +116,7 @@ export default class GameOverPanel extends Panel {
         }
     }
     onDrawBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
             panel.saveCallback = (path)=>{
                 let hero = Game.newHeroConf("角色", path);
@@ -128,7 +126,7 @@ export default class GameOverPanel extends Panel {
         });
     }
     onShareBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         if(tt){
             crossPlatform.shareAppMessage({
                 title:"我画的怎么样！求赞求花花", 

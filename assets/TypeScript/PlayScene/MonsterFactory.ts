@@ -78,7 +78,7 @@ export default class MonsterFactory extends cc.Component {
                 y = Util.randomInt(-boxH/2, boxH/2);
                 x = boxW/2 * (Math.random()>0.5?1:-1);
             }
-            let speed = Util.randomInt(150,180);
+            let speed = Util.randomInt(180,210);
             let dir:cc.Vec2 = null;
             if(Math.random() > 0.5){
                 dir = playScene.hero.node.position.sub(cc.v2(x,y));     //追主角

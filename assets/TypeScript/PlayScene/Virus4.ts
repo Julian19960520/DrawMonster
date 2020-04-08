@@ -60,7 +60,6 @@ export default class Virus4 extends Virus {
         virus.node.name = "divisioner";
         virus.node.scale = 0;
         virus.velocity = this.velocity;
-        cc.log("division", this.node.name);
         // this.anima.stop();
         // this.tw = cc.tween(this.node).to(0.5,{scale:1.5})
         //     .call(()=>{

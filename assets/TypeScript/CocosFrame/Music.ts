@@ -19,13 +19,14 @@ export default class Music extends cc.Component {
     @property
     volume:number = 1;
     id = null;
+    public static volume:number = 1;
     onLoad () {
     }
     play(){
         if(this.id!=null){
             this.stop();
         }
-        this.id = cc.audioEngine.play(this.clip, this.loop,this.volume);
+        this.id = cc.audioEngine.play(this.clip, this.loop, this.volume * Music.volume);
     }
     stop(){
         cc.audioEngine.stop(this.id);

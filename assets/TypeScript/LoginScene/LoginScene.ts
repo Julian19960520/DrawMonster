@@ -6,6 +6,8 @@ import { crossPlatform } from "../CocosFrame/dts";
 import { Local } from "../CocosFrame/Local";
 import { PrefabPath, Config } from "../CocosFrame/Config";
 import { Game } from "../Game";
+import { Sound } from "../CocosFrame/Sound";
+import Music from "../CocosFrame/Music";
 const {ccclass, menu, property} = cc._decorator;
 
 @ccclass
@@ -20,7 +22,9 @@ export default class LoginScene extends Scene {
         })
         let stage = Local.Get("user/stage") || 1;
         let energy = Local.Get("user/energy") || 5;
-        let sensitivity = Local.Get("user/sensitivity") || 1;
+        let sensitivity = Local.Get("option/sensitivity") || 1;
+        Sound.volume = Local.Get("option/sound") || 0.5;
+        Music.volume = Local.Get("option/music") || 0.5;
         let colorIds = Local.Get("user/colorIds") || [1,2,3,4,5,6,7,8,9,10, 11,12,13,14,15,16,17,18,19,20, 21,22,23,24,25,26,27,28,29,30, 31,32];
         let rankDatas = Local.Get("user/rankDatas") || [];
 
@@ -30,9 +34,12 @@ export default class LoginScene extends Scene {
         let usingMonsterIds = Local.Get("user/usingMonsterIds") || [1,2,3,4,5,6];
         
         let uuid = Local.Get("uuid") || 1000;
+        
         DB.Set("user/stage", stage);
         DB.Set("user/energy", energy);
         DB.Set("option/sensitivity", sensitivity);
+        DB.Set("option/sound", Sound.volume);
+        DB.Set("option/music", Music.volume);
         DB.Set("user/colorIds", colorIds);
         DB.Set("user/rankDatas", rankDatas);
         DB.Set("user/customMonsters", customMonsters);

@@ -15,7 +15,7 @@ import SceneManager from "../../CocosFrame/SceneManager";
 import PaintPanel from "../PaintPanel/PaintPanel";
 import { DB } from "../../CocosFrame/DataBind";
 import { Game } from "../../Game";
-import { AudioManager } from "../../CocosFrame/AudioManager";
+import { Sound } from "../../CocosFrame/Sound";
 
 const {ccclass, property} = cc._decorator;
 
@@ -57,7 +57,7 @@ export default class HeroCell extends cc.Component {
         }
     }
     onClick(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         if(this.data.createNew){
             SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
                 panel.saveCallback = (path)=>{

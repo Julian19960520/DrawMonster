@@ -8,7 +8,8 @@ import { RankData } from "../CocosFrame/dts";
 import { Util } from "../CocosFrame/Util";
 import PlayScene from "../PlayScene/PlayScene";
 import { Game } from "../Game";
-import { AudioManager } from "../CocosFrame/AudioManager";
+import Top from "../CocosFrame/Top";
+import { Sound } from "../CocosFrame/Sound";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -115,7 +116,7 @@ export default class MenuScene extends Scene {
         }
     }
     private onPlayBtnTap(){
-        AudioManager.playSound("gameStartBtn");
+        Sound.play("gameStartBtn");
         SceneManager.ins.Enter("LoadingScene")
             .then((loadingScene:LoadingScene)=>{
                 loadingScene.Load([
@@ -130,27 +131,28 @@ export default class MenuScene extends Scene {
             });
     }
     private onRankBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.OpenPanelByName("RankPanel");
     }
     private onOptionBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.OpenPanelByName("OptionPanel");
     }
     private onDownloadBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         // this.OpenPanelByName("DownloadPanel");
+        Top.ins.showToast("正在开发中...");
     }
     private onCreateBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.OpenPanelByName("CreationPanel");
     }
     private onMonsterBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.OpenPanelByName("MonsterPanel");
     }
     private onHeroBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.OpenPanelByName("HeroPanel");
     }
 }

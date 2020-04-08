@@ -16,6 +16,7 @@ import { Game } from "../Game";
 import { TweenUtil } from "../CocosFrame/TweenUtil";
 import SceneManager from "../CocosFrame/SceneManager";
 import PlayScene from "./PlayScene";
+import { Sound } from "../CocosFrame/Sound";
 
 const {ccclass, property} = cc._decorator;
 
@@ -76,6 +77,7 @@ export default class Hero extends DB.DataBindComponent {
                 if(this.shieldTime<0 && this.shield.active){
                     this.shield.active = false;
                     this.playDropSprite(this.shield.getComponent(cc.Sprite).spriteFrame);
+                    Sound.play("dorpShield");
                 }
             }
         }
@@ -120,6 +122,7 @@ export default class Hero extends DB.DataBindComponent {
                 if(this.shield.active){
                     monster.active = false;
                     monster.beginDrop();
+                    this.node.dispatchEvent(Util.customEvent("shakeScene", true, 0.5));
                     return;
                 }
                 let find = false;
@@ -131,7 +134,8 @@ export default class Hero extends DB.DataBindComponent {
                         monster.active = false;
                         monster.beginDrop();
                         this.playDropSprite(child.getComponent(cc.Sprite).spriteFrame, 0.5);
-                        this.node.dispatchEvent(Util.customEvent("shakeScene", true));
+                        this.node.dispatchEvent(Util.customEvent("shakeScene", true, 1));
+                        Sound.play("dorpHeart");
                         break;
                     }
                 }
@@ -139,7 +143,7 @@ export default class Hero extends DB.DataBindComponent {
                     this.node.dispatchEvent(Util.customEvent("gameOver", true));
                     let dir = this.node.x - other.node.x;
                     this.beginDrop(dir);
-                    this.node.dispatchEvent(Util.customEvent("shakeScene", true));
+                    this.node.dispatchEvent(Util.customEvent("shakeScene", true, 1));
                 }
             }
         }
@@ -151,6 +155,7 @@ export default class Hero extends DB.DataBindComponent {
                     if(!child.active){
                         child.active = true;
                         other.node.dispatchEvent(Util.customEvent("returnPool"));
+                        Sound.play("getHeart");
                         break;
                     }
                 }
@@ -159,6 +164,7 @@ export default class Hero extends DB.DataBindComponent {
                 this.shieldTime = 5;
                 this.shield.active = true;
                 other.node.dispatchEvent(Util.customEvent("returnPool"));
+                Sound.play("getHeart");
             }
         }
     }

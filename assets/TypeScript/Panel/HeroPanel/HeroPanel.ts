@@ -15,7 +15,7 @@ import { PrefabPath, Config } from "../../CocosFrame/Config";
 import LoadingScene from "../../LoadingScene/LoadingScene";
 import PlayScene from "../../PlayScene/PlayScene";
 import { DB } from "../../CocosFrame/DataBind";
-import { AudioManager } from "../../CocosFrame/AudioManager";
+import { Sound } from "../../CocosFrame/Sound";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -30,11 +30,7 @@ export default class HeroPanel extends Panel {
     onLoad(){
         super.onLoad();
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
-        this.Bind("user/customHeros",(customHeros:any[])=>{
-            console.log(customHeros);
-            
-            console.log(Config.heros);
-            
+        this.Bind("user/customHeros",(customHeros:any[])=>{            
             let arr:any[] = [{createNew:true}].concat(customHeros).concat(Config.heros);
             this.scrollList.setDataArr(arr);
             let usingHeroId = DB.Get("user/usingHeroId");
@@ -44,7 +40,7 @@ export default class HeroPanel extends Panel {
         this.scrollList.node.on(ScrollList.SELECT_CHILD, this.onSelectChild, this);
     }
     onPlayBtnTap(){
-        AudioManager.playSound("gameStartBtn");
+        Sound.play("gameStartBtn");
         SceneManager.ins.Enter("LoadingScene")
             .then((loadingScene:LoadingScene)=>{
                 loadingScene.Load([

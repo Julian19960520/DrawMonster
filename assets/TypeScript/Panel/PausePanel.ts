@@ -10,7 +10,7 @@
 
 import Panel from "../CocosFrame/Panel";
 import SceneManager, { ShiftAnima } from "../CocosFrame/SceneManager";
-import { AudioManager } from "../CocosFrame/AudioManager";
+import { Sound } from "../CocosFrame/Sound";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -31,13 +31,13 @@ export default class PausePanel extends Panel {
         this.resumeBtn.node.on("click", this.onResumeBtnTap, this);
     }
     onBackBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         if(this.backHomeCallback){
             this.backHomeCallback();
         }
     }
     onResumeBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         SceneManager.ins.popPanel();
     }
 }

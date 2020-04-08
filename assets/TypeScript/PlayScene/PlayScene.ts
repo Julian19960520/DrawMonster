@@ -8,8 +8,8 @@ import MonsterFactory from "./MonsterFactory";
 import Hero, { State } from "./Hero";
 import { crossPlatform } from "../CocosFrame/dts";
 import { Game } from "../Game";
-import { AudioManager } from "../CocosFrame/AudioManager";
 import Music from "../CocosFrame/Music";
+import { Sound } from "../CocosFrame/Sound";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -41,13 +41,15 @@ export default class PlayScene extends Scene {
     private playing = false;
     private targetPos:cc.Vec2 = cc.Vec2.ZERO;
     private sensitivity = 1;
+    private oriPos:cc.Vec2 = null;
     onLoad () {
+        this.oriPos = this.node.position;
         cc.director.getCollisionManager().enabled = true; //开启碰撞检测，默认为关闭
         // cc.director.getCollisionManager().enabledDebugDraw = true; //开启碰撞检测范围的绘制
         // cc.director.getCollisionManager().enabledDrawBoundingBox = true; //开启碰撞组件的包围盒绘制
         this.pauseBtn.node.on("click", this.onPauseBtnTap, this);
         this.touchNode.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-        this.node.on("shakeScene", this.shakeScene, this);
+        this.node.on("shakeScene", this.onShakeScene, this);
         this.node.on("gameOver", this.onGameOver, this);
         this.Bind("option/sensitivity", (sensitivity)=>{
             this.sensitivity = sensitivity;
@@ -57,7 +59,7 @@ export default class PlayScene extends Scene {
         this.touchNode.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
     }
     onPauseBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         this.pause();
         this.OpenPanelByName("PausePanel",(pausePanel:PausePanel)=>{
             pausePanel.closeCallback = ()=>{
@@ -81,7 +83,7 @@ export default class PlayScene extends Scene {
         if(!this.playing){
             return;
         }
-        AudioManager.playSound("gameOver");
+        Sound.play("gameOver");
         this.playing = false;
         let time = Util.fixedNum(this.time, 2);
         Game.addRankData(time);
@@ -152,15 +154,18 @@ export default class PlayScene extends Scene {
         this.propFactory.resume();
         this.hero.setState(State.active);
     }
-    shakeScene(){
-        let oriPos = this.node.position;
+    onShakeScene(evt:cc.Event.EventCustom){
+        this.shakeScene(evt.detail);
+    }
+    shakeScene(scale = 1){
+        let oriPos = this.oriPos;
         cc.tween(this.node)
-            .to(0.1,{position:oriPos.add(cc.v2(0, 5))})
-            .to(0.1,{position:oriPos.add(cc.v2(-4, -3))})
-            .to(0.1,{position:oriPos.add(cc.v2(4, 3))})
-            .to(0.1,{position:oriPos.add(cc.v2(-4, 3))})
-            .to(0.1,{position:oriPos.add(cc.v2(0, -5))})
-            .to(0.1,{position:oriPos.add(cc.v2(4, 3))})
+            .to(0.1,{position:oriPos.add(cc.v2(0, 5*scale))})
+            .to(0.1,{position:oriPos.add(cc.v2(-4*scale, -3*scale))})
+            .to(0.1,{position:oriPos.add(cc.v2(4*scale, 3*scale))})
+            .to(0.1,{position:oriPos.add(cc.v2(-4*scale, 3*scale))})
+            .to(0.1,{position:oriPos.add(cc.v2(0, -5*scale))})
+            .to(0.1,{position:oriPos.add(cc.v2(4*scale, 3*scale))})
             .to(0.1,{position:oriPos})
             .start();
     }

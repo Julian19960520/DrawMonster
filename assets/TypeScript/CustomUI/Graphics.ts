@@ -298,7 +298,7 @@ export default class Graphics extends cc.Component {
     }
     
     //操作栈
-    private opStack = [];
+    public opStack = [];
     private pushOp(op){
         //每隔10个操作，保存一个快照
         if(this.opStack.length%3 == 0 && this.opStack.length != 0){

@@ -21,10 +21,11 @@ export default class Top extends cc.Component {
             toast.getComponentInChildren(cc.Label).string = text;
             this.node.addChild(toast);
             toast.opacity = 0;
+            toast.y = -20;
             cc.tween(toast)
-                .to(0.1, {opacity:255} )
+                .to(0.1, {opacity:255,y:0} )
                 .delay(1.5)
-                .to(0.1, {opacity:0} )
+                .to(0.1, {opacity:0,y:20} )
                 .call(()=>{
                     this.node.removeChild(toast);
                 }
@@ -34,7 +35,6 @@ export default class Top extends cc.Component {
     public showFloatLabel(string , parent:cc.Node, offset){
         let pos:any = parent.convertToWorldSpaceAR(offset);
         pos = parent.convertToNodeSpaceAR(pos);
-        cc.log(pos);
         let node = new cc.Node();
         let label = node.addComponent(cc.Label);
         parent.addChild(node);

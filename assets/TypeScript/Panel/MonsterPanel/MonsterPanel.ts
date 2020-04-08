@@ -14,7 +14,7 @@ import SceneManager from "../../CocosFrame/SceneManager";
 import { PrefabPath, Config } from "../../CocosFrame/Config";
 import LoadingScene from "../../LoadingScene/LoadingScene";
 import PlayScene from "../../PlayScene/PlayScene";
-import { AudioManager } from "../../CocosFrame/AudioManager";
+import { Sound } from "../../CocosFrame/Sound";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -35,7 +35,7 @@ export default class MonsterPanel extends Panel {
         });
     }
     onPlayBtnTap(){
-        AudioManager.playSound("gameStartBtn");
+        Sound.play("gameStartBtn");
         SceneManager.ins.Enter("LoadingScene")
             .then((loadingScene:LoadingScene)=>{
                 loadingScene.Load([

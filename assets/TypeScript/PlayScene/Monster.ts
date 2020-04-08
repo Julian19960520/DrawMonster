@@ -10,6 +10,7 @@
 
 import { Util } from "../CocosFrame/Util";
 import { Game } from "../Game";
+import { Sound } from "../CocosFrame/Sound";
 
 const {ccclass, property} = cc._decorator;
 
@@ -63,6 +64,7 @@ export default class Monster extends cc.Component {
         this.velocity = cc.v2( Util.randomInt(-100, 100), Util.randomInt(300, 500));
         this.g = 1200;
         this.active = false;
+        Sound.play("hit");
     }
     updateDrop(dt){
         if(this.velocity){

@@ -14,7 +14,7 @@ import { RankData } from "../CocosFrame/dts";
 import SceneManager from "../CocosFrame/SceneManager";
 import MessageBox from "../CocosFrame/MessageBox";
 import { DB } from "../CocosFrame/DataBind";
-import { AudioManager } from "../CocosFrame/AudioManager";
+import { Sound } from "../CocosFrame/Sound";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -30,17 +30,21 @@ export default class RankPanel extends Panel {
 
     @property(ScrollList)
     scrollList: ScrollList = null;
-    
+
+    @property(cc.Node)
+    emptyNode: cc.Node = null;
+
     onLoad () {
         super.onLoad();
         this.clearBtn.node.on("click", this.onClearBtnTap, this);
         this.okBtn.node.on("click", this.onOkBtnTap, this);
         let rankDatas:RankData[] = DB.Get("user/rankDatas");
+        this.emptyNode.active = (rankDatas.length == 0);
         this.scrollList.setDataArr(rankDatas);
         this.scrollList.selectItemByData(null);
     }
     onClearBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
             messageBox.label.string = "是否清空排行榜";
             messageBox.onOk = ()=>{
@@ -51,7 +55,7 @@ export default class RankPanel extends Panel {
         })
     }
     onOkBtnTap(){
-        AudioManager.playSound("clickBtn");
+        Sound.play("clickBtn");
         SceneManager.ins.popPanel();
     }
 }

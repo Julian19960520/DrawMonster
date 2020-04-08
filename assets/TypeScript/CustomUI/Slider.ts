@@ -22,7 +22,14 @@ export default class Slider extends cc.Slider {
     min=1;
     @property
     max=10;
-    value = 0;
+    _value = 0;
+    get value(){
+        return this._value;
+    }
+    set value(v){
+        this.progress = (v-this.min)/(this.max - this.min);
+        this._value = v;
+    }
     onLoad(){
         let evtHandler = new cc.Component.EventHandler();
         evtHandler.target = this.node;
@@ -33,8 +40,8 @@ export default class Slider extends cc.Slider {
     }
     _onMove(target:Slider){
         let value = Util.lerp(this.min, this.max, this.progress);
-        if(value != this.value){
-            this.value = value;
+        if(value != this._value){
+            this._value = value;
             this.node.emit(Slider.MOVE, value);
         }
     }
