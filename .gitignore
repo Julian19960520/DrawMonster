@@ -1,0 +1,9 @@
+build/
+library/**
+temp/
+local/**
+jsb-default/
+jsb-binary/
+jsb-link/
+web-desktop/
+.DS_Store
