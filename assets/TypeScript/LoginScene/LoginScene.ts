@@ -32,8 +32,6 @@ export default class LoginScene extends Scene {
         let customHeros = Local.Get("user/customHeros") || [];
         let customDramas = Local.Get("user/customDramas") || [];
         let usingHeroId = Local.Get("user/usingHeroId") || 1;
-        let usingMonsterIds = Local.Get("user/usingMonsterIds") || [1,2,3,4,5,6];
-        
         let uuid = Local.Get("uuid") || 1000;
         
         DB.Set("user/stage", stage);
@@ -49,7 +47,6 @@ export default class LoginScene extends Scene {
         DB.Set("user/customDramas", customDramas);
 
         DB.Set("user/usingHeroId", usingHeroId);
-        DB.Set("user/usingMonsterIds", usingMonsterIds);
 
         DB.Set("uuid", uuid);
 

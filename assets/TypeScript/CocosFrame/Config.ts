@@ -1,8 +1,14 @@
-import { ColorData, DramaData } from "./dts";
+import { ColorData, DramaData, MonsterConfig } from "./dts";
 export enum PrefabPath{
     heart = "Prefab/Prop/Heart",
     shield = "Prefab/Prop/Shield",
     monster = "Prefab/Monster/Monster",
+}
+export enum DirType{
+    Upward,     //向上
+    HorFlip,    //水平方向翻转
+    Forwards,   //朝向前方
+    Rotate,     //旋转
 }
 export namespace Config{
     export function getColorDataByID(id){
@@ -25,13 +31,13 @@ export namespace Config{
         {id:5, name:"咸蛋超人", url:"Atlas/Hero/hero5" },
         {id:6, name:"小恐龙", url:"Atlas/Hero/hero6" },
     ] 
-    export let monsters:any[] = [
-        {id:1, name:"怪物1", url:"Atlas/Monster/monster1" },
-        {id:2, name:"怪物2", url:"Atlas/Monster/monster2" },
-        {id:3, name:"怪物3", url:"Atlas/Monster/monster3" },
-        {id:4, name:"怪物4", url:"Atlas/Monster/monster4" },
-        {id:5, name:"怪物5", url:"Atlas/Monster/monster5" },
-        {id:6, name:"怪物6", url:"Atlas/Monster/monster6" },
+    export let monsters:MonsterConfig[] = [
+        {id:1, url:"Atlas/Monster/monster1", dirType:DirType.Rotate},
+        {id:2, url:"Atlas/Monster/monster2", dirType:DirType.Forwards},
+        {id:3, url:"Atlas/Monster/monster3", dirType:DirType.Forwards},
+        {id:4, url:"Atlas/Monster/monster4", dirType:DirType.HorFlip},
+        {id:5, url:"Atlas/Monster/monster5", dirType:DirType.Upward},
+        {id:6, url:"Atlas/Monster/monster6", dirType:DirType.Forwards},
     ]
 
     export let colors:ColorData[] = [

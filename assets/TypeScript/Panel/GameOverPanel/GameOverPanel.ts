@@ -9,17 +9,13 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import Panel from "../../CocosFrame/Panel";
-import ScrollList from "../../CustomUI/ScrollList";
 import SceneManager from "../../CocosFrame/SceneManager";
 import PlayScene from "../../PlayScene/PlayScene";
-import { DB } from "../../CocosFrame/DataBind";
-import { RankData, wx, tt, crossPlatform } from "../../CocosFrame/dts";
 import { Util } from "../../CocosFrame/Util";
-import { Config } from "../../CocosFrame/Config";
-import PaintPanel from "../PaintPanel/PaintPanel";
 import { Game } from "../../Game";
 import { Sound } from "../../CocosFrame/Sound";
 import { GameRecorder } from "../../GameRecorder";
+import { crossPlatform } from "../../CocosFrame/dts";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -45,8 +41,6 @@ export default class GameOverPanel extends Panel {
     @property(cc.Animation)
     starAnim:cc.Animation = null;
 
-
-    private videoPath = null;
     private wxShareBtn = null;
     onLoad(){
         super.onLoad();
@@ -63,6 +57,14 @@ export default class GameOverPanel extends Panel {
             }
         });
         GameRecorder.stop();
+        console.log("Util.getTimeStamp()", Util.getTimeStamp());
+        console.log("GameRecorder.startStamp", GameRecorder.startStamp);
+        if(Util.getTimeStamp() - GameRecorder.startStamp < 4000){
+            //录屏时间太短，转分享
+            this.shareBtn.getComponentInChildren(cc.Label).string = "分享";
+        }else{
+            this.shareBtn.getComponentInChildren(cc.Label).string = "分享视频";
+        }
         // if(wx){
         //     crossPlatform.getGameRecorder().stop();
         //     let box = Util.convertToWindowSpace(this.shareBtn.node);
@@ -125,6 +127,12 @@ export default class GameOverPanel extends Panel {
     }
     onShareBtnTap(){
         Sound.play("clickBtn");
-        GameRecorder.share();
+        if(this.shareBtn.getComponentInChildren(cc.Label).string == "分享视频"){
+            GameRecorder.share();
+        }else{
+            crossPlatform.shareAppMessage({
+                templateId:"6deh5ubi85226of3co",
+            });
+        }
     }
 }

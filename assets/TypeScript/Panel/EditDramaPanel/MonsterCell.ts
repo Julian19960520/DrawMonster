@@ -9,15 +9,12 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import ScrollList from "../../CustomUI/ScrollList";
-import { Util } from "../../CocosFrame/Util";
-import Toggle from "../../CustomUI/Toggle";
 import SceneManager from "../../CocosFrame/SceneManager";
 import PaintPanel from "../PaintPanel/PaintPanel";
 import { DB } from "../../CocosFrame/DataBind";
 import { Game } from "../../Game";
 import { Sound } from "../../CocosFrame/Sound";
 import Top from "../../CocosFrame/Top";
-import ColorBtn from "../PaintPanel/ColorBtn";
 import { Local } from "../../CocosFrame/Local";
 
 const {ccclass, property} = cc._decorator;
@@ -59,18 +56,19 @@ export default class MonsterCell extends cc.Component {
     }
     onClick(){
         Sound.play("clickBtn");
+        let dramaId  = DB.Get("user/dramaId");
+        let drama = Game.findDramaConf(dramaId);
         if(this.data.createNew){
             SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
                 panel.saveCallback = (path)=>{
-                    let monster = Game.newMonsterConf("角色", path);
-                    let usingMonster:number[] = DB.Get("user/usingMonsterIds");
-                    usingMonster.push(monster.id);
-                    DB.SetLoacl("user/usingMonsterIds", usingMonster);
+                    let monster = Game.newMonsterConf(path);
+                    drama.monsterIds.push(monster.id);
+                    DB.Invoke("user/dramaId");
+                    DB.Invoke("user/customMonsters");
+                    Local.setDirty("user/customDramas");
                 }
             });
         }else{
-            let dramaId  = DB.Get("user/dramaId");
-            let drama = Game.findDramaConf(dramaId);
             let idx = drama.monsterIds.indexOf(this.data.id);
             if(idx>=0){
                 drama.monsterIds.splice(idx, 1);

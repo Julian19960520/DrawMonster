@@ -9,7 +9,6 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { PoolManager } from "../CocosFrame/PoolManager";
-import Virus from "./Virus";
 import { Util } from "../CocosFrame/Util";
 import ScreenRect from "../CocosFrame/ScreenRect";
 import SceneManager from "../CocosFrame/SceneManager";
@@ -28,7 +27,6 @@ export default class MonsterFactory extends cc.Component {
     private playing = false;
     private timer = 0;
     private ROF = 2;
-    private urlTextureMap = new Map<string, cc.Texture2D>();
     usingMonsters = [];
 
     private time = 0;
@@ -104,8 +102,10 @@ export default class MonsterFactory extends cc.Component {
         this.ROF = this.rofFunc.getY(this.time);
         if(this.timer > 1/this.ROF){
             this.timer = 0;
-            let playScene = SceneManager.ins.findScene(PlayScene);
-            let x ,y;   //出生点坐标
+            let idx = Util.randomIdx(this.usingMonsters.length);
+            let monsterConf = this.usingMonsters[idx];
+            //出生点坐标
+            let x ,y;   
             let boxW = ScreenRect.width + 200;
             let boxH = ScreenRect.height + 200;
             if(Math.random() < boxW/(boxH+boxW)){
@@ -115,45 +115,28 @@ export default class MonsterFactory extends cc.Component {
                 y = Util.randomInt(-boxH/2, boxH/2);
                 x = boxW/2 * (Math.random()>0.5?1:-1);
             }
-            let speed = Util.randomInt(180,210);
-            let dir:cc.Vec2 = null;
+            //飞的方向
+            let vec:cc.Vec2 = null;
             if(Math.random() > 0.7){
-                dir = playScene.hero.node.position.sub(cc.v2(x,y));     //追主角
+                let playScene = SceneManager.ins.findScene(PlayScene);
+                vec = playScene.hero.node.position.sub(cc.v2(x,y));     //追主角
             }else{
-                dir = cc.v2(Util.randomInt(-200,200), Util.randomInt(-200,200)).sub(cc.v2(x,y));        //追随机点
+                vec = cc.v2(Util.randomInt(-200,200), Util.randomInt(-200,200)).sub(cc.v2(x,y));        //追随机点
             }
-            let velocity = dir.normalizeSelf().mulSelf(speed);
-            let idx = Util.randomIdx(this.usingMonsters.length);
+            //缩放
             let scale = this.sizeFunc.getY(Math.random());
+            //速度与缩放反比
+            let speed = Util.randomInt(180,210);
+            let velocity = vec.normalizeSelf().mulSelf(speed);
             velocity.mulSelf(1/scale);
-            let monster = this.generateMonster(this.usingMonsters[idx].url, x, y, scale, velocity); 
-            monster.playAnima("action2");
+            //创建Monster
+            let monsterNode:cc.Node = PoolManager.getInstance(PrefabPath.monster);
+            this.node.addChild(monsterNode);
+            monsterNode.x = x;
+            monsterNode.y = y;
+            let monster = monsterNode.getComponent(Monster);
+            monster.setData(monsterConf, velocity, scale);
         }
-    }
-    generateMonster(url, x, y, scale, velocity){
-        let node:cc.Node = PoolManager.getInstance(PrefabPath.monster);
-        this.node.addChild(node);
-        let monster = node.getComponent(Monster);
-        monster.node.x = x;
-        monster.node.y = y;
-        monster.node.scaleX = scale;
-        let angle = Util.angle(velocity);
-        if(angle>90 && angle <270){
-            node.scaleY = -scale;
-        }else{
-            node.scaleY = scale;
-        }
-        node.angle = angle;
-        monster.setVelocity(velocity);
-        if(this.urlTextureMap.has(url)){
-            monster.setTexture(this.urlTextureMap.get(url));
-        }else{
-            Game.loadTexture(url, (texture)=>{
-                this.urlTextureMap.set(url, texture);
-                monster.setTexture(texture);
-            });
-        }
-        return monster;
     }
     onCollisionExit(other:cc.Collider, self){
         if(other.node.group == "Monster"){

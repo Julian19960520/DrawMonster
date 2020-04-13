@@ -11,6 +11,9 @@
 import { Util } from "../CocosFrame/Util";
 import { Game } from "../Game";
 import { Sound } from "../CocosFrame/Sound";
+import { MonsterConfig } from "../CocosFrame/dts";
+import { PoolManager } from "../CocosFrame/PoolManager";
+import { DirType } from "../CocosFrame/Config";
 
 const {ccclass, property} = cc._decorator;
 
@@ -18,7 +21,7 @@ const {ccclass, property} = cc._decorator;
 export default class Monster extends cc.Component {
     @property(cc.Sprite)
     sprite: cc.Sprite = null;
-
+    conf:MonsterConfig = null;
     velocity:cc.Vec2 = null;
     anima:cc.Animation = null;
     angleSpeed = 180;
@@ -58,6 +61,15 @@ export default class Monster extends cc.Component {
         if(this.velocity){
             this.node.position = this.node.position.add(this.velocity.mul(dt));
         }
+        if(this.conf){
+            let conf = this.conf;
+            switch(conf.dirType){
+                case DirType.Rotate:{
+                    this.node.angle += dt*this.angleSpeed;
+                    break;
+                }
+            }
+        }
     }
     beginDrop(){
         this.droping = true;
@@ -73,9 +85,6 @@ export default class Monster extends cc.Component {
             this.node.position = this.node.position.add(this.velocity.mul(dt));
         }
     }
-    setVelocity(velocity){
-        this.velocity = velocity;
-    }
 
     setTexture(texture){
         let spriteFrame = new cc.SpriteFrame();
@@ -87,5 +96,38 @@ export default class Monster extends cc.Component {
             this.anima.play(name);
         }
     }
-
+    setData(conf:MonsterConfig, velocity:cc.Vec2, scale:number){
+        this.conf = conf;
+        this.node.angle = 0;
+        switch(conf.dirType){
+            case DirType.Forwards:{
+                this.node.scaleX = scale;
+                let angle = Util.angle(velocity);
+                if(angle>90 && angle <270){
+                    this.node.scaleY = -scale;
+                }else{
+                    this.node.scaleY = scale;
+                }
+                this.node.angle = angle;
+                break;
+            }
+            case DirType.HorFlip:{
+                this.node.scaleX = this.node.x>0 ? -scale : scale;
+                this.node.scaleY = scale;
+                break;
+            }
+            case DirType.Rotate:{
+                this.node.scale = scale;
+                break;
+            }
+            case DirType.Upward:{
+                this.node.scale = scale;
+            }
+        }
+        this.velocity = velocity;
+        Game.loadTexture(conf.url, (texture)=>{
+            this.setTexture(texture);
+        });
+        this.playAnima("action2");
+    }
 }

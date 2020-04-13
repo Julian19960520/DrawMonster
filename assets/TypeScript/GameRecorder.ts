@@ -1,4 +1,5 @@
 import { crossPlatform, tt, wx } from "./CocosFrame/dts";
+import { Util } from "./CocosFrame/Util";
 
 export namespace GameRecorder {
     let impl = crossPlatform.getGameRecorderManager();
@@ -6,6 +7,7 @@ export namespace GameRecorder {
     let onStartListenrs = [];
     let onStopListenrs = [];
     let _inited = false;
+    export let startStamp = 0;
     export function Init(){
         if(_inited){
             return;
@@ -40,6 +42,7 @@ export namespace GameRecorder {
     //开始录屏
     export function start(){
         Init();
+        startStamp = Util.getTimeStamp();
         if(wx){
             impl.start({duration:3000});  
         }

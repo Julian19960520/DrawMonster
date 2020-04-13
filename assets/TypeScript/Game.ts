@@ -1,7 +1,7 @@
-import { crossPlatform, RankData, DramaData } from "./CocosFrame/dts";
+import { crossPlatform, RankData, DramaData, MonsterConfig } from "./CocosFrame/dts";
 import { Util } from "./CocosFrame/Util";
 import { DB } from "./CocosFrame/DataBind";
-import { Config } from "./CocosFrame/Config";
+import { Config, DirType } from "./CocosFrame/Config";
 
 export namespace Game{
     export let timeScale = 1;
@@ -116,9 +116,13 @@ export namespace Game{
 
         return hero;
     }
-    export function newMonsterConf(name, url){
+    export function newMonsterConf(url){
         let id = newUuid();
-        let monster = {id:id, name:name, url:url};
+        let monster:MonsterConfig = {
+            id:id, 
+            url:url,
+            dirType:DirType.Forwards,
+        };
         monsterConfigMap.set(id, monster);
 
         let customMonsters:any[] = DB.Get("user/customMonsters");

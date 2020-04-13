@@ -13,6 +13,7 @@ import Slider from "../CustomUI/Slider";
 import { DB } from "../CocosFrame/DataBind";
 import SceneManager from "../CocosFrame/SceneManager";
 import { Sound } from "../CocosFrame/Sound";
+import Music from "../CocosFrame/Music";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -59,10 +60,12 @@ export default class OptionPanel extends Panel {
     }
     onSoundSliderMove(value){
         Sound.play("clickBtn");
+        Sound.volume = value;
         DB.SetLoacl("option/sound", value);
     }
     onMusicSliderMove(value){
         Sound.play("clickBtn");
+        Music.volume = value;
         DB.SetLoacl("option/music", value);
     }
     onSensitivitySliderMove(value){

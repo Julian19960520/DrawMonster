@@ -1,3 +1,4 @@
+import { DirType } from "./Config";
 
 export enum Ease{
     quintOut = 'quintOut',
@@ -29,6 +30,11 @@ export class DramaData{
     monsterIds:number[];
     isCustom?:boolean;
 }
+export class MonsterConfig{
+    id:number;
+    url:string;
+    dirType:DirType;
+}
 export class ColorData{
     id:number;
     name:string;
@@ -54,6 +60,7 @@ export class CrossPlatform{
             videoPath: string, // 可替换成录屏得到的视频地址
             videoTopics: string[] //话题
         },
+        templateId?:string,
         success?:()=>void,
         fail?:()=>void,
     }){
