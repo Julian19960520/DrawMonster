@@ -24,12 +24,10 @@ export class RankData{
     time:number;
 };
 export class DramaData{
-    createNew?:boolean;
-    name:string;
-    hero:{
-        url:string;
-    };
-    monsters:{url:string}[];
+    id:number;
+    heroId:number;
+    monsterIds:number[];
+    isCustom?:boolean;
 }
 export class ColorData{
     id:number;
@@ -94,6 +92,28 @@ export class CrossPlatform{
         image?:string,
         text?:string,
     }){
+    }
+    getGameRecorder(){
+        return {
+            start(obj:{duration:number}){
+                console.log("开始录屏");
+            },
+            pause(){},
+            recordClip(obj:{timeRange?:number[], success?:(res:{index:number})=>{void}, fail?, complete?}){},
+            clipVideo(obj:{path:string, timeRange?:number[], clipRange?:number[], success?, fail?}){},
+            resume(){},
+            stop(){
+                console.log("结束录屏");
+                return "视频地址";
+            },
+            onStart(callback){},
+            onResume(callback){},
+            onPause(callback){},
+            onStop(callback:(obj:{videoPath:string})=>void){},
+            onError(callback:(obj:{errMsg:string})=>void){},
+            onInterruptionBegin(callback){},
+            onInterruptionEnd(callback){},
+        }
     }
     //抖音专用API
     getGameRecorderManager(){
@@ -174,10 +194,11 @@ export let crossPlatform:CrossPlatform = new CrossPlatform();
 
 export let wx = window["wx"];
 export let tt = window["tt"];
-if(wx){
+
+if(tt){
+    crossPlatform = tt;
+    wx = null;
+}if(wx){
     crossPlatform = wx;
     crossPlatform.getGameRecorderManager = wx.getGameRecorder;
-
-}else if(tt){
-    crossPlatform = tt;
 }

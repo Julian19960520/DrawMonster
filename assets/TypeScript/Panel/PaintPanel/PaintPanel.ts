@@ -60,8 +60,6 @@ export default class PaintPanel extends Panel {
     paintGroup:cc.Node = null;
     @property(cc.Node)
     animGroup:cc.Node = null;
-    @property(Toggle)
-    toggle:Toggle = null;
     @property(cc.Node)
     colliderSizePreview:cc.Node = null;
 
@@ -85,7 +83,6 @@ export default class PaintPanel extends Panel {
         this.initColorBtns();
         this.highLightBtn(this.pencilBtn);
         this.state = State.Pencil;
-        this.toggle.node.on(Toggle.STATE_CHANGE, this.onToggleStateChage, this);
     }
 
     onDestroy(){
@@ -118,12 +115,6 @@ export default class PaintPanel extends Panel {
             this.monster.setTexture(this.graphics.renderTexture);
             this.onActionToggleChange(this.actionToggle.idx, false);
         }
-    }
-    onToggleStateChage(b, click){
-        if(click){
-            Sound.play("clickBtn");
-        }
-        this.colliderSizePreview.active = b;
     }
     onActionToggleChange(idx,click){
         if(click){
@@ -171,7 +162,7 @@ export default class PaintPanel extends Panel {
     }
     saveCallback = null;
     onSaveBtnTap(){
-        if(this.graphics.opStack.length<5){
+        if(this.graphics.opStack.length<3){
             SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
                 messageBox.toOkStyle("多画几笔吧")
             });

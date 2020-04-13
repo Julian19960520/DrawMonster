@@ -8,13 +8,22 @@ export namespace Config{
     export function getColorDataByID(id){
         return colors.find((data)=>{return data.id == id});
     }
+    export let dramas:DramaData[]=[
+
+        {id:1, heroId:1, monsterIds:[1,2,3]},
+        {id:2, heroId:2, monsterIds:[1,2,3]},
+        {id:3, heroId:3, monsterIds:[1,2,3]},
+        {id:4, heroId:4, monsterIds:[1,2,3]},
+        {id:5, heroId:5, monsterIds:[1,2,3]},
+        {id:0, heroId:6, monsterIds:[1,2,3]},
+    ]
     export let heros:any[] = [
-        {id:1, name:"角色1", url:"Atlas/Hero/hero1" },
-        {id:2, name:"角色2", url:"Atlas/Hero/hero2" },
-        {id:3, name:"角色3", url:"Atlas/Hero/hero3" },
-        {id:4, name:"角色4", url:"Atlas/Hero/hero4" },
-        {id:5, name:"角色5", url:"Atlas/Hero/hero5" },
-        {id:6, name:"角色6", url:"Atlas/Hero/hero6" },
+        {id:1, name:"害羞鹅", url:"Atlas/Hero/hero1" },
+        {id:2, name:"黄章鱼", url:"Atlas/Hero/hero2" },
+        {id:3, name:"小鱼", url:"Atlas/Hero/hero3" },
+        {id:4, name:"鼠标", url:"Atlas/Hero/hero4" },
+        {id:5, name:"咸蛋超人", url:"Atlas/Hero/hero5" },
+        {id:6, name:"小恐龙", url:"Atlas/Hero/hero6" },
     ] 
     export let monsters:any[] = [
         {id:1, name:"怪物1", url:"Atlas/Monster/monster1" },

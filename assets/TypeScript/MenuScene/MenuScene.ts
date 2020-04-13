@@ -3,13 +3,14 @@ import SceneManager, { ShiftAnima } from "../CocosFrame/SceneManager";
 import LoadingScene from "../LoadingScene/LoadingScene";
 import { PrefabPath, Config } from "../CocosFrame/Config";
 import { DB } from "../CocosFrame/DataBind";
-import StagePoint, { State } from "./StagePoint";
-import { RankData } from "../CocosFrame/dts";
+import { RankData, DramaData } from "../CocosFrame/dts";
 import { Util } from "../CocosFrame/Util";
 import PlayScene from "../PlayScene/PlayScene";
 import { Game } from "../Game";
-import Top from "../CocosFrame/Top";
 import { Sound } from "../CocosFrame/Sound";
+import ScrollList from "../CustomUI/ScrollList";
+import PaintPanel from "../Panel/PaintPanel/PaintPanel";
+import EditDramaPanel from "../Panel/EditDramaPanel/EditDramaPanel";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -19,48 +20,43 @@ export default class MenuScene extends Scene {
 
     @property(cc.Button)
     playBtn: cc.Button = null;
+    @property(cc.Button)
+    drawBtn: cc.Button = null;
 
     @property(cc.Button)
     optionBtn: cc.Button = null;
     @property(cc.Button)
     rankBtn: cc.Button = null;
-    @property(cc.Button)
-    heroBtn: cc.Button = null;
-    @property(cc.Button)
-    monsterBtn: cc.Button = null;
-    @property(cc.Button)
-    downloadBtn: cc.Button = null;
-
-    @property(StagePoint)
-    stagePoint: StagePoint = null;
-    @property(cc.Label)
-    stageLabel: cc.Label = null;
 
     @property(cc.Label)
     highScoreLabel: cc.Label = null;
 
-    @property(cc.Sprite)
-    heroSprite:cc.Sprite = null;
+    @property(ScrollList)
+    dramaList:ScrollList = null;
+
+    @property(cc.Node)
+    title:cc.Node = null;
     onLoad () {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
-        this.heroBtn.node.on("click", this.onHeroBtnTap, this);
-        this.monsterBtn.node.on("click", this.onMonsterBtnTap, this);
         this.rankBtn.node.on("click", this.onRankBtnTap, this);
         this.optionBtn.node.on("click", this.onOptionBtnTap, this);
-        this.downloadBtn.node.on("click", this.onDownloadBtnTap, this);
-        this.initStageProgress();
+        this.drawBtn.node.on("click", this.onDrawBtnTap, this);
+        this.dramaList.node.on(ScrollList.SELECT_CHILD, this.onSelectChild, this);
         this.initHighScoreLabel();
-        this.Bind("user/usingHeroId", (id)=>{
-            let arr = Config.heros.concat(DB.Get("user/customHeros"));
-            let hero = arr.find((data)=>{
-                return data.id == id;
-            });
-            if(hero){
-                Game.loadTexture(hero.url, (texture)=>{
-                    this.heroSprite.spriteFrame = new cc.SpriteFrame(texture);
-                });
-            }
-        });
+        this.updateDramaList();
+    }
+    public updateDramaList(){
+        let arr = [null].concat(Game.allDramas).concat([null]);
+        this.dramaList.setDataArr(arr);
+        let dramaId = DB.Get("user/dramaId");
+        let drama = Game.findDramaConf(dramaId);
+        this.dramaList.selectItemByData(drama);
+        this.dramaList.centerOnData(drama);
+    }
+    onSelectChild(item, data:DramaData){
+        if(data){
+            DB.SetLoacl("user/dramaId", data.id);
+        }
     }
     onEnterScene(){
         let btnAnim = (node:cc.Node, delay)=>{
@@ -68,42 +64,39 @@ export default class MenuScene extends Scene {
             node.angle = 50;
             cc.tween(node).delay(delay).to(0.5,{scale:1, angle:0},{easing:cc.easing.backOut}).start();
         }
-        btnAnim(this.heroBtn.node, 0);
-        btnAnim(this.monsterBtn.node, 0.1);
-        btnAnim(this.downloadBtn.node, 0.2);
+        this.playTitleAnim();
+        btnAnim(this.dramaList.node, 0.2);
         btnAnim(this.playBtn.node, 0.4);
-
+        btnAnim(this.drawBtn.node, 0.5);
         btnAnim(this.rankBtn.node, 0);
         btnAnim(this.optionBtn.node, 0);
-    }
-    onDestroy(){
-        this.playBtn.node.off("click", this.onPlayBtnTap, this);
-        this.monsterBtn.node.off("click", this.onCreateBtnTap, this);
-        this.rankBtn.node.off("click", this.onRankBtnTap, this);
-        this.optionBtn.node.off("click", this.onOptionBtnTap, this);
-        this.downloadBtn.node.off("click", this.onDownloadBtnTap, this);
-    }
-    private initStageProgress(){
-        let stage = DB.Get("user/stage");
-        this.stageLabel.string = `第${stage}关`;
-        let parent = this.stagePoint.node.parent;
-        let max = 5;
-        for(let i=parent.childrenCount; i<max; i++){
-            let node = cc.instantiate(this.stagePoint.node);
-            parent.addChild(node);
-        }
 
-        let idx = (stage-1) % max;
-        for(let i=0; i<parent.childrenCount; i++){
-            let point = parent.children[i].getComponent(StagePoint);
-            if(i<idx){
-                point.setState(State.Passed);
-            }else if(i>idx){
-                point.setState(State.Lock);
-            }else{
-                point.setState(State.Current);
+    }
+    public playTitleAnim(){
+        let func = (node:cc.Node, delay)=>{
+            let scale = node.scale;
+            let y = node.y;
+            node.scale = 0;
+            node.y = y+30;
+            node.opacity = 0;
+            cc.tween(node).delay(delay).to(0.5, {scale:scale, y:y, opacity:255}, { easing: cc.easing.backOut}).start();
+        }
+        let nodes = [];
+        for(let i=1;i<=this.title.childrenCount;i++){
+            let node = this.title.getChildByName(`titleWord${i}`);
+            if(node){
+                nodes.push(node);
             }
         }
+        for(let i=0;i<nodes.length; i++){
+            func(nodes[i], i*0.05);
+        }
+    }
+
+    onDestroy(){
+        this.playBtn.node.off("click", this.onPlayBtnTap, this);
+        this.rankBtn.node.off("click", this.onRankBtnTap, this);
+        this.optionBtn.node.off("click", this.onOptionBtnTap, this);
     }
     private initHighScoreLabel(){
         let rankDatas:RankData[] = DB.Get("user/rankDatas");
@@ -116,8 +109,9 @@ export default class MenuScene extends Scene {
         }
     }
     private onPlayBtnTap(){
-        Sound.play("gameStartBtn");
-        SceneManager.ins.Enter("LoadingScene")
+        let func = ()=>{
+            Sound.play("gameStartBtn");
+            SceneManager.ins.Enter("LoadingScene")
             .then((loadingScene:LoadingScene)=>{
                 loadingScene.Load([
                     PrefabPath.shield,
@@ -125,10 +119,19 @@ export default class MenuScene extends Scene {
                     PrefabPath.monster,
                 ]).then(()=>{
                     SceneManager.ins.Enter("PlayScene").then((playScene:PlayScene)=>{
-                        playScene.restart();
+                        playScene.restart(DB.Get("user/dramaId"));
                     });
                 });
             });
+        }
+        let drama = Game.findDramaConf(DB.Get("user/dramaId"));
+        if(drama.isCustom){
+            this.OpenPanelByName("EditDramaPanel",(panel:EditDramaPanel)=>{
+                panel.playCallback = func;
+            });
+        }else{
+            func();
+        }
     }
     private onRankBtnTap(){
         Sound.play("clickBtn");
@@ -138,21 +141,15 @@ export default class MenuScene extends Scene {
         Sound.play("clickBtn");
         this.OpenPanelByName("OptionPanel");
     }
-    private onDownloadBtnTap(){
+    private onDrawBtnTap(){
         Sound.play("clickBtn");
-        // this.OpenPanelByName("DownloadPanel");
-        Top.ins.showToast("正在开发中...");
-    }
-    private onCreateBtnTap(){
-        Sound.play("clickBtn");
-        this.OpenPanelByName("CreationPanel");
-    }
-    private onMonsterBtnTap(){
-        Sound.play("clickBtn");
-        this.OpenPanelByName("MonsterPanel");
-    }
-    private onHeroBtnTap(){
-        Sound.play("clickBtn");
-        this.OpenPanelByName("HeroPanel");
+        SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
+            panel.saveCallback = (path)=>{
+                let hero = Game.newHeroConf("角色", path);
+                let drama = Game.newDramaConf(hero.id);
+                DB.SetLoacl("user/dramaId", drama.id);
+                this.updateDramaList();
+            }
+        });
     }
 }

@@ -4,7 +4,6 @@ import { DB } from "../CocosFrame/DataBind";
 import { Util } from "../CocosFrame/Util";
 import { crossPlatform } from "../CocosFrame/dts";
 import { Local } from "../CocosFrame/Local";
-import { PrefabPath, Config } from "../CocosFrame/Config";
 import { Game } from "../Game";
 import { Sound } from "../CocosFrame/Sound";
 import Music from "../CocosFrame/Music";
@@ -22,6 +21,7 @@ export default class LoginScene extends Scene {
         })
         let stage = Local.Get("user/stage") || 1;
         let energy = Local.Get("user/energy") || 5;
+        let dramaId = Local.Get("user/dramaId") || 2;
         let sensitivity = Local.Get("option/sensitivity") || 1;
         Sound.volume = Local.Get("option/sound") || 0.5;
         Music.volume = Local.Get("option/music") || 0.5;
@@ -30,6 +30,7 @@ export default class LoginScene extends Scene {
 
         let customMonsters = Local.Get("user/customMonsters") || [];
         let customHeros = Local.Get("user/customHeros") || [];
+        let customDramas = Local.Get("user/customDramas") || [];
         let usingHeroId = Local.Get("user/usingHeroId") || 1;
         let usingMonsterIds = Local.Get("user/usingMonsterIds") || [1,2,3,4,5,6];
         
@@ -37,6 +38,7 @@ export default class LoginScene extends Scene {
         
         DB.Set("user/stage", stage);
         DB.Set("user/energy", energy);
+        DB.Set("user/dramaId", dramaId);
         DB.Set("option/sensitivity", sensitivity);
         DB.Set("option/sound", Sound.volume);
         DB.Set("option/music", Music.volume);
@@ -44,6 +46,7 @@ export default class LoginScene extends Scene {
         DB.Set("user/rankDatas", rankDatas);
         DB.Set("user/customMonsters", customMonsters);
         DB.Set("user/customHeros", customHeros);
+        DB.Set("user/customDramas", customDramas);
 
         DB.Set("user/usingHeroId", usingHeroId);
         DB.Set("user/usingMonsterIds", usingMonsterIds);
@@ -53,5 +56,6 @@ export default class LoginScene extends Scene {
         Game.Init();
         Util.Init();
         SceneManager.ins.Enter("MenuScene");
+
     }
 }

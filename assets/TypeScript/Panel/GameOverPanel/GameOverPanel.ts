@@ -19,6 +19,7 @@ import { Config } from "../../CocosFrame/Config";
 import PaintPanel from "../PaintPanel/PaintPanel";
 import { Game } from "../../Game";
 import { Sound } from "../../CocosFrame/Sound";
+import { GameRecorder } from "../../GameRecorder";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -31,10 +32,6 @@ export default class GameOverPanel extends Panel {
 
     @property(cc.Button)
     retryBtn: cc.Button = null;
-
-
-    @property(cc.Button)
-    drawBtn: cc.Button = null;
 
     @property(cc.Button)
     shareBtn: cc.Button = null;
@@ -55,41 +52,40 @@ export default class GameOverPanel extends Panel {
         super.onLoad();
         this.homeBtn.node.on("click", this.onHomeBtnTap, this);
         this.retryBtn.node.on("click", this.onRetryBtnTap, this);
-        this.drawBtn.node.on("click", this.onDrawBtnTap, this);
         this.shareBtn.node.on("click", this.onShareBtnTap, this);
-        this.Bind("user/usingHeroId", (id)=>{
-            let arr = Config.heros.concat(DB.Get("user/customHeros"));
-            let hero = arr.find((data)=>{
-                return data.id == id;
-            });
+        this.Bind("user/dramaId", (dramaId)=>{
+            let drama = Game.findDramaConf(dramaId);
+            let hero = Game.findHeroConf(drama.heroId);
             if(hero){
                 Game.loadTexture(hero.url, (texture)=>{
                     this.heroSprite.spriteFrame = new cc.SpriteFrame(texture);
                 });
             }
         });
-        if(wx){
-            crossPlatform.getGameRecorderManager().stop();
-            let box = Util.convertToWindowSpace(this.shareBtn.node);
-            this.wxShareBtn = crossPlatform.createGameRecorderShareButton({
-                text:"分享视频",
-                style:{
-                    left:box.left,
-                    top:box.top,
-                    height:box.height,
-                },
-                share:{
-                    query:"foo=bar",
-                    bgm:"",
-                    timeRange:[[0, 2300]]
-                }
-            });
-            this.shareBtn.node.active = false;
-            this.wxShareBtn.show();
-        }
-        if(tt){
-            this.videoPath = crossPlatform.getGameRecorderManager().stop();
-        }
+        GameRecorder.stop();
+        // if(wx){
+        //     crossPlatform.getGameRecorder().stop();
+        //     let box = Util.convertToWindowSpace(this.shareBtn.node);
+        //     this.wxShareBtn = crossPlatform.createGameRecorderShareButton({
+        //         text:"分享视频",
+        //         style:{
+        //             left:box.left,
+        //             top:box.top,
+        //             height:box.height,
+        //         },
+        //         share:{
+        //             query:"foo=bar",
+        //             bgm:"",
+        //             timeRange:[[0, 2300]]
+        //         }
+        //     });
+        //     this.shareBtn.node.active = false;
+        //     this.wxShareBtn.show();
+        // }
+        // if(tt){
+        //     let recorder = crossPlatform.getGameRecorderManager();
+        //     this.videoPath = recorder.stop();
+        // }
     }
     closeAnim(callback){
         if(this.wxShareBtn){
@@ -99,6 +95,18 @@ export default class GameOverPanel extends Panel {
     }
     setData(data){
         this.timeLabel.string = `时间：${data.time}秒`;
+        this.playTimeAnim(data.time);
+    }
+    playTimeAnim(time){
+        let tw = cc.tween(this.timeLabel.node.parent);
+        let cnt = Math.ceil(time/5);
+        for(let i=0; i<cnt; i++){
+            tw.call(()=>{
+                this.timeLabel.node.parent.scale = 1.2;
+                this.timeLabel.string = Util.fixedNum(time*(i+1)/cnt, 2).toString();
+            }).to(0.1,{scale:1});
+        }
+        tw.start();
     }
     onHomeBtnTap(){
         Sound.play("clickBtn");
@@ -115,27 +123,8 @@ export default class GameOverPanel extends Panel {
             playScene.restart();
         }
     }
-    onDrawBtnTap(){
-        Sound.play("clickBtn");
-        SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
-            panel.saveCallback = (path)=>{
-                let hero = Game.newHeroConf("角色", path);
-                DB.SetLoacl("user/usingHeroId", hero.id);
-                this.starAnim.node.active = false;
-            }
-        });
-    }
     onShareBtnTap(){
         Sound.play("clickBtn");
-        if(tt){
-            crossPlatform.shareAppMessage({
-                title:"我画的怎么样！求赞求花花", 
-                channel:"video",
-                extra:{
-                    videoPath:this.videoPath,
-                    videoTopics:["画怪物"]
-                }
-            });
-        }
+        GameRecorder.share();
     }
 }

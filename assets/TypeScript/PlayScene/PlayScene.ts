@@ -6,10 +6,10 @@ import PausePanel from "../Panel/PausePanel";
 import GameOverPanel from "../Panel/GameOverPanel/GameOverPanel";
 import MonsterFactory from "./MonsterFactory";
 import Hero, { State } from "./Hero";
-import { crossPlatform } from "../CocosFrame/dts";
 import { Game } from "../Game";
 import Music from "../CocosFrame/Music";
 import { Sound } from "../CocosFrame/Sound";
+import { GameRecorder } from "../GameRecorder";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -59,6 +59,9 @@ export default class PlayScene extends Scene {
         this.touchNode.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
     }
     onPauseBtnTap(){
+        if(!this.playing){
+            return;
+        }
         Sound.play("clickBtn");
         this.pause();
         this.OpenPanelByName("PausePanel",(pausePanel:PausePanel)=>{
@@ -125,7 +128,7 @@ export default class PlayScene extends Scene {
             }
         }
     }
-    restart(){
+    restart(dramaId = 1){
         this.music.play();
         this.time = 0;
         this.monsterFactory.clear();
@@ -133,12 +136,9 @@ export default class PlayScene extends Scene {
         this.propFactory.clear();
         this.propFactory.begin();
         this.hero.setState(State.active);
+        this.hero.node.position = this.targetPos = cc.Vec2.ZERO;
         this.playing = true;
-        if(this.hero){
-            this.hero.node.position = this.targetPos = cc.Vec2.ZERO;
-        }
-        let recorder = crossPlatform.getGameRecorderManager();
-        recorder.start({duration:3000});        
+        GameRecorder.start();
     }
     pause(){
         this.music.pause();

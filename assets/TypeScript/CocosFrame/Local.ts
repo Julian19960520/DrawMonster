@@ -37,4 +37,10 @@ export namespace Local {
         }
         dirtyList = [];
     }
+    export function setDirty(key){
+        if(dirtyList.indexOf(key)<0){
+            dirtyList.push(key);
+        }
+        Save();
+    }
 }

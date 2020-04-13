@@ -16,6 +16,9 @@ import PaintPanel from "../PaintPanel/PaintPanel";
 import { DB } from "../../CocosFrame/DataBind";
 import { Game } from "../../Game";
 import { Sound } from "../../CocosFrame/Sound";
+import Top from "../../CocosFrame/Top";
+import ColorBtn from "../PaintPanel/ColorBtn";
+import { Local } from "../../CocosFrame/Local";
 
 const {ccclass, property} = cc._decorator;
 
@@ -27,17 +30,11 @@ export default class MonsterCell extends cc.Component {
     emptyNode:cc.Node = null;
     @property(cc.Sprite)
     monsterSprite:cc.Sprite = null;
-    @property(cc.Label)
-    nameLabel:cc.Label = null;
-
-    @property(Toggle)
-    toggle:Toggle = null;
 
     data = null
     onLoad () {
         this.node.on(ScrollList.SET_DATA, this.setData, this);
         this.node.on("click", this.onClick, this);
-        this.toggle.node.on(Toggle.STATE_CHANGE, this.onStateChange, this);
     }
     setData(data){
         this.data = data;
@@ -46,15 +43,18 @@ export default class MonsterCell extends cc.Component {
         if(data.createNew){
             this.node.color = cc.color(171,226,175);
         }else{
-            this.node.color = cc.Color.WHITE;
+            this.monsterSprite.node.active = false;
             Game.loadTexture(data.url,(texture)=>{
+                this.monsterSprite.node.active = true;
                 let frame = new cc.SpriteFrame();
                 frame.setTexture(texture);
                 this.monsterSprite.spriteFrame = frame;
             });
-            this.nameLabel.string = data.name;
-            let ids:number[] = DB.Get("user/usingMonsterIds");
-            this.toggle.isChecked = ids.indexOf(this.data.id)>=0;
+
+            let dramaId  = DB.Get("user/dramaId");
+            let drama = Game.findDramaConf(dramaId);
+            let idx = drama.monsterIds.indexOf(this.data.id);
+            this.setUsingState(idx>=0);
         }
     }
     onClick(){
@@ -68,19 +68,28 @@ export default class MonsterCell extends cc.Component {
                     DB.SetLoacl("user/usingMonsterIds", usingMonster);
                 }
             });
+        }else{
+            let dramaId  = DB.Get("user/dramaId");
+            let drama = Game.findDramaConf(dramaId);
+            let idx = drama.monsterIds.indexOf(this.data.id);
+            if(idx>=0){
+                drama.monsterIds.splice(idx, 1);
+                this.setUsingState(false);
+                DB.Invoke("user/dramaId");
+                Local.setDirty("user/customDramas");
+            }else{
+                if(drama.monsterIds.length<5){
+                    drama.monsterIds.push(this.data.id);
+                    DB.Invoke("user/dramaId");
+                    Local.setDirty("user/customDramas");
+                    this.setUsingState(true);
+                }else{
+                    Top.ins.showToast("最多选择5个");
+                }
+            }
         }
     }
-    onStateChange(b, click){
-        if(click){
-            let usingMonster:number[] = DB.Get("user/usingMonsterIds");
-            if(b && usingMonster.indexOf(this.data.id) <0){
-                usingMonster.push(this.data.id);
-            }
-            if(!b && usingMonster.indexOf(this.data.id)>=0){
-                let idx = usingMonster.indexOf(this.data.id);
-                usingMonster.splice(idx, 1);
-            }
-            DB.SetLoacl("user/usingMonsterIds", usingMonster);
-        }
+    setUsingState(b){
+        this.node.color = b?cc.color(237,245,142):cc.Color.WHITE;
     }
 }

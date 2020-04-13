@@ -18,6 +18,7 @@ import { PrefabPath, Config } from "../CocosFrame/Config";
 import Monster from "./Monster";
 import { DB } from "../CocosFrame/DataBind";
 import { Game } from "../Game";
+import PiecewiseFunc from "../CocosFrame/PiecewiseFunc";
 
 const {ccclass, property} = cc._decorator;
 
@@ -29,10 +30,44 @@ export default class MonsterFactory extends cc.Component {
     private ROF = 2;
     private urlTextureMap = new Map<string, cc.Texture2D>();
     usingMonsters = [];
+
+    private time = 0;
+    rofFunc:PiecewiseFunc = null;
+    sizeFunc:PiecewiseFunc = null;
+    constructor(){
+        super();
+        this.rofFunc = new PiecewiseFunc([
+            cc.v2(0, 2), 
+            cc.v2(10,2.4),
+            cc.v2(20,2.7),
+            cc.v2(30,3),
+            cc.v2(40,3.2),
+            cc.v2(50,3.3),
+            cc.v2(60,3.4),
+            cc.v2(70,3.5),
+            cc.v2(80,3.6),
+        ]);
+        this.sizeFunc = new PiecewiseFunc([
+            cc.v2(0,  0.5), 
+            cc.v2(0.1,0.55),
+            cc.v2(0.2,0.6),
+            cc.v2(0.3,0.65),
+            cc.v2(0.4,0.7),
+            cc.v2(0.5,0.75),
+            cc.v2(0.6,0.85),
+            cc.v2(0.7,1),
+            cc.v2(0.8,1.3),
+            cc.v2(0.9,1.8),
+            cc.v2(1,  2.5),
+        ]);
+    }
     public play(){
         this.timer = 0;
+        this.time = 0;
         this.playing = true;
-        let usingMonstersIds:number[] = DB.Get("user/usingMonsterIds");
+        let dramaId  = DB.Get("user/dramaId");
+        let drama = Game.findDramaConf(dramaId);
+        let usingMonstersIds:number[] = drama.monsterIds;
         this.usingMonsters = [];
         usingMonstersIds.forEach((id)=>{
             let monster = Game.findMonsterConf(id);
@@ -65,6 +100,8 @@ export default class MonsterFactory extends cc.Component {
             return;
         }
         this.timer += dt;
+        this.time += dt;
+        this.ROF = this.rofFunc.getY(this.time);
         if(this.timer > 1/this.ROF){
             this.timer = 0;
             let playScene = SceneManager.ins.findScene(PlayScene);
@@ -80,14 +117,14 @@ export default class MonsterFactory extends cc.Component {
             }
             let speed = Util.randomInt(180,210);
             let dir:cc.Vec2 = null;
-            if(Math.random() > 0.5){
+            if(Math.random() > 0.7){
                 dir = playScene.hero.node.position.sub(cc.v2(x,y));     //追主角
             }else{
                 dir = cc.v2(Util.randomInt(-200,200), Util.randomInt(-200,200)).sub(cc.v2(x,y));        //追随机点
             }
             let velocity = dir.normalizeSelf().mulSelf(speed);
             let idx = Util.randomIdx(this.usingMonsters.length);
-            let scale = Util.randomFloat(0.5, 1.5);
+            let scale = this.sizeFunc.getY(Math.random());
             velocity.mulSelf(1/scale);
             let monster = this.generateMonster(this.usingMonsters[idx].url, x, y, scale, velocity); 
             monster.playAnima("action2");

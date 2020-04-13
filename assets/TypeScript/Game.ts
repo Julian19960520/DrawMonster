@@ -1,4 +1,4 @@
-import { crossPlatform, RankData } from "./CocosFrame/dts";
+import { crossPlatform, RankData, DramaData } from "./CocosFrame/dts";
 import { Util } from "./CocosFrame/Util";
 import { DB } from "./CocosFrame/DataBind";
 import { Config } from "./CocosFrame/Config";
@@ -71,8 +71,10 @@ export namespace Game{
      ****************************/
     let heroConfigMap = new Map<number, any>();
     let monsterConfigMap = new Map<number, any>();
-    let allHeros = [];
-    let allMonsters = [];
+    let dramaConfigMap = new Map<number, DramaData>();
+    export let allHeros = [];
+    export let allMonsters = [];
+    export let allDramas = [];
     //初始化
     function initHeroAndMonsterConfig(){
         allHeros = DB.Get("user/customHeros").concat(Config.heros);
@@ -85,6 +87,11 @@ export namespace Game{
             let monster = allMonsters[i];
             monsterConfigMap.set(monster.id, monster);
         }
+        allDramas = DB.Get("user/customDramas").concat(Config.dramas);
+        for(let i=0; i<allDramas.length; i++){
+            let drama = allDramas[i];
+            dramaConfigMap.set(drama.id, drama);
+        }
     }
     //找到配置
     export function findHeroConf(id){
@@ -92,6 +99,9 @@ export namespace Game{
     }
     export function findMonsterConf(id){
         return monsterConfigMap.get(id);
+    }
+    export function findDramaConf(id){
+        return dramaConfigMap.get(id);
     }
     //新建配置
     export function newHeroConf(name, url){
@@ -119,6 +129,18 @@ export namespace Game{
         return monster;
     }
 
+    export function newDramaConf(heroId){
+        let id = newUuid();
+        let drama:DramaData = {id:id, heroId:heroId, monsterIds:[1,2,3], isCustom:true};
+        dramaConfigMap.set(id, drama);
+
+        let customDramas:any[] = DB.Get("user/customDramas");
+        customDramas.unshift(drama);
+        allDramas.unshift(drama);
+        DB.SetLoacl("user/customDramas", customDramas);
+
+        return drama;
+    }
     /*****************************
      * 排行榜
      ****************************/

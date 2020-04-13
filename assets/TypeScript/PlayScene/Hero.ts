@@ -55,8 +55,9 @@ export default class Hero extends DB.DataBindComponent {
         this.initHeart();
         this.shieldTime = 0;
         this.shield.active = false;
-        this.Bind("user/usingHeroId",(usingHeroId)=>{
-            let hero = Game.findHeroConf(usingHeroId);
+        this.Bind("user/dramaId",(dramaId)=>{
+            let drama = Game.findDramaConf(dramaId);
+            let hero = Game.findHeroConf(drama.heroId);
             Game.loadTexture(hero.url, (texture)=>{
                 this.setTexture(texture);
             });
@@ -161,7 +162,7 @@ export default class Hero extends DB.DataBindComponent {
                 }
             }
             if(other.node.name == "Shield"){
-                this.shieldTime = 5;
+                this.shieldTime = 3;
                 this.shield.active = true;
                 other.node.dispatchEvent(Util.customEvent("returnPool"));
                 Sound.play("getHeart");

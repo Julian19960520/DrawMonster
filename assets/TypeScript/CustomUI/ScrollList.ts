@@ -1,14 +1,15 @@
+import { Util } from "../CocosFrame/Util";
 
 const {ccclass,menu, property} = cc._decorator;
 
 @ccclass
 @menu("自定义UI/ScrollList")
 export default class ScrollList extends cc.ScrollView {
-    public static SELECT_CHILD = "selectChild";     //scrollList节点事件：选中子节点。param1:item, param2:data
-    public static CLICK_CHILD = "clickChild";     //scrollList节点事件：点击节点。param1:item, param2:data
-    public static STATE_CHANGE = "stateChange";     //item节点事件：状态改变。param：是否被选中
-    public static SET_DATA = "setData";             //item节点事件：数据改变。param：新数据
-
+    public static SELECT_CHILD = "SELECT_CHILD";     //scrollList节点事件：选中子节点。param1:item, param2:data
+    public static CLICK_CHILD = "CLICK_CHILD";     //scrollList节点事件：点击节点。param1:item, param2:data
+    public static STATE_CHANGE = "STATE_CHANGE";     //item节点事件：状态改变。param：是否被选中
+    public static SET_DATA = "SET_DATA";             //item节点事件：数据改变。param：新数据
+    public static SCROLL_MOVE = "SCROLL_MOVE";        //item节点事件：滚动条发生滑动。param：ScrollList
     @property(cc.Node)
     private itemPrefab:cc.Node = null;
 
@@ -34,6 +35,23 @@ export default class ScrollList extends cc.ScrollView {
             this.init();
         }
         this.node.on('scrolling', this.onScrolling, this);
+        this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        this.node.on(cc.Node.EventType.TOUCH_CANCEL, this.onTouchEnd, this);
+    }
+    onTouchEnd(){
+        let offset = this.getScrollOffset();
+        if(this.layoutType == cc.Layout.Type.HORIZONTAL){
+            let idx =  Math.floor(( this.maskWidth/2 - offset.x)/(this.itemWidth+this.spacingX));
+            idx = Util.clamp(idx, 0, this.dataArr.length-1);
+            let pos = this.calcuPos(idx);
+            pos.x -= this.maskWidth/2;
+            this.scrollToOffset(pos, 0.3);
+            this.selectItemByIdx(idx);
+        }else if(this.layoutType == cc.Layout.Type.VERTICAL){
+
+        }else if(this.layoutType == cc.Layout.Type.GRID){
+
+        }
     }
     init(){
         this.inited = true;
@@ -88,13 +106,14 @@ export default class ScrollList extends cc.ScrollView {
             let item = this.findItemByData(data);
             if(i>=startIdx && i<endIdx){   //应该显示
                 if(!item){                      //如果这个数据还没有对应的显示item
-                    let item = this.newItem();      //获取一个item显示之
+                    item = this.newItem();      //获取一个item显示之
                     this.content.addChild(item);    
                     item.position = this.calcuPos(i);
                     item.emit(ScrollList.SET_DATA, data);
                     item.emit(ScrollList.STATE_CHANGE, this.curSelectData == data);
                     this.map.set(data, item);
                 }
+                item.emit(ScrollList.SCROLL_MOVE, this);
             }else{                          //不该显示
                 if(item){                       
                     this.itemsPool.push(item);      //放回对象池
@@ -226,5 +245,15 @@ export default class ScrollList extends cc.ScrollView {
             }
         }
         this.selectItemByItem(target);       
+    }
+    public centerOnIdx(idx){
+        idx = Util.clamp(idx, 0, this.dataArr.length-1);
+        let pos = this.calcuPos(idx);
+        pos.x -= this.maskWidth/2;
+        this.scrollToOffset(pos, 0.3);
+    }
+    public centerOnData(data){
+        let idx = this.dataArr.indexOf(data);
+        this.centerOnIdx(idx);
     }
 }
