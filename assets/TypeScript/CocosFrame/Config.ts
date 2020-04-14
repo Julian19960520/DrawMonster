@@ -16,28 +16,67 @@ export namespace Config{
     }
     export let dramas:DramaData[]=[
 
-        {id:1, heroId:1, monsterIds:[1,2,3]},
-        {id:2, heroId:2, monsterIds:[1,2,3]},
-        {id:3, heroId:3, monsterIds:[1,2,3]},
-        {id:4, heroId:4, monsterIds:[1,2,3]},
-        {id:5, heroId:5, monsterIds:[1,2,3]},
-        {id:0, heroId:6, monsterIds:[1,2,3]},
+        {id:1, heroId:1, monsterIds:[11,12,13]},
+        {id:2, heroId:2, monsterIds:[21,22,23]},
+        {id:3, heroId:3, monsterIds:[31,32,33]},
+        {id:4, heroId:4, monsterIds:[41,42,43]},
+        {id:5, heroId:5, monsterIds:[51]},
+        {id:6, heroId:6, monsterIds:[61,62,63]},
+        {id:7, heroId:7, monsterIds:[71,72,73]},
+        {id:8, heroId:8, monsterIds:[81,82]},
+        {id:9, heroId:9, monsterIds:[91,92,93]},
+        {id:10, heroId:10, monsterIds:[101,102,103]},
     ]
     export let heros:any[] = [
-        {id:1, name:"害羞鹅", url:"Atlas/Hero/hero1" },
-        {id:2, name:"黄章鱼", url:"Atlas/Hero/hero2" },
-        {id:3, name:"小鱼", url:"Atlas/Hero/hero3" },
-        {id:4, name:"鼠标", url:"Atlas/Hero/hero4" },
-        {id:5, name:"咸蛋超人", url:"Atlas/Hero/hero5" },
-        {id:6, name:"小恐龙", url:"Atlas/Hero/hero6" },
+        {id:1, name:"", url:"Atlas/Hero/hero1" },
+        {id:2, name:"", url:"Atlas/Hero/hero2" },
+        {id:3, name:"", url:"Atlas/Hero/hero3" },
+        {id:4, name:"", url:"Atlas/Hero/hero4" },
+        {id:5, name:"", url:"Atlas/Hero/hero5" },
+        {id:6, name:"", url:"Atlas/Hero/hero6" },
+        {id:7, name:"", url:"Atlas/Hero/hero7" },
+        {id:8, name:"", url:"Atlas/Hero/hero8" },
+        {id:9, name:"", url:"Atlas/Hero/hero9" },
+        {id:10, name:"", url:"Atlas/Hero/hero10" },
     ] 
     export let monsters:MonsterConfig[] = [
-        {id:1, url:"Atlas/Monster/monster1", dirType:DirType.Rotate},
-        {id:2, url:"Atlas/Monster/monster2", dirType:DirType.Forwards},
-        {id:3, url:"Atlas/Monster/monster3", dirType:DirType.Forwards},
-        {id:4, url:"Atlas/Monster/monster4", dirType:DirType.HorFlip},
-        {id:5, url:"Atlas/Monster/monster5", dirType:DirType.Upward},
-        {id:6, url:"Atlas/Monster/monster6", dirType:DirType.Forwards},
+        {id:11, url:"Atlas/Monster/monster11", dirType:DirType.Forwards},
+        {id:12, url:"Atlas/Monster/monster12", dirType:DirType.Forwards},
+        {id:13, url:"Atlas/Monster/monster13", dirType:DirType.Forwards},
+
+        {id:21, url:"Atlas/Monster/monster21", dirType:DirType.Rotate},
+        {id:22, url:"Atlas/Monster/monster22", dirType:DirType.Upward},
+        {id:23, url:"Atlas/Monster/monster23", dirType:DirType.Rotate},
+
+        {id:31, url:"Atlas/Monster/monster31", dirType:DirType.HorFlip},
+        {id:32, url:"Atlas/Monster/monster32", dirType:DirType.HorFlip},
+        {id:33, url:"Atlas/Monster/monster33", dirType:DirType.HorFlip},
+
+        {id:41, url:"Atlas/Monster/monster41", dirType:DirType.Rotate},
+        {id:42, url:"Atlas/Monster/monster42", dirType:DirType.Forwards},
+        {id:43, url:"Atlas/Monster/monster43", dirType:DirType.Rotate},
+
+        {id:51, url:"Atlas/Monster/monster51", dirType:DirType.Upward},
+
+
+        {id:61, url:"Atlas/Monster/monster61", dirType:DirType.Rotate},
+        {id:62, url:"Atlas/Monster/monster62", dirType:DirType.Rotate},
+        {id:63, url:"Atlas/Monster/monster63", dirType:DirType.Rotate},
+
+        {id:71, url:"Atlas/Monster/monster71", dirType:DirType.Rotate},
+        {id:72, url:"Atlas/Monster/monster72", dirType:DirType.Forwards},
+        {id:73, url:"Atlas/Monster/monster73", dirType:DirType.Forwards},
+
+        {id:81, url:"Atlas/Monster/monster81", dirType:DirType.HorFlip},
+        {id:82, url:"Atlas/Monster/monster82", dirType:DirType.HorFlip},
+
+        {id:91, url:"Atlas/Monster/monster91", dirType:DirType.Upward},
+        {id:92, url:"Atlas/Monster/monster92", dirType:DirType.Upward},
+        {id:93, url:"Atlas/Monster/monster93", dirType:DirType.Upward},
+
+        {id:101, url:"Atlas/Monster/monster101", dirType:DirType.Upward},
+        {id:102, url:"Atlas/Monster/monster102", dirType:DirType.Upward},
+        {id:103, url:"Atlas/Monster/monster103", dirType:DirType.Upward},
     ]
 
     export let colors:ColorData[] = [

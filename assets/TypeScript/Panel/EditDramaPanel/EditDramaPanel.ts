@@ -22,12 +22,12 @@ const {ccclass, menu, property} = cc._decorator;
 @menu("面板/EditDramaPanel")
 export default class EditDramaPanel extends Panel {
     @property(ScrollList)
-    usingMonsterList:ScrollList;
+    usingMonsterList:ScrollList = null;
     @property(ScrollList)
-    allMonsterList:ScrollList;
+    allMonsterList:ScrollList = null;
 
     @property(cc.Button)
-    playBtn:cc.Button;
+    playBtn:cc.Button = null;
     playCallback = null;
     onLoad(){
         super.onLoad();
