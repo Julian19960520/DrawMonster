@@ -13,6 +13,7 @@ const {ccclass, menu, property} = cc._decorator;
 @ccclass
 @menu("自定义UI/Graphics")
 export default class Graphics extends cc.Component {
+    @property(cc.Sprite)
     sprite:cc.Sprite = null;
     renderTexture:cc.RenderTexture = null;
     pixels:Uint8Array = null;
@@ -27,23 +28,20 @@ export default class Graphics extends cc.Component {
         return this._lineWidth;
     }
     onLoad(){
-        let node = new cc.Node();
+        let node = this.sprite.node;
         node.anchorX = this.node.anchorX;
         node.anchorY = this.node.anchorY;
         node.width = this.node.width;
         node.height = this.node.height;
         this.width = this.node.width;
         this.height = this.node.height;
-        let sprite = node.addComponent(cc.Sprite);
-        sprite.spriteFrame = new cc.SpriteFrame();
-        this.node.addChild(node);
+        this.sprite.spriteFrame = new cc.SpriteFrame();
         let renderTexture  = new cc.RenderTexture();
-
+        renderTexture.setFilters(cc.Texture2D.Filter.NEAREST, cc.Texture2D.Filter.NEAREST);
         let gl = cc.game["_renderContext"];
         renderTexture.initWithSize(this.node.width, this.node.height, gl.STENCIL_INDEX8);
         let pixels = this._getUint8Array();
 
-        this.sprite = sprite;
         this.renderTexture = renderTexture;
         this.pixels = pixels;
     }
@@ -216,8 +214,6 @@ export default class Graphics extends cc.Component {
     }
     private fillRange(data:RangeData[], color:cc.Color){
         let pixels = this.pixels;
-        let w = this.width;
-        let h = this.height;
         let r = color.getR();
         let g = color.getG();
         let b = color.getB();

@@ -29,11 +29,16 @@ export default class Monster extends cc.Component {
     droping = false;
     active = true;
     playing = false;
+
+    circleCollider:cc.CircleCollider = null;
+    boxCollider:cc.BoxCollider =  null;
     onLoad(){
         this.anima = this.getComponent(cc.Animation);
         this.node.on("outPool", this.onOutPool, this);
         this.node.on("returnPool", this.onReturnPool, this);
         this.onOutPool();
+        this.circleCollider = this.node.getComponent(cc.CircleCollider);
+        this.boxCollider = this.node.getComponent(cc.BoxCollider);
     }
     onOutPool(){
         this.droping = false;
@@ -81,7 +86,7 @@ export default class Monster extends cc.Component {
     updateDrop(dt){
         if(this.velocity){
             this.velocity.y -= this.g*dt;
-            this.node.angle += dt*this.angleSpeed;
+            this.node.angle += dt*180;
             this.node.position = this.node.position.add(this.velocity.mul(dt));
         }
     }
@@ -98,6 +103,31 @@ export default class Monster extends cc.Component {
     }
     setData(conf:MonsterConfig, velocity:cc.Vec2, scale:number){
         this.conf = conf;
+        Game.loadTexture(conf.url, (texture)=>{
+            this.setTexture(texture);
+        });  
+        this.velocity = velocity;
+        if(conf.angleSpeedRange){
+            let idx = Util.randomIdx(conf.angleSpeedRange.length);
+            let range = conf.angleSpeedRange[idx];
+            this.angleSpeed = Util.randomInt(range[0], range[1]);
+        }else{
+            this.angleSpeed = 0;
+        }
+        
+        this.playAnima("action2");
+        //碰撞器大小
+        this.boxCollider.enabled = (conf.box!=null);
+        this.circleCollider.enabled = (conf.circle!=null);
+        if(conf.box){
+            this.boxCollider.offset = conf.box.offset || cc.Vec2.ZERO;
+            this.boxCollider.size = conf.box.size || cc.Size.ZERO;
+        }
+        if(conf.circle){
+            this.circleCollider.offset = conf.circle.offset || cc.Vec2.ZERO;
+            this.circleCollider.radius = conf.circle.radius || 0;
+        }
+        //缩放与角度
         this.node.angle = 0;
         switch(conf.dirType){
             case DirType.Forwards:{
@@ -124,10 +154,5 @@ export default class Monster extends cc.Component {
                 this.node.scale = scale;
             }
         }
-        this.velocity = velocity;
-        Game.loadTexture(conf.url, (texture)=>{
-            this.setTexture(texture);
-        });
-        this.playAnima("action2");
     }
 }

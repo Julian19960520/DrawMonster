@@ -1,6 +1,6 @@
 {
   "ver": "2.3.3",
-  "uuid": "11d94e79-b173-4d82-94c1-6f5417a0d4c0",
+  "uuid": "8fc5ee71-a7f0-4448-8ef5-f303eb7ba63e",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,8 +11,8 @@
   "subMetas": {
     "monster92": {
       "ver": "1.0.4",
-      "uuid": "8068fde8-bc1f-4013-820e-ab7d7faf3768",
-      "rawTextureUuid": "11d94e79-b173-4d82-94c1-6f5417a0d4c0",
+      "uuid": "fdac3ef3-06e6-45b2-bd63-c8585f42603f",
+      "rawTextureUuid": "8fc5ee71-a7f0-4448-8ef5-f303eb7ba63e",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

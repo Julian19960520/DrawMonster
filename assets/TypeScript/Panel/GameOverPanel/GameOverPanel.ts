@@ -15,7 +15,7 @@ import { Util } from "../../CocosFrame/Util";
 import { Game } from "../../Game";
 import { Sound } from "../../CocosFrame/Sound";
 import { GameRecorder } from "../../GameRecorder";
-import { crossPlatform } from "../../CocosFrame/dts";
+import { crossPlatform, wx, tt, Ease } from "../../CocosFrame/dts";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -34,6 +34,11 @@ export default class GameOverPanel extends Panel {
 
     @property(cc.Label)
     timeLabel: cc.Label = null;
+    @property(cc.Node)
+    titleNode: cc.Node = null;
+
+    @property(cc.Label)
+    monsterNameLabel: cc.Label = null;
 
     @property(cc.Sprite)
     heroSprite:cc.Sprite = null;
@@ -42,6 +47,7 @@ export default class GameOverPanel extends Panel {
     starAnim:cc.Animation = null;
 
     private wxShareBtn = null;
+    private shareLabel = null;
     onLoad(){
         super.onLoad();
         this.homeBtn.node.on("click", this.onHomeBtnTap, this);
@@ -57,19 +63,23 @@ export default class GameOverPanel extends Panel {
             }
         });
         GameRecorder.stop();
-        console.log("Util.getTimeStamp()", Util.getTimeStamp());
-        console.log("GameRecorder.startStamp", GameRecorder.startStamp);
-        if(Util.getTimeStamp() - GameRecorder.startStamp < 4000){
-            //录屏时间太短，转分享
-            this.shareBtn.getComponentInChildren(cc.Label).string = "分享";
-        }else{
-            this.shareBtn.getComponentInChildren(cc.Label).string = "分享视频";
+        this.shareLabel = this.shareBtn.getComponentInChildren(cc.Label);
+        if(tt){
+            if(Util.getTimeStamp() - GameRecorder.startStamp < 4000){
+                //录屏时间太短，转分享
+                this.shareLabel.string = "分享";
+            }else{
+                this.shareLabel.string = "分享录频";
+            }
+        }
+        if(wx){
+            this.shareLabel.string = "分享";
         }
         // if(wx){
         //     crossPlatform.getGameRecorder().stop();
         //     let box = Util.convertToWindowSpace(this.shareBtn.node);
         //     this.wxShareBtn = crossPlatform.createGameRecorderShareButton({
-        //         text:"分享视频",
+        //         text:"分享录频",
         //         style:{
         //             left:box.left,
         //             top:box.top,
@@ -96,19 +106,63 @@ export default class GameOverPanel extends Panel {
         super.closeAnim(callback);
     }
     setData(data){
-        this.timeLabel.string = `时间：${data.time}秒`;
-        this.playTimeAnim(data.time);
+        this.monsterNameLabel.string = data.monsterName;
+        this.playTitleAnim(data.time, data.killerName);
     }
-    playTimeAnim(time){
-        let tw = cc.tween(this.timeLabel.node.parent);
-        let cnt = Math.ceil(time/5);
-        for(let i=0; i<cnt; i++){
-            tw.call(()=>{
-                this.timeLabel.node.parent.scale = 1.2;
-                this.timeLabel.string = Util.fixedNum(time*(i+1)/cnt, 2).toString();
-            }).to(0.1,{scale:1});
+    playTitleAnim(time, killerName:string){
+        let obj = {progress:0};
+        let labels = this.titleNode.getComponentsInChildren(cc.Label); 
+        for(let i=0;i<labels.length;i++){
+            labels[i].node.active = false;
         }
-        tw.start();
+        cc.tween(obj)
+            .delay(0.2)
+            .call(()=>{
+                Sound.play("word");
+                labels[0].node.active = true;
+                labels[0].string = "享";
+            })
+            .delay(0.2)
+            .call(()=>{
+                Sound.play("word");
+                labels[0].string = "享年";
+            })
+            .delay(0.5)
+            .call(()=>{
+                labels[1].node.active = true;
+            })
+            .to(0.5, {progress:1},{progress:(start, end, current, ratio)=>{
+                current = cc.easing.quadOut(ratio);
+                labels[1].string = (current*time).toFixed(2);
+                return current;
+            }})
+            .delay(0.3)
+            .call(()=>{
+                Sound.play("word");
+                labels[2].node.active = true;
+                labels[2].string = "秒，";
+            })
+            .delay(0.6)
+            .call(()=>{
+                Sound.play("word");
+                labels[2].string = "秒，卒";
+            })
+            .delay(0.2)
+            .call(()=>{
+                Sound.play("word");
+                labels[2].string = "秒，卒于";
+                obj.progress = 0;
+            })
+            .delay(0.6)
+            .call(()=>{
+                Sound.play("word");
+                labels[3].node.active = true;
+                labels[3].string = killerName;
+                labels[3].node.opacity = 0;
+                labels[3].node.scale = 2;
+                cc.tween(labels[3].node).to(0.2,{scale:1.1,opacity:255}, {easing:cc.easing.backOut}).start();
+            })
+            .start();
     }
     onHomeBtnTap(){
         Sound.play("clickBtn");
@@ -127,7 +181,7 @@ export default class GameOverPanel extends Panel {
     }
     onShareBtnTap(){
         Sound.play("clickBtn");
-        if(this.shareBtn.getComponentInChildren(cc.Label).string == "分享视频"){
+        if(this.shareLabel.string == "分享录频"){
             GameRecorder.share();
         }else{
             crossPlatform.shareAppMessage({

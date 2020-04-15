@@ -22,7 +22,7 @@ export default class LoginScene extends Scene {
         let stage = Local.Get("user/stage") || 1;
         let energy = Local.Get("user/energy") || 5;
         let dramaId = Local.Get("user/dramaId") || 2;
-        let sensitivity = Local.Get("option/sensitivity") || 1;
+        let sensitivity = Local.Get("option/sensitivity") || 1.5;
         Sound.volume = Local.Get("option/sound") || 0.5;
         Music.volume = Local.Get("option/music") || 0.5;
         let colorIds = Local.Get("user/colorIds") || [1,2,3,4,5,6,7,8,9,10, 11,12,13,14,15,16,17,18,19,20, 21,22,23,24,25,26,27,28,29,30, 31,32];
@@ -53,6 +53,12 @@ export default class LoginScene extends Scene {
         Game.Init();
         Util.Init();
         SceneManager.ins.Enter("MenuScene");
-
+        // let arr = [128,128,128,0, 128,128,128,0, 255,255,255,0, 255,255,255,0, 255,255,255,0, 128,128,128,0, 128,128,128,0];
+        // let pixels = new Uint8Array(arr);
+        // console.log(pixels);
+        // let compData = Game.compressPixels(pixels);
+        // console.log(compData);
+        // let out = Game.decompression(compData);
+        // console.log(out);
     }
 }

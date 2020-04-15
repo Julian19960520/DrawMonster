@@ -38,6 +38,8 @@ export default class OptionPanel extends Panel {
 
     onLoad () {
         super.onLoad();
+        this.sensitivitySlider.min = 0.5;
+        this.sensitivitySlider.max = 2.5;
         this.resetBtn.node.on("click", this.onResetBtnTap, this);
         this.saveBtn.node.on("click", this.onSaveBtnTap, this);
         this.soundSlider.node.on(Slider.MOVE, this.onSoundSliderMove, this);

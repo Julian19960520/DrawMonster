@@ -14,6 +14,7 @@ import { Config } from "../../CocosFrame/Config";
 import Toggle from "../../CustomUI/Toggle";
 import { Game } from "../../Game";
 import { Sound } from "../../CocosFrame/Sound";
+import Top from "../../CocosFrame/Top";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -63,6 +64,12 @@ export default class PaintPanel extends Panel {
     @property(cc.Node)
     colliderSizePreview:cc.Node = null;
 
+    @property(cc.Node)
+    bucketTool:cc.Node = null;
+
+    @property(cc.Node)
+    eraserTool:cc.Node = null;
+
     state:State = State.Pencil;
 
     onLoad () {
@@ -70,6 +77,7 @@ export default class PaintPanel extends Panel {
         this.graphics.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.graphics.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.graphics.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        this.graphics.node.on(cc.Node.EventType.TOUCH_CANCEL, this.onTouchEnd, this);
         this.pencilBtn.node.on("click", this.onPencilTap, this);
         this.eraserBtn.node.on("click", this.onEraserTap, this);
         this.revertBtn.node.on("click", this.onRevertTap, this);
@@ -82,6 +90,8 @@ export default class PaintPanel extends Panel {
         this.mainToggle.node.on(ToggleGroup.TOGGLE_CHANGE, this.onMainToggleChange, this);
         this.initColorBtns();
         this.highLightBtn(this.pencilBtn);
+        this.bucketTool.active = false;
+        this.eraserTool.active = false;
         this.state = State.Pencil;
     }
 
@@ -90,6 +100,7 @@ export default class PaintPanel extends Panel {
         this.graphics.node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.graphics.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.graphics.node.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        this.graphics.node.off(cc.Node.EventType.TOUCH_CANCEL, this.onTouchEnd, this);
         this.pencilBtn.node.off("click", this.onPencilTap, this);
         this.eraserBtn.node.off("click", this.onEraserTap, this);
         this.revertBtn.node.off("click", this.onRevertTap, this);
@@ -164,7 +175,7 @@ export default class PaintPanel extends Panel {
     onSaveBtnTap(){
         if(this.graphics.opStack.length<3){
             SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
-                messageBox.toOkStyle("多画几笔吧")
+                messageBox.toOkStyle("多画几笔吧（最少3笔）")
             });
             return;
         }
@@ -201,42 +212,67 @@ export default class PaintPanel extends Panel {
         this.graphics.node.convertToNodeSpaceAR(pos, pos);
         switch(this.state){
             case State.Bucket:{
-                this.graphics.bucketFill(pos, this.pencilColor);
+                this.bucketTool.active = true;
+                this.bucketTool.position = pos;
+                this.bucketTool.children[0].color = this.pencilColor;
                 break;
             }
-            case State.Pencil:
+            case State.Pencil: {
+                this.graphics.color = this.pencilColor;
+                this.graphics.beginLine(pos); 
+                break;
+            }
+            
             case State.Eraser:{
-                let color = (this.state == State.Pencil ? this.pencilColor : cc.Color.TRANSPARENT);
-                this.graphics.color = color;
+                let tool:cc.Node = this.eraserTool;
+                let gra = this.eraserTool.getComponentInChildren(cc.Graphics);
+                gra.clear();
+                gra.fillColor = gra.strokeColor = cc.Color.WHITE;
+                gra.circle(0,0, this.graphics.lineWidth);
+                gra.stroke();
+                tool.active = true;
+                tool.position = pos;
+                this.graphics.color = cc.Color.TRANSPARENT;
+                pos.addSelf(cc.v2(-tool.width, tool.height));
                 this.graphics.beginLine(pos);     
                 break;
             } 
         }
     }
     private onTouchMove(event:cc.Event.EventTouch){
-        
+        let pos = event.getLocation();
+        this.graphics.node.convertToNodeSpaceAR(pos, pos);
         switch(this.state){
             case State.Bucket:{
-
+                this.bucketTool.position = pos;
                 break;
             }
-            case State.Pencil:
+            case State.Pencil: {
+                this.graphics.lineTo(pos);     
+                break;
+            }
             case State.Eraser:{
-                let pos = event.getLocation();
-                this.graphics.node.convertToNodeSpaceAR(pos, pos);
+                let tool:cc.Node = this.eraserTool;
+                tool.position = pos;
+                pos.addSelf(cc.v2(-tool.width, tool.height));
                 this.graphics.lineTo(pos);     
                 break;
             } 
         }
     }
     private onTouchEnd(event:cc.Event.EventTouch){
+        let pos = event.getLocation();
+        this.graphics.node.convertToNodeSpaceAR(pos, pos);
         switch(this.state){
             case State.Bucket:{
-
+                this.bucketTool.active = false;
+                let sight = this.bucketTool.children[0];
+                pos.addSelf(sight.position);
+                this.graphics.bucketFill(pos, this.pencilColor);
                 break;
             }
-            case State.Pencil:
-            case State.Eraser:{
+            case State.Pencil: case State.Eraser:{
+                this.eraserTool.active = false;
                 this.graphics.endLine();   
                 break;
             } 

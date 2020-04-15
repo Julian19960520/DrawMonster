@@ -18,6 +18,7 @@ import Monster from "./Monster";
 import { DB } from "../CocosFrame/DataBind";
 import { Game } from "../Game";
 import PiecewiseFunc from "../CocosFrame/PiecewiseFunc";
+import { MonsterConfig } from "../CocosFrame/dts";
 
 const {ccclass, property} = cc._decorator;
 
@@ -27,7 +28,7 @@ export default class MonsterFactory extends cc.Component {
     private playing = false;
     private timer = 0;
     private ROF = 2;
-    usingMonsters = [];
+    usingMonsters:MonsterConfig[] = [];
 
     private time = 0;
     rofFunc:PiecewiseFunc = null;
@@ -47,16 +48,9 @@ export default class MonsterFactory extends cc.Component {
         ]);
         this.sizeFunc = new PiecewiseFunc([
             cc.v2(0,  0.5), 
-            cc.v2(0.1,0.55),
-            cc.v2(0.2,0.6),
-            cc.v2(0.3,0.65),
-            cc.v2(0.4,0.7),
-            cc.v2(0.5,0.75),
-            cc.v2(0.6,0.85),
-            cc.v2(0.7,1),
-            cc.v2(0.8,1.3),
-            cc.v2(0.9,1.8),
-            cc.v2(1,  2.5),
+            cc.v2(0.5,0.8),
+            cc.v2(0.8,1),
+            cc.v2(1,  1.5),
         ]);
     }
     public play(){
@@ -126,7 +120,7 @@ export default class MonsterFactory extends cc.Component {
             //缩放
             let scale = this.sizeFunc.getY(Math.random());
             //速度与缩放反比
-            let speed = Util.randomInt(180,210);
+            let speed = Util.randomInt(150,200);
             let velocity = vec.normalizeSelf().mulSelf(speed);
             velocity.mulSelf(1/scale);
             //创建Monster

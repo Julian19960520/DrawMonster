@@ -52,8 +52,8 @@ export namespace Util{
         var date = new Date();
         return date.getTime();
     }
-    let _customEvent = new cc.Event.EventCustom("",false);
     export function customEvent(type, bubbles = false, detail = null){
+        let _customEvent = new cc.Event.EventCustom("",false);
         _customEvent.type = type;
         _customEvent.bubbles = bubbles;
         _customEvent.detail = detail;

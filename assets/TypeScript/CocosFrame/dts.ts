@@ -30,10 +30,19 @@ export class DramaData{
     monsterIds:number[];
     isCustom?:boolean;
 }
+export class HeroConfig {
+    id:number;
+    url:string;
+    name:string;
+}
 export class MonsterConfig{
     id:number;
     url:string;
+    name:string;
     dirType:DirType;
+    box?:{offset?:cc.Vec2, size?:cc.Size};
+    circle?:{offset?:cc.Vec2, radius?:number};
+    angleSpeedRange?:number[][];
 }
 export class ColorData{
     id:number;

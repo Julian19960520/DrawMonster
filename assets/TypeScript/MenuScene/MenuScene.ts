@@ -61,7 +61,7 @@ export default class MenuScene extends Scene {
     onEnterScene(){
         let btnAnim = (node:cc.Node, delay)=>{
             node.scale = 0;
-            node.angle = 50;
+            node.angle = 20;
             cc.tween(node).delay(delay).to(0.5,{scale:1, angle:0},{easing:cc.easing.backOut}).start();
         }
         this.playTitleAnim();

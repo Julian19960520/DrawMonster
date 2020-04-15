@@ -18,9 +18,9 @@ export namespace GameRecorder {
         }
         if(tt){
             impl = crossPlatform.getGameRecorderManager();
+            impl.onStart(onStart);
+            impl.onStop(onStop);
         }
-        impl.onStart(onStart);
-        impl.onStop(onStop);
     }
     //录屏开始时触发
     function onStart(){
@@ -44,7 +44,7 @@ export namespace GameRecorder {
         Init();
         startStamp = Util.getTimeStamp();
         if(wx){
-            impl.start({duration:3000});  
+            //impl.start({duration:3000});  
         }
         if(tt){
             impl.start({duration:300});  
@@ -54,7 +54,7 @@ export namespace GameRecorder {
     export function stop(){
         Init();
         if(wx){
-            impl.stop();  
+            //impl.stop();  
         }
         if(tt){
             impl.stop();  

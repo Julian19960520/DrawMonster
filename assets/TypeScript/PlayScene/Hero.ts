@@ -13,9 +13,6 @@ import Monster from "./Monster";
 import { Util } from "../CocosFrame/Util";
 import PhyObject from "./PhyObject";
 import { Game } from "../Game";
-import { TweenUtil } from "../CocosFrame/TweenUtil";
-import SceneManager from "../CocosFrame/SceneManager";
-import PlayScene from "./PlayScene";
 import { Sound } from "../CocosFrame/Sound";
 
 const {ccclass, property} = cc._decorator;
@@ -40,7 +37,9 @@ export default class Hero extends DB.DataBindComponent {
     shield:cc.Node = null;
     @property(cc.Label)
     shieldLabel:cc.Label = null;
+    
     shieldTime = 0;
+    invincibilityTime = 0;
     hpMax = 1;
     dropV = cc.Vec2.ZERO;
     g = 1200;
@@ -81,6 +80,12 @@ export default class Hero extends DB.DataBindComponent {
                     Sound.play("dorpShield");
                 }
             }
+            if(this.invincibilityTime>=0){
+                this.invincibilityTime -= dt;
+                if(this.shieldTime<0){
+                    
+                }
+            }
         }
         switch(this.state){
             case State.pause:
@@ -98,7 +103,7 @@ export default class Hero extends DB.DataBindComponent {
     initHeart(){
         let prefab = this.heartGroup.children[0];
         prefab.active = false;
-        for(let i=0;i<5;i++){
+        for(let i=0;i<2;i++){
             let child = cc.instantiate(prefab);
             this.heartGroup.addChild(child);
         }
@@ -137,11 +142,12 @@ export default class Hero extends DB.DataBindComponent {
                         this.playDropSprite(child.getComponent(cc.Sprite).spriteFrame, 0.5);
                         this.node.dispatchEvent(Util.customEvent("shakeScene", true, 1));
                         Sound.play("dorpHeart");
+                        this.invincibilityTime = 0.5;
                         break;
                     }
                 }
                 if(!find){
-                    this.node.dispatchEvent(Util.customEvent("gameOver", true));
+                    this.node.dispatchEvent(Util.customEvent("gameOver", true, {monsterName:monster.conf.name}));
                     let dir = this.node.x - other.node.x;
                     this.beginDrop(dir);
                     this.node.dispatchEvent(Util.customEvent("shakeScene", true, 1));
@@ -151,14 +157,19 @@ export default class Hero extends DB.DataBindComponent {
         //碰到道具，处理获得道具
         if(other.node.group == "Prop"){
             if(other.node.name == "Heart"){
+                let find = false;
                 for(let i=0;i<this.heartGroup.childrenCount; i++){
                     let child = this.heartGroup.children[i];
                     if(!child.active){
+                        find = true;
                         child.active = true;
                         other.node.dispatchEvent(Util.customEvent("returnPool"));
                         Sound.play("getHeart");
                         break;
                     }
+                }
+                if(!find){
+                    
                 }
             }
             if(other.node.name == "Shield"){

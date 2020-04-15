@@ -15,15 +15,14 @@ export namespace Config{
         return colors.find((data)=>{return data.id == id});
     }
     export let dramas:DramaData[]=[
-
         {id:1, heroId:1, monsterIds:[11,12,13]},
         {id:2, heroId:2, monsterIds:[21,22,23]},
         {id:3, heroId:3, monsterIds:[31,32,33]},
-        {id:4, heroId:4, monsterIds:[41,42,43]},
+        {id:4, heroId:4, monsterIds:[41,42]},
         {id:5, heroId:5, monsterIds:[51]},
         {id:6, heroId:6, monsterIds:[61,62,63]},
         {id:7, heroId:7, monsterIds:[71,72,73]},
-        {id:8, heroId:8, monsterIds:[81,82]},
+        {id:8, heroId:8, monsterIds:[81]},
         {id:9, heroId:9, monsterIds:[91,92,93]},
         {id:10, heroId:10, monsterIds:[101,102,103]},
     ]
@@ -40,43 +39,42 @@ export namespace Config{
         {id:10, name:"", url:"Atlas/Hero/hero10" },
     ] 
     export let monsters:MonsterConfig[] = [
-        {id:11, url:"Atlas/Monster/monster11", dirType:DirType.Forwards},
-        {id:12, url:"Atlas/Monster/monster12", dirType:DirType.Forwards},
-        {id:13, url:"Atlas/Monster/monster13", dirType:DirType.Forwards},
+        {id:11, url:"Atlas/Monster/monster11", name:"导弹", dirType:DirType.Forwards, box:{size:cc.size(115,45)} },
+        {id:12, url:"Atlas/Monster/monster12", name:"导弹", dirType:DirType.Forwards, box:{size:cc.size(115,45)} },
+        {id:13, url:"Atlas/Monster/monster13", name:"子弹", dirType:DirType.Forwards, box:{size:cc.size(100,30)} },
 
-        {id:21, url:"Atlas/Monster/monster21", dirType:DirType.Rotate},
-        {id:22, url:"Atlas/Monster/monster22", dirType:DirType.Upward},
-        {id:23, url:"Atlas/Monster/monster23", dirType:DirType.Rotate},
+        {id:21, url:"Atlas/Monster/monster21", name:"陨石", dirType:DirType.Rotate, circle:{radius:50}, angleSpeedRange:[[-90,90]] },
+        {id:22, url:"Atlas/Monster/monster22", name:"外星人", dirType:DirType.Upward, circle:{radius:50} },
+        {id:23, url:"Atlas/Monster/monster23", name:"小行星", dirType:DirType.Rotate, circle:{radius:60}, angleSpeedRange:[[-30,30]] },
 
-        {id:31, url:"Atlas/Monster/monster31", dirType:DirType.HorFlip},
-        {id:32, url:"Atlas/Monster/monster32", dirType:DirType.HorFlip},
-        {id:33, url:"Atlas/Monster/monster33", dirType:DirType.HorFlip},
+        {id:31, url:"Atlas/Monster/monster31", name:"汉堡包", dirType:DirType.HorFlip, circle:{radius:55} },
+        {id:32, url:"Atlas/Monster/monster32", name:"奶茶", dirType:DirType.HorFlip, box:{size:cc.size(60,100), offset:cc.v2(0,-8)} },
+        {id:33, url:"Atlas/Monster/monster33", name:"大鸡腿", dirType:DirType.Rotate, circle:{radius:40, offset:cc.v2(7,16)} },
 
-        {id:41, url:"Atlas/Monster/monster41", dirType:DirType.Rotate},
-        {id:42, url:"Atlas/Monster/monster42", dirType:DirType.Forwards},
-        {id:43, url:"Atlas/Monster/monster43", dirType:DirType.Rotate},
+        {id:41, url:"Atlas/Monster/monster41", name:"手里剑", dirType:DirType.Rotate, circle:{radius:50}, angleSpeedRange:[[-360,-150],[150,300]] },
+        {id:42, url:"Atlas/Monster/monster42", name:"苦无", dirType:DirType.Forwards, box:{size:cc.size(130,30)} },
+        // {id:43, url:"Atlas/Monster/monster43", name:"手里剑", dirType:DirType.Rotate, circle:{radius:50}, angleSpeedRange:[[-180,-150],[150,180]] },
 
-        {id:51, url:"Atlas/Monster/monster51", dirType:DirType.Upward},
+        {id:51, url:"Atlas/Monster/monster51", name:"十字架", dirType:DirType.Upward, circle:{radius:50} },
 
 
-        {id:61, url:"Atlas/Monster/monster61", dirType:DirType.Rotate},
-        {id:62, url:"Atlas/Monster/monster62", dirType:DirType.Rotate},
-        {id:63, url:"Atlas/Monster/monster63", dirType:DirType.Rotate},
+        {id:61, url:"Atlas/Monster/monster61", name:"K", dirType:DirType.Rotate, box:{size:cc.size(70,90)}, angleSpeedRange:[[-150,-100],[100,150]] },
+        {id:62, url:"Atlas/Monster/monster62", name:"A", dirType:DirType.Rotate, box:{size:cc.size(70,90)}, angleSpeedRange:[[-150,-100],[100,150]] },
+        {id:63, url:"Atlas/Monster/monster63", name:"JOKER", dirType:DirType.Rotate, box:{size:cc.size(70,90)}, angleSpeedRange:[[-150,-100],[100,150]] },
 
-        {id:71, url:"Atlas/Monster/monster71", dirType:DirType.Rotate},
-        {id:72, url:"Atlas/Monster/monster72", dirType:DirType.Forwards},
-        {id:73, url:"Atlas/Monster/monster73", dirType:DirType.Forwards},
+        {id:71, url:"Atlas/Monster/monster71", name:"斧头", dirType:DirType.Rotate, box:{size:cc.size(70,90)}, angleSpeedRange:[[-300,-200]] },
+        {id:72, url:"Atlas/Monster/monster72", name:"锯子", dirType:DirType.Forwards, box:{size:cc.size(120,45)} },
+        {id:73, url:"Atlas/Monster/monster73", name:"剪刀", dirType:DirType.Forwards, box:{size:cc.size(100,60)} },
 
-        {id:81, url:"Atlas/Monster/monster81", dirType:DirType.HorFlip},
-        {id:82, url:"Atlas/Monster/monster82", dirType:DirType.HorFlip},
+        {id:81, url:"Atlas/Monster/monster81", name:"噬菌体", dirType:DirType.HorFlip, box:{size:cc.size(60,100)} },
 
-        {id:91, url:"Atlas/Monster/monster91", dirType:DirType.Upward},
-        {id:92, url:"Atlas/Monster/monster92", dirType:DirType.Upward},
-        {id:93, url:"Atlas/Monster/monster93", dirType:DirType.Upward},
+        {id:91, url:"Atlas/Monster/monster91", name:"孤独", dirType:DirType.Upward, box:{size:cc.size(110,60)} },
+        {id:92, url:"Atlas/Monster/monster92", name:"寂寞", dirType:DirType.Upward, box:{size:cc.size(110,60)} },
+        {id:93, url:"Atlas/Monster/monster93", name:"冷", dirType:DirType.Upward, box:{size:cc.size(110,60)} },
 
-        {id:101, url:"Atlas/Monster/monster101", dirType:DirType.Upward},
-        {id:102, url:"Atlas/Monster/monster102", dirType:DirType.Upward},
-        {id:103, url:"Atlas/Monster/monster103", dirType:DirType.Upward},
+        {id:101, url:"Atlas/Monster/monster101", name:"广告按钮", dirType:DirType.Upward, box:{size:cc.size(105,72), offset:cc.v2(0,-10)}, },
+        {id:102, url:"Atlas/Monster/monster102", name:"分享按钮", dirType:DirType.Upward, box:{size:cc.size(105,72)} },
+        {id:103, url:"Atlas/Monster/monster103", name:"关闭按钮", dirType:DirType.Upward, box:{size:cc.size(80,80)} },
     ]
 
     export let colors:ColorData[] = [

@@ -77,11 +77,14 @@ export default class PlayScene extends Scene {
     //所以需要安全的推出，先回收进对象池，再延迟一帧退出Scene
     savelyExit(){
         this.monsterFactory.clear();
+        this.propFactory.clear();
+        this.monsterFactory.pause();
+        this.propFactory.pause();
         this.scheduleOnce(()=>{
             SceneManager.ins.goHome();
         },0);
     }
-    onGameOver(){
+    onGameOver(evt:cc.Event.EventCustom){
         this.music.stop();
         if(!this.playing){
             return;
@@ -100,6 +103,7 @@ export default class PlayScene extends Scene {
             this.OpenPanelByName("GameOverPanel",(gameOverPanel:GameOverPanel)=>{
                 gameOverPanel.setData({
                     time:time,
+                    killerName:evt.detail.monsterName
                 });
             });
         }

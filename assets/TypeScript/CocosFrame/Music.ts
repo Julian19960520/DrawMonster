@@ -12,7 +12,7 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class Music extends cc.Component {
-    @property(cc.AudioClip)
+    @property({type:cc.AudioClip})
     clip: cc.AudioClip = null;
     @property
     loop:boolean = false;
