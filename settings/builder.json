@@ -20,8 +20,8 @@
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
-  "md5Cache": true,
-  "mergeStartScene": false,
+  "md5Cache": false,
+  "mergeStartScene": true,
   "optimizeHotUpdate": false,
   "orientation": {
     "landscapeLeft": true,

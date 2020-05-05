@@ -14,6 +14,8 @@ import { DB } from "../CocosFrame/DataBind";
 import SceneManager from "../CocosFrame/SceneManager";
 import { Sound } from "../CocosFrame/Sound";
 import Music from "../CocosFrame/Music";
+import { Local } from "../CocosFrame/Local";
+import { tt } from "../CocosFrame/dts";
 
 const {ccclass, menu, property} = cc._decorator;
 

@@ -1,4 +1,6 @@
 import { Util } from "./Util";
+import ScreenRect from "./ScreenRect";
+import { DB } from "./DataBind";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -11,10 +13,19 @@ import { Util } from "./Util";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
-export default class Top extends cc.Component {
+export default class Top extends DB.DataBindComponent {
     static ins:Top = null;
+    private block:cc.BlockInputEvents = null;
+
     onLoad(){
         Top.ins = this;
+        this.node.width = ScreenRect.width;
+        this.node.height = ScreenRect.height;
+        this.block = this.getComponent(cc.BlockInputEvents);
+        this.blockInput(false);
+    }
+    public blockInput(b){
+        this.block.enabled = b;
     }
     public showToast(text:string){
         Util.instantPrefab("TopLayer/Toast").then((toast:cc.Node)=>{
@@ -50,5 +61,28 @@ export default class Top extends cc.Component {
             }
         ).start();
         return label;
+    }
+    public bezierSprite(data:{url:string, from:cc.Vec2, to:cc.Vec2, callback?, cnt?:number, time?:number}){
+        data.cnt = data.cnt || 1;
+        data.time = data.time || 1;
+        cc.loader.loadRes(data.url, cc.SpriteFrame, (err, sf)=>{
+            for(let i=0; i<data.cnt; i++){
+                setTimeout(() => {
+                    let node = new cc.Node();
+                    this.node.addChild(node);
+                    let sprite = node.addComponent(cc.Sprite);
+                    sprite.spriteFrame = sf;
+                    let range = 200;
+                    let ctrlPos = data.from.add(cc.v2(Util.randomInt(-range,range), Util.randomInt(-range,range)));
+                    node.position = data.from;
+                    node.runAction(cc.sequence(cc.bezierTo(data.time, [data.from, ctrlPos, data.to]), cc.callFunc(()=>{
+                        node.removeFromParent();
+                        if(data.callback){
+                            data.callback(i==data.cnt-1)
+                        }
+                    })));
+                }, i*50);                
+            }
+        });
     }
 }

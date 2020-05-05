@@ -15,11 +15,9 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class PiecewiseFunc {
     constructor(public points:cc.Vec2[]){
-        console.log(points);
         points.sort((a, b) => {
             return a.x - b.x;
         })
-        console.log(points);
     }
     getY(x){
         let len = this.points.length;

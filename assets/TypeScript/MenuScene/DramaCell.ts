@@ -11,6 +11,8 @@
 import ScrollList from "../CustomUI/ScrollList";
 import { Game } from "../Game";
 import { DramaData } from "../CocosFrame/dts";
+import { DB } from "../CocosFrame/DataBind";
+import { Util } from "../CocosFrame/Util";
 
 const {ccclass, property} = cc._decorator;
 
@@ -18,15 +20,16 @@ const {ccclass, property} = cc._decorator;
 export default class DramaCell extends cc.Component {
     // @property(cc.Node)
     // normalNode:cc.Node = null;
-    // @property(cc.Node)
-    // emptyNode:cc.Node = null;
     @property(cc.Node)
     scaleNode:cc.Node = null;
     @property(cc.Sprite)
     sprite:cc.Sprite = null;
     @property(cc.Sprite)
     selectBox:cc.Sprite = null;
-
+    @property(cc.Node)
+    lockNode:cc.Node = null;
+    @property(cc.Label)
+    costLabel:cc.Label = null;
     // @property(cc.Node)
     // youMark:cc.Node = null;
 
@@ -54,8 +57,13 @@ export default class DramaCell extends cc.Component {
     setData(data:DramaData){
         if(!data){
             this.scaleNode.active = false;
+            this.lockNode.active = false;
             return;
         }
+        let open = Game.isThemeOpen(data.id);
+        Util.grayfiyNode(this.scaleNode, !open);
+        this.lockNode.active = !open;
+        this.costLabel.string = data.cost.toString();
         this.scaleNode.active = true;
         let hero = Game.findHeroConf(data.heroId);
         this.sprite.node.active = false;

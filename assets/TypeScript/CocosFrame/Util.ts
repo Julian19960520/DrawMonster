@@ -36,6 +36,13 @@ export namespace Util{
             });
         })
     }
+    export function rawUrl(name){
+        var path = cc.url.raw(name);
+        if (cc.loader.md5Pipe) {
+            path = cc.loader.md5Pipe.transformURL(path);
+        }
+        return path;
+    }
     export function enableAllCollider(node:cc.Node){
         let cols = node.getComponents(cc.Collider);
         for(let i=0;i<cols.length;i++){
@@ -158,6 +165,17 @@ export namespace Util{
         nodeB.convertToNodeSpaceAR(res, res);
         return res;
     }
+    //深度优先搜索子节点
+    export function searchChild(node:cc.Node, name:string){
+        for(let i=0;i<node.childrenCount;i++){
+            let child = node.children[i];
+            if(child.name == name){
+                return child;
+            }else{
+                return searchChild(child, name);
+            }
+        }
+    }
     //移动node到一个新的节点下，并保持位置不变
     export function moveNode(node:cc.Node, parent:cc.Node){
         let res = cc.v2();
@@ -183,5 +201,25 @@ export namespace Util{
             width:rect.width*factor,
             height:rect.height*factor,
         }
+    }
+
+    export function grayfiyNode(node:cc.Node, gray:boolean){
+        // let state = gray ? cc.Sprite.State.GRAY : cc.Sprite.State.NORMAL;
+        let mat:cc.Material = null; 
+        if(gray){
+            mat = cc.Material["getInstantiatedBuiltinMaterial"]('2d-gray-sprite', node);
+        }else{
+            mat = cc.Material["getBuiltinMaterial"]('2d-sprite', node);
+        }
+        let sprites = node.getComponentsInChildren(cc.Sprite).concat(node.getComponents(cc.Sprite));
+        for(let i=0;i<sprites.length;i++){
+            sprites[i].setMaterial(0, mat);
+        }
+    }
+    export function bizer(){
+        // var bezier = [cc.v2(0, windowSize.height / 2), cc.v2(300, -windowSize.height / 2), cc.v2(300, 100)];
+        // var bezierForward = new cc.BezierBy(3, bezier);
+        // s.runAction(bezierForward);
+
     }
 }

@@ -10,6 +10,8 @@ import { Game } from "../Game";
 import Music from "../CocosFrame/Music";
 import { Sound } from "../CocosFrame/Sound";
 import { GameRecorder } from "../GameRecorder";
+import FinishScene from "../FinishScene/FinishScene";
+import CoinBar from "../CoinBar";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -33,7 +35,10 @@ export default class PlayScene extends Scene {
 
     @property(PropFactory)
     propFactory: PropFactory = null;
-
+    
+    @property(CoinBar)
+    coinBar:CoinBar = null;
+    
     @property(Music)
     music: Music = null;
 
@@ -69,52 +74,63 @@ export default class PlayScene extends Scene {
                 this.resume();
             }
             pausePanel.backHomeCallback = ()=>{
-                this.savelyExit();
+                this.savelyExit(()=>{
+                    SceneManager.ins.goHome();
+                });
             }
         });
     }
     //scene.active = false时，会引起virusFactory的collider禁用，进而引起子节点被回收到对象池,引起报错
-    //所以需要安全的推出，先回收进对象池，再延迟一帧退出Scene
-    savelyExit(){
+    //所以需要安全的退出，先回收进对象池，再延迟一帧退出Scene
+    savelyExit(callback){
         this.monsterFactory.clear();
         this.propFactory.clear();
         this.monsterFactory.pause();
         this.propFactory.pause();
-        this.scheduleOnce(()=>{
-            SceneManager.ins.goHome();
-        },0);
+        this.scheduleOnce(callback, 0);
     }
     onGameOver(evt:cc.Event.EventCustom){
-        this.music.stop();
+        this.music.pause();
         if(!this.playing){
             return;
         }
         Sound.play("gameOver");
         this.playing = false;
-        let time = Util.fixedNum(this.time, 2);
-        Game.addRankData(time);
         let obj = {
             timeScale:0.2
         }
         let opend = false;
-        let openPanel = ()=>{
-            if(opend)return;
-            opend = true;
-            this.OpenPanelByName("GameOverPanel",(gameOverPanel:GameOverPanel)=>{
-                gameOverPanel.setData({
-                    time:time,
-                    killerName:evt.detail.monsterName
-                });
-            });
-        }
         cc.tween(obj).to(2, {timeScale:1}, {progress:(start, end, current, ratio)=>{
             current = start + (end-start) * cc.easing.quadInOut(ratio);
             Game.timeScale = current;
             if(current>=1){
-                openPanel();
+                if(opend)return;
+                    opend = true;
+                this.onGameOverPanel(evt.detail.monsterName);
             }
             return current;
         }}).start();
+    }
+    private onGameOverPanel(killerName){
+        let time = Util.fixedNum(this.time, 2);
+        this.OpenPanelByName("GameOverPanel",(panel:GameOverPanel)=>{
+            //重试
+            panel.onRebornCallback = ()=>{
+                this.reborn();
+            }
+            //放弃
+            panel.onGiveUpCallback = ()=>{
+                Game.addRankData(time);
+                SceneManager.ins.findScene(PlayScene).savelyExit(()=>{
+                    SceneManager.ins.Enter("FinishScene").then((finish:FinishScene)=>{
+                        finish.setData({
+                            time:time,
+                            killerName:killerName,
+                        })
+                    });
+                });
+            };
+        });
     }
     private onTouchMove(event:cc.Event.EventTouch){
         if(this.playing){
@@ -172,5 +188,11 @@ export default class PlayScene extends Scene {
             .to(0.1,{position:oriPos.add(cc.v2(4*scale, 3*scale))})
             .to(0.1,{position:oriPos})
             .start();
+    }
+    reborn(){
+        Sound.play("gameStartBtn");
+        this.hero.openShield(3);
+        this.hero.node.position = this.targetPos;
+        this.resume();
     }
 }

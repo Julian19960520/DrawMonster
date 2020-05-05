@@ -251,6 +251,7 @@ export default class ScrollList extends cc.ScrollView {
         let pos = this.calcuPos(idx);
         pos.x -= this.maskWidth/2;
         this.scrollToOffset(pos, 0.3);
+        this.updateList();
     }
     public centerOnData(data){
         let idx = this.dataArr.indexOf(data);

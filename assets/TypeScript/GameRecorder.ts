@@ -61,16 +61,18 @@ export namespace GameRecorder {
         }
     }
     //分享视频
-    export function share(msg:string = "抓到你就完蛋了", tips:string[]=["抓到你就完蛋了", "抖音小游戏"]){
+    export function share(success = null, fail = null){
         Init();
         console.log(videoPath);
         crossPlatform.shareAppMessage({
-            title:msg, 
+            title: "抓到你就完蛋了", 
             channel:"video",
             extra:{
                 videoPath:videoPath,
-                videoTopics:tips
-            }
+                videoTopics:["抓到你就完蛋了", "抖音小游戏"]
+            },
+            success:success,
+            fail:fail,
         });
     }
 }

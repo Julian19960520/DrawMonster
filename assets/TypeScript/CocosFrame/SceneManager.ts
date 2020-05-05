@@ -55,6 +55,33 @@ export default class SceneManager extends cc.Component {
         })
     }
     //回到Home场景，并检查返回路径上的场景是否需要销毁
+    public BackTo(sceneName:string, shiftAnima = ShiftAnima.simpleShift){
+        this.blockInput.node.active = true;
+        return new Promise((resolve, reject)=>{
+            if(sceneName == this.curScene.node.name){
+                resolve(this.curScene)
+                this.blockInput.node.active = false;
+                return;
+            }
+            //先弹出当前场景，但不销毁
+            this.stack.pop();
+            //检查并销毁路径上的场景
+            while(this.stack.length > 0 
+                    && (sceneName != this.stack[this.stack.length-1])){
+                this.stack.pop();
+                let sceneNode = this.content.getChildByName(sceneName);
+                if(sceneNode){
+                    let scene = sceneNode.getComponent(Scene);
+                    if(scene && scene.autoDestroy){
+                        this.content.removeChild(sceneNode);
+                    }
+                }
+            }
+            //从当前场景转换到Home场景
+            this.shiftScene(sceneName, shiftAnima).then(resolve).catch(reject);
+        })
+    }
+    //回到Home场景，并检查返回路径上的场景是否需要销毁
     public goHome(shiftAnima = ShiftAnima.simpleShift){
         this.blockInput.node.active = true;
         return new Promise((resolve, reject)=>{
@@ -89,7 +116,7 @@ export default class SceneManager extends cc.Component {
                 resolve(newScene);
                 let oldScene = this.curScene;
                 this.curScene = newScene;
-                DB.Set("curScene", this.curScene);
+                DB.Set("temp/curScene", this.curScene);
                 shiftAnima(oldScene, newScene, ()=>{
                     if(oldScene && oldScene.autoDestroy){
                         oldScene.onExitScene();

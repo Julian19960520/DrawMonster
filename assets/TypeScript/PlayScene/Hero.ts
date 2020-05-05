@@ -14,6 +14,10 @@ import { Util } from "../CocosFrame/Util";
 import PhyObject from "./PhyObject";
 import { Game } from "../Game";
 import { Sound } from "../CocosFrame/Sound";
+import Shield from "./Shield";
+import Top from "../CocosFrame/Top";
+import SceneManager from "../CocosFrame/SceneManager";
+import PlayScene from "./PlayScene";
 
 const {ccclass, property} = cc._decorator;
 
@@ -33,27 +37,29 @@ export default class Hero extends DB.DataBindComponent {
 
     @property(cc.Node)
     heartGroup:cc.Node = null;
-    @property(cc.Node)
-    shield:cc.Node = null;
+    @property(Shield)
+    shield:Shield = null;
     @property(cc.Label)
     shieldLabel:cc.Label = null;
     
+    isInvincible = false;
     shieldTime = 0;
-    invincibilityTime = 0;
     hpMax = 1;
     dropV = cc.Vec2.ZERO;
     g = 1200;
     angleSpeed = 180;
     state:State = State.active;
+    collider:cc.Collider = null;
     onLoad(){
         this.anim = this.getComponent(cc.Animation);
+        this.collider = this.getComponent(cc.CircleCollider);
         this.anim.play("idle");
         this.Bind("user/hpMax",(hpMax)=>{
             this.hpMax = hpMax;
         })
         this.initHeart();
+        this.closeShield();
         this.shieldTime = 0;
-        this.shield.active = false;
         this.Bind("user/dramaId",(dramaId)=>{
             let drama = Game.findDramaConf(dramaId);
             let hero = Game.findHeroConf(drama.heroId);
@@ -74,16 +80,10 @@ export default class Hero extends DB.DataBindComponent {
             if(this.shieldTime>=0){
                 this.shieldTime -= dt;
                 this.shieldLabel.string = `${Util.fixedNum(this.shieldTime,1)}`;
-                if(this.shieldTime<0 && this.shield.active){
-                    this.shield.active = false;
+                if(this.shieldTime<0 && this.shield.node.active){
+                    this.closeShield();
                     this.playDropSprite(this.shield.getComponent(cc.Sprite).spriteFrame);
                     Sound.play("dorpShield");
-                }
-            }
-            if(this.invincibilityTime>=0){
-                this.invincibilityTime -= dt;
-                if(this.shieldTime<0){
-                    
                 }
             }
         }
@@ -121,16 +121,13 @@ export default class Hero extends DB.DataBindComponent {
         if(this.state!= State.active){
             return;
         }
+        if(self != this.collider){
+            return;
+        }
         //碰到怪物，处理丢失道具 或 游戏结束
         if(other.node.group == "Monster"){
             let monster = other.node.getComponent(Monster);
-            if(monster && monster.active){
-                if(this.shield.active){
-                    monster.active = false;
-                    monster.beginDrop();
-                    this.node.dispatchEvent(Util.customEvent("shakeScene", true, 0.5));
-                    return;
-                }
+            if(monster && monster.active && !this.isInvincible){
                 let find = false;
                 for(let i=0;i<this.heartGroup.childrenCount; i++){
                     let child = this.heartGroup.children[i];
@@ -142,7 +139,6 @@ export default class Hero extends DB.DataBindComponent {
                         this.playDropSprite(child.getComponent(cc.Sprite).spriteFrame, 0.5);
                         this.node.dispatchEvent(Util.customEvent("shakeScene", true, 1));
                         Sound.play("dorpHeart");
-                        this.invincibilityTime = 0.5;
                         break;
                     }
                 }
@@ -173,10 +169,24 @@ export default class Hero extends DB.DataBindComponent {
                 }
             }
             if(other.node.name == "Shield"){
-                this.shieldTime = 3;
-                this.shield.active = true;
+                this.openShield(3);
                 other.node.dispatchEvent(Util.customEvent("returnPool"));
                 Sound.play("getHeart");
+            }
+            if(other.node.name == "CoinBag"){
+                let playScene = SceneManager.ins.findScene(PlayScene);
+                Top.ins.bezierSprite({
+                    url:"Atlas/UI/coin",
+                    from:Util.convertPosition(this.node, Top.ins.node),
+                    to:Util.convertPosition(playScene.coinBar.iconPos, Top.ins.node),
+                    cnt:5,
+                    time:0.8,
+                    callback:(finish)=>{
+                        let coin = DB.Get("user/coin");
+                        DB.SetLoacl("user/coin", coin+50);
+                    }
+                });
+                other.node.dispatchEvent(Util.customEvent("returnPool"));
             }
         }
     }
@@ -198,5 +208,18 @@ export default class Hero extends DB.DataBindComponent {
         dir = Util.sign(dir);
         this.state = State.drop;
         this.dropV = cc.v2( Util.randomInt(50, 100)*dir, Util.randomInt(200, 250));
+    }
+    public openShield(time){
+        // this.collider.enabled = false;
+        this.isInvincible = true;
+        this.shieldTime = time;
+        this.shield.node.active = true;
+        this.shield.beginAnim();
+    }
+    public closeShield(){
+        this.shield.endAnim();
+        // this.collider.enabled = true;
+        this.isInvincible = false;
+        this.shield.node.active = false;
     }
 }

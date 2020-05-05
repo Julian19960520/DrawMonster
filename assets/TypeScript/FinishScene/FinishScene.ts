@@ -1,0 +1,298 @@
+// Learn TypeScript:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
+// Learn Attribute:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
+// Learn life-cycle callbacks:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+
+import Scene from "../CocosFrame/Scene";
+import { Sound } from "../CocosFrame/Sound";
+import { Util } from "../CocosFrame/Util";
+import { crossPlatform } from "../CocosFrame/dts";
+import Top from "../CocosFrame/Top";
+import SceneManager from "../CocosFrame/SceneManager";
+import { Game } from "../Game";
+import { DB } from "../CocosFrame/DataBind";
+import CoinBar from "../CoinBar";
+import { Config } from "../CocosFrame/Config";
+
+const {ccclass, menu, property} = cc._decorator;
+
+@ccclass
+@menu("场景/FinishScene")
+export default class FinishScene extends Scene {
+    @property(cc.Node)
+    titleNode: cc.Node = null;
+
+    @property(cc.ProgressBar)
+    timeProgress: cc.ProgressBar = null;
+
+    @property(cc.Button)
+    openAllBtn: cc.Button = null;
+
+    @property(cc.Button)
+    freeOpenAllBtn: cc.Button = null;
+
+    @property(cc.Button)
+    backBtn: cc.Button = null;
+
+    @property(cc.Node)
+    buttonLayout: cc.Node = null;
+
+    @property(cc.Node)
+    keyNode: cc.Node = null;
+
+    @property(cc.Button)
+    chestBtn: cc.Button = null;
+    
+    @property(CoinBar)
+    coinBar:CoinBar = null;
+
+    private type:"share"|"video" = "share";
+    // private gainKeyCosts = [10, 20, 40];
+    private keyCnt = 0;
+    private openCnt = 0;
+    private rewards = null;
+    onLoad(){
+        this.backBtn.node.on("click",this.onBackBtnTap, this);
+        this.openAllBtn.node.on("click",this.onOpenAllBtnTap, this);
+        this.freeOpenAllBtn.node.on("click",this.onFreeOpenAllBtnTap, this);
+        this.setBtnType("share");
+        this.initChestBtn();
+        this.rewards = Game.randomFinishRewards();
+    }
+    initChestBtn(){
+        let chestParent = this.chestBtn.node.parent;
+        while(chestParent.childrenCount < 3){
+            let newChest = cc.instantiate(this.chestBtn.node);
+            chestParent.addChild(newChest);
+        }
+        for(let i=0; i<chestParent.childrenCount; i++){
+            let chestBtn = chestParent.children[i];
+            chestBtn.name = "chest"+i;
+            chestBtn.on("click", this.onChestBtnTap, this);
+        }
+    }
+    onChestBtnTap(e:cc.Event.EventTouch){
+        let chestNode:cc.Node = e.target;
+        if(!chestNode["isOpen"] && this.openCnt<3){
+            if(this.keyCnt > 0){
+                chestNode["isOpen"] = true;
+                let idx = this.keyCnt-1;
+                let key = this.keyNode.parent.children[idx];
+                let icon = key.getChildByName("icon"); 
+                let pos = Util.convertPosition(chestNode, key);
+                let dis = pos.sub(icon.position).mag();
+                let coinCnt = this.rewards[this.openCnt].cnt;
+                cc.tween(icon).to(dis*0.001, {
+                    x:pos.x,
+                    y:pos.y,
+                    scale:0.5,
+                })
+                .call(()=>{
+                    Sound.play("openChest");
+                    icon.active = false;
+                    chestNode.getComponent(cc.Button).enabled = false;
+                    chestNode.getComponent(cc.Animation).play("openChest");
+                    Top.ins.bezierSprite({
+                        url:"Atlas/UI/coin",
+                        from:Util.convertPosition(chestNode, Top.ins.node),
+                        to:Util.convertPosition(this.coinBar.iconPos, Top.ins.node),
+                        cnt:Math.floor(coinCnt/50),
+                        callback:(finish)=>{
+                            let coin = DB.Get("user/coin");
+                            DB.SetLoacl("user/coin", coin+50);
+                        }
+                    });
+                }).start();
+                this.keyCnt--;
+                this.openCnt++;
+                if(this.keyCnt <= 0){
+                    if(this.openCnt < 3){
+                        this.openAllBtn.node.active = true;
+                        this.freeOpenAllBtn.node.active = false;
+                        this.backBtn.node.active = true;
+                    }else{
+                        this.openAllBtn.node.active = false;
+                        this.freeOpenAllBtn.node.active = false;
+                        this.backBtn.node.active = true;
+                    }
+                }
+            }else{
+                Top.ins.showToast("没有钥匙了");
+            }
+        }
+    }
+    onOpenAllBtnTap(){
+        Sound.play("clickBtn");
+        if(this.type == "share"){
+            crossPlatform.share({
+                imageUrl:Util.rawUrl('resources/Atlas/ShareImg/1.png'),
+                templateId:"6deh5ubi85226of3co",
+                success:()=>{
+                    this.openAllChest();
+                    this.openAllBtn.node.active = false;
+                },
+                fail:()=>{
+                    Top.ins.showToast("分享失败");
+                }
+            });
+        }else if(this.type == "video"){
+            
+        }
+    }
+
+    onFreeOpenAllBtnTap(){
+        this.openAllChest();
+        this.freeOpenAllBtn.node.active = false;
+        this.backBtn.node.active = true;
+    }
+    openAllChest(){
+        let chestParent = this.chestBtn.node.parent;
+        for(let i=0; i<chestParent.childrenCount; i++){
+            let chestNode = chestParent.children[i];
+            let coinCnt = this.rewards[this.openCnt].cnt;
+            if(!chestNode["isOpen"]){
+                chestNode.getComponent(cc.Animation).play("openChest");
+                Top.ins.bezierSprite({
+                    url:"Atlas/UI/coin",
+                    from:Util.convertPosition(chestNode, Top.ins.node),
+                    to:Util.convertPosition(this.coinBar.iconPos, Top.ins.node),
+                    cnt:Math.floor(coinCnt/50),
+                    callback:(finish)=>{
+                        let coin = DB.Get("user/coin");
+                        DB.SetLoacl("user/coin", coin+50);
+                    }
+                });
+                this.openCnt++;
+            }
+        }
+    }
+    onBackBtnTap(){
+        SceneManager.ins.BackTo("MenuScene");
+    }
+
+    onDestroy(){
+        if(this.titleTw){
+            this.titleTw.stop();
+        }
+    }
+    
+    setBtnType(type){
+        this.type = type;
+        Util.loadRes("Atlas/UI/"+type,cc.SpriteFrame).then((spriteFrame:cc.SpriteFrame)=>{
+            let sprite = Util.searchChild(this.openAllBtn.node, "icon").getComponent(cc.Sprite);
+            sprite.spriteFrame = spriteFrame;
+        });
+    }
+
+    setData(data){
+        this.playAnim(data.time, data.killerName);
+    }
+    
+    private titleTw = null;
+    playAnim(time, killerName:string){
+        Top.ins.blockInput(true);
+        //隐藏标题字
+        let labels = this.titleNode.getComponentsInChildren(cc.Label); 
+        for(let i=0;i<labels.length;i++){
+            labels[i].node.active = false;
+        }
+        //布置🔑并置灰
+        let keyParent = this.keyNode.parent;
+        let maxTime = Config.gainKeyCosts[Config.gainKeyCosts.length-1];
+        let keyIdx = 0;
+        while(keyParent.childrenCount < Config.gainKeyCosts.length){
+            let newKeyNode = cc.instantiate(this.keyNode);
+            keyParent.addChild(newKeyNode);
+        }
+        for(let i=0; i<keyParent.childrenCount; i++){
+            let child = keyParent.children[i];
+            child.x = keyParent.width * (Config.gainKeyCosts[i] / maxTime);
+            child.getComponentInChildren(cc.Label).string = `${Config.gainKeyCosts[i]}秒`;
+            Util.grayfiyNode(child, true);
+            child["canUse"] = false;
+        }
+        //隐藏按钮
+        this.buttonLayout.active = false;
+        this.openAllBtn.node.active = false;
+        this.freeOpenAllBtn.node.active = false;
+        this.backBtn.node.active = false;
+        
+        let obj = {progress:0};
+        //开始动画
+        this.titleTw = cc.tween(obj)
+            .delay(0.2)
+            .call(()=>{
+                Sound.play("word");
+                labels[0].node.active = true;
+                labels[0].string = "享";
+            })
+            .delay(0.2)
+            .call(()=>{
+                Sound.play("word");
+                labels[0].string = "享年";
+            })
+            .delay(0.5)
+            .call(()=>{
+                labels[1].node.active = true;
+            })
+            .to(1, {progress:1},{progress:(start, end, current, ratio)=>{
+                current = cc.easing.quadOut(ratio);
+                let curTime = current*time;
+                //时间文字
+                labels[1].string = curTime.toFixed(2);
+                //时间进度条
+                this.timeProgress.progress = curTime/maxTime;
+                //获得钥匙
+                if(keyIdx < Config.gainKeyCosts.length && curTime > Config.gainKeyCosts[keyIdx] ){
+                    let key = keyParent.children[keyIdx];
+                    Util.grayfiyNode(key, false);
+                    key["canUse"] = true;
+                    Sound.play("gainKey");
+                    cc.tween(key).to(0.2, {scale:1.5}).to(0.2, {scale:1}).start();
+                    keyIdx++;
+                    this.keyCnt = keyIdx;
+                }
+                return current;
+            }})
+            .delay(0.3)
+            .call(()=>{
+                Top.ins.blockInput(false);
+                this.buttonLayout.active = true;
+                if(this.keyCnt>=3){
+                    this.freeOpenAllBtn.node.active = true;
+                }else if(this.keyCnt == 0){
+                    this.openAllBtn.node.active = true; 
+                    this.backBtn.node.active = true;
+                }
+                Sound.play("word");
+                labels[2].node.active = true;
+                labels[2].string = "秒，";
+            })
+            .delay(0.6)
+            .call(()=>{
+                Sound.play("word");
+                labels[2].string = "秒，卒";
+            })
+            .delay(0.2)
+            .call(()=>{
+                Sound.play("word");
+                labels[2].string = "秒，卒于";
+                obj.progress = 0;
+            })
+            .delay(0.6)
+            .call(()=>{
+                Sound.play("word");
+                labels[3].node.active = true;
+                labels[3].string = killerName;
+                labels[3].node.opacity = 0;
+                labels[3].node.scale = 2;
+                cc.tween(labels[3].node).to(0.2,{scale:1.1,opacity:255}, {easing:cc.easing.backOut}).start();
+            })
+            .start();
+    }
+}

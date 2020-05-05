@@ -39,7 +39,7 @@ export default class PropFactory extends cc.Component {
         this.timer += dt;
         if(this.timer > this.interval){
             this.timer = 0;
-            this.generateProp(Util.randomInt(1,2));
+            this.generateProp(Util.randomInt(1, 3));
         }
     }
     generateProp(type){
@@ -53,6 +53,14 @@ export default class PropFactory extends cc.Component {
                 node = PoolManager.getInstance(PrefabPath.heart);
                 break;
             }
+            case 3:{
+                node = PoolManager.getInstance(PrefabPath.coinBag);
+                break;
+            }
+            // case 4:{
+            //     node = PoolManager.getInstance(PrefabPath.clock);
+            //     break;
+            // }
         }
         this.node.addChild(node);
         let prop = node.getComponent(Prop);

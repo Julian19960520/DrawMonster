@@ -1,4 +1,5 @@
 import { DirType } from "./Config";
+import { fail } from "assert";
 
 export enum Ease{
     quintOut = 'quintOut',
@@ -29,6 +30,7 @@ export class DramaData{
     heroId:number;
     monsterIds:number[];
     isCustom?:boolean;
+    cost:number;
 }
 export class HeroConfig {
     id:number;
@@ -43,6 +45,7 @@ export class MonsterConfig{
     box?:{offset?:cc.Vec2, size?:cc.Size};
     circle?:{offset?:cc.Vec2, radius?:number};
     angleSpeedRange?:number[][];
+    isUserPainting?:boolean
 }
 export class ColorData{
     id:number;
@@ -58,6 +61,24 @@ export class CrossPlatform{
 
     }
     onHide(callback){}
+    share(obj:{
+        title?: string, 
+        imageUrl?:string, 
+        query?:string, 
+        imageUrlId?:string,
+
+        channel?: "token"|"video",
+        extra?: {
+            videoPath: string, // 可替换成录屏得到的视频地址
+            videoTopics: string[] //话题
+        },
+        templateId?:string,
+        success?:()=>void,
+        fail?:()=>void,
+    }){
+        if(obj.success) obj.success();
+        console.log("分享", obj);
+    }
     shareAppMessage(obj:{
         title?: string, 
         imageUrl?:string, 
@@ -73,6 +94,7 @@ export class CrossPlatform{
         success?:()=>void,
         fail?:()=>void,
     }){
+        if(obj.success) obj.success();
         console.log("分享", obj);
     }
     setStorage(obj:{key:string, data:string}){}
@@ -217,4 +239,38 @@ if(tt){
 }if(wx){
     crossPlatform = wx;
     crossPlatform.getGameRecorderManager = wx.getGameRecorder;
+}
+if(wx){
+    let hideTime = 0;
+    let shareing = false;
+    let shareSuccess = null;
+    let shareFail = null;
+    crossPlatform.onHide(()=>{
+        hideTime = new Date().getTime();
+    });
+    crossPlatform.onShow(()=>{
+        if(shareing){
+            if(hideTime != null){
+                let dt = new Date().getTime() - hideTime;
+                if(dt > 1000){
+                    if(shareSuccess) shareSuccess();
+                }else{
+                    if(shareFail) shareFail();
+                }
+            }
+            shareing = false;
+            shareSuccess = null;
+            shareFail = null;
+        }
+    });
+
+    crossPlatform.share = (obj)=>{
+        shareing = true;
+        shareSuccess = obj.success;
+        shareFail = obj.fail;
+        crossPlatform.shareAppMessage(obj);
+    }
+}
+if(tt){
+    crossPlatform.share = crossPlatform.shareAppMessage;
 }

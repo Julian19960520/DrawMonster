@@ -2,6 +2,8 @@ import { ColorData, DramaData, MonsterConfig } from "./dts";
 export enum PrefabPath{
     heart = "Prefab/Prop/Heart",
     shield = "Prefab/Prop/Shield",
+    clock = "Prefab/Prop/Clock",
+    coinBag = "Prefab/Prop/CoinBag",
     monster = "Prefab/Monster/Monster",
 }
 export enum DirType{
@@ -11,20 +13,16 @@ export enum DirType{
     Rotate,     //旋转
 }
 export namespace Config{
-    export function getColorDataByID(id){
-        return colors.find((data)=>{return data.id == id});
-    }
     export let dramas:DramaData[]=[
-        {id:1, heroId:1, monsterIds:[11,12,13]},
-        {id:2, heroId:2, monsterIds:[21,22,23]},
-        {id:3, heroId:3, monsterIds:[31,32,33]},
-        {id:4, heroId:4, monsterIds:[41,42]},
-        {id:5, heroId:5, monsterIds:[51]},
-        {id:6, heroId:6, monsterIds:[61,62,63]},
-        {id:7, heroId:7, monsterIds:[71,72,73]},
-        {id:8, heroId:8, monsterIds:[81]},
-        {id:9, heroId:9, monsterIds:[91,92,93]},
-        {id:10, heroId:10, monsterIds:[101,102,103]},
+        {id:1, heroId:1, cost:0, monsterIds:[11,12,13]},
+        {id:9, heroId:9, cost:0, monsterIds:[91,92,93]},
+        {id:3, heroId:3, cost:0, monsterIds:[31,32,33]},
+        {id:2, heroId:2, cost:1000, monsterIds:[21,22,23]},
+        {id:4, heroId:4, cost:1000, monsterIds:[41,42]},
+        {id:5, heroId:5, cost:2000, monsterIds:[51]},
+        {id:6, heroId:6, cost:3000, monsterIds:[61,62,63]},
+        {id:7, heroId:7, cost:4000, monsterIds:[71,72,73]},
+        {id:10, heroId:10, cost:6000, monsterIds:[101,102,103]},
     ]
     export let heros:any[] = [
         {id:1, name:"", url:"Atlas/Hero/hero1" },
@@ -34,7 +32,6 @@ export namespace Config{
         {id:5, name:"", url:"Atlas/Hero/hero5" },
         {id:6, name:"", url:"Atlas/Hero/hero6" },
         {id:7, name:"", url:"Atlas/Hero/hero7" },
-        {id:8, name:"", url:"Atlas/Hero/hero8" },
         {id:9, name:"", url:"Atlas/Hero/hero9" },
         {id:10, name:"", url:"Atlas/Hero/hero10" },
     ] 
@@ -65,8 +62,6 @@ export namespace Config{
         {id:71, url:"Atlas/Monster/monster71", name:"斧头", dirType:DirType.Rotate, box:{size:cc.size(70,90)}, angleSpeedRange:[[-300,-200]] },
         {id:72, url:"Atlas/Monster/monster72", name:"锯子", dirType:DirType.Forwards, box:{size:cc.size(120,45)} },
         {id:73, url:"Atlas/Monster/monster73", name:"剪刀", dirType:DirType.Forwards, box:{size:cc.size(100,60)} },
-
-        {id:81, url:"Atlas/Monster/monster81", name:"噬菌体", dirType:DirType.HorFlip, box:{size:cc.size(60,100)} },
 
         {id:91, url:"Atlas/Monster/monster91", name:"孤独", dirType:DirType.Upward, box:{size:cc.size(110,60)} },
         {id:92, url:"Atlas/Monster/monster92", name:"寂寞", dirType:DirType.Upward, box:{size:cc.size(110,60)} },
@@ -111,9 +106,19 @@ export namespace Config{
         {id:31, name:'黑色', color:cc.color(143,151,74)},
         {id:32, name:'黑色', color:cc.color(138,111,48)},
     ]
-    
+    export let finishRewards = [
+        {type:"coin", cnt: 50, pr:10},
+        {type:"coin", cnt: 100, pr:8},
+        {type:"coin", cnt: 300, pr:5},
+        {type:"coin", cnt: 800, pr:2},
+        {type:"coin", cnt: 1500, pr:1},
+    ];
+    export let gainKeyCosts = [10, 20, 40];
     export function getlvlConf(lvl:number){
         let conf = cc.loader.getRes("Conf/Level");
         return conf.json[lvl];
+    }
+    export function getColorDataByID(id){
+        return colors.find((data)=>{return data.id == id});
     }
 }

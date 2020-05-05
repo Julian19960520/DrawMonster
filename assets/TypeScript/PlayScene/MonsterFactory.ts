@@ -36,15 +36,41 @@ export default class MonsterFactory extends cc.Component {
     constructor(){
         super();
         this.rofFunc = new PiecewiseFunc([
-            cc.v2(0, 2), 
-            cc.v2(10,2.4),
-            cc.v2(20,2.7),
-            cc.v2(30,3),
-            cc.v2(40,3.2),
-            cc.v2(50,3.3),
-            cc.v2(60,3.4),
-            cc.v2(70,3.5),
-            cc.v2(80,3.6),
+            cc.v2(0,2.4), 
+            cc.v2(5,2.4),
+            cc.v2(7,2),
+
+            cc.v2(10,2.8),
+            cc.v2(12,2.4),
+
+            cc.v2(15,3.2),
+            cc.v2(17,2.8),
+
+            cc.v2(20,3.6),
+            cc.v2(22,3.2),
+
+            cc.v2(25,4.0),
+            cc.v2(27,3.6),
+
+            cc.v2(30,4.4),
+            cc.v2(32,4.0),
+
+            cc.v2(35,4.8),
+            cc.v2(37,4.4),
+
+            cc.v2(40,5.2),
+            cc.v2(42,4.8),
+
+            cc.v2(45,5.6),
+            cc.v2(47,4.2),
+
+            cc.v2(50,6.0),
+            cc.v2(52,5.6),
+
+            cc.v2(55,6.4),
+            cc.v2(57,6.0),
+
+            cc.v2(60, 8),
         ]);
         this.sizeFunc = new PiecewiseFunc([
             cc.v2(0,  0.5), 

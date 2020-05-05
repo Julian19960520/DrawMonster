@@ -11,6 +11,9 @@ import { Sound } from "../CocosFrame/Sound";
 import ScrollList from "../CustomUI/ScrollList";
 import PaintPanel from "../Panel/PaintPanel/PaintPanel";
 import EditDramaPanel from "../Panel/EditDramaPanel/EditDramaPanel";
+import Top from "../CocosFrame/Top";
+import Panel from "../CocosFrame/Panel";
+import MessageBox from "../CocosFrame/MessageBox";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -20,6 +23,8 @@ export default class MenuScene extends Scene {
 
     @property(cc.Button)
     playBtn: cc.Button = null;
+    @property(cc.Button)
+    buyBtn: cc.Button = null;
     @property(cc.Button)
     drawBtn: cc.Button = null;
 
@@ -38,6 +43,7 @@ export default class MenuScene extends Scene {
     title:cc.Node = null;
     onLoad () {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
+        this.buyBtn.node.on("click", this.onBuyBtnTap, this);
         this.rankBtn.node.on("click", this.onRankBtnTap, this);
         this.optionBtn.node.on("click", this.onOptionBtnTap, this);
         this.drawBtn.node.on("click", this.onDrawBtnTap, this);
@@ -50,12 +56,15 @@ export default class MenuScene extends Scene {
         this.dramaList.setDataArr(arr);
         let dramaId = DB.Get("user/dramaId");
         let drama = Game.findDramaConf(dramaId);
-        this.dramaList.selectItemByData(drama);
         this.dramaList.centerOnData(drama);
+        this.dramaList.selectItemByData(drama);
     }
     onSelectChild(item, data:DramaData){
         if(data){
             DB.SetLoacl("user/dramaId", data.id);
+            let open = Game.isThemeOpen(data.id);
+            this.playBtn.node.active = open;
+            this.buyBtn.node.active = !open;
         }
     }
     onEnterScene(){
@@ -95,6 +104,7 @@ export default class MenuScene extends Scene {
 
     onDestroy(){
         this.playBtn.node.off("click", this.onPlayBtnTap, this);
+        this.buyBtn.node.off("click", this.onBuyBtnTap, this);
         this.rankBtn.node.off("click", this.onRankBtnTap, this);
         this.optionBtn.node.off("click", this.onOptionBtnTap, this);
     }
@@ -116,6 +126,8 @@ export default class MenuScene extends Scene {
                 loadingScene.Load([
                     PrefabPath.shield,
                     PrefabPath.heart,
+                    PrefabPath.coinBag,
+                    PrefabPath.clock,
                     PrefabPath.monster,
                 ]).then(()=>{
                     SceneManager.ins.Enter("PlayScene").then((playScene:PlayScene)=>{
@@ -133,6 +145,26 @@ export default class MenuScene extends Scene {
             func();
         }
     }
+    private onBuyBtnTap(){
+        Sound.play("clickBtn");
+        let coin = DB.Get("user/coin");
+        let dramaId = DB.Get("user/dramaId");
+        let conf = Game.findDramaConf(dramaId);
+        if(coin < conf.cost){
+            SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
+                messageBox.label.string = "金币不足";
+            })
+        }else{
+            SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
+                messageBox.label.string = "是否购买主题？";
+                messageBox.onOk = ()=>{
+                    DB.SetLoacl("user/coin", coin-conf.cost);
+                    Game.openTheme(conf.id);
+                    this.updateDramaList();
+                }
+            })
+        }
+    }
     private onRankBtnTap(){
         Sound.play("clickBtn");
         this.OpenPanelByName("RankPanel");
@@ -142,6 +174,16 @@ export default class MenuScene extends Scene {
         this.OpenPanelByName("OptionPanel");
     }
     private onDrawBtnTap(){
+        // var bezier = [cc.v2(0, 0), cc.v2(200, 300), cc.v2(0, 500)];
+        // this.drawBtn.node.runAction(cc.sequence(cc.bezierTo(2, bezier), cc.callFunc(()=>{
+        //     Top.ins.showToast("asdf");
+        // })));
+        // Top.ins.bezierSprite({
+        //     url:"Atlas/UI/coin",
+        //     from:Util.convertPosition(this.drawBtn.node, Top.ins.node),
+        //     to:Util.convertPosition(Top.ins.coinBar.iconPos, Top.ins.node),
+        // });
+        // return;
         Sound.play("clickBtn");
         SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
             panel.saveCallback = (path)=>{

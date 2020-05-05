@@ -103,6 +103,11 @@ export default class Monster extends cc.Component {
     }
     setData(conf:MonsterConfig, velocity:cc.Vec2, scale:number){
         this.conf = conf;
+        if(conf.isUserPainting){
+            this.sprite.node.scale = 0.45;
+        }else{
+            this.sprite.node.scale = 1;
+        }
         Game.loadTexture(conf.url, (texture)=>{
             this.setTexture(texture);
         });  

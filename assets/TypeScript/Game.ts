@@ -237,6 +237,8 @@ export namespace Game{
             name:"ID:"+id,
             url:url,
             dirType:DirType.Forwards,
+            circle:{radius:50},
+            isUserPainting:true,
         };
         monsterConfigMap.set(id, monster);
 
@@ -254,15 +256,26 @@ export namespace Game{
         monsterIds.push(allMonsters[0].id);
         monsterIds.push(allMonsters[1].id);
         monsterIds.push(allMonsters[2].id);
-        let drama:DramaData = {id:id, heroId:heroId, monsterIds:monsterIds, isCustom:true};
+        let drama:DramaData = {id:id, heroId:heroId, monsterIds:monsterIds, isCustom:true, cost:0};
         dramaConfigMap.set(id, drama);
 
         let customDramas:any[] = DB.Get("user/customDramas");
         customDramas.unshift(drama);
         allDramas.unshift(drama);
         DB.SetLoacl("user/customDramas", customDramas);
-
+        let openThemeIds = DB.Get("user/openThemeIds");
+        openThemeIds.push(id);
+        DB.SetLoacl("user/openThemeIds", openThemeIds);
         return drama;
+    }
+    export function isThemeOpen(id){
+        let openIds:number[] = DB.Get("user/openThemeIds");
+        return openIds.indexOf(id) >= 0;
+    }
+    export function openTheme(id){
+        let openIds:number[] = DB.Get("user/openThemeIds");
+        openIds.push(id);
+        DB.SetLoacl("user/openThemeIds", openIds);
     }
     /*****************************
      * 排行榜
@@ -284,4 +297,28 @@ export namespace Game{
         rankDatas.splice(newData.rank-1, 0, newData);
         DB.SetLoacl("user/rankDatas", rankDatas);
     }
+    /*****************************
+     * 结束奖励
+     ****************************/
+    export function randomFinishRewards(){
+        let rewards = Config.finishRewards.concat();
+        let res = [];
+        while(res.length < 3){
+            let totalPR = 0;
+            for(let i=0;i<rewards.length;i++){
+                totalPR += rewards[i].pr;
+            }
+            let value = Math.random()*totalPR;
+            for(let i=0;i<rewards.length;i++){
+                value -= rewards[i].pr;
+                if(value<0){
+                    res.push(rewards[i]);
+                    rewards.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
 }
