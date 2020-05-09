@@ -119,7 +119,7 @@ export default class GameOverPanel extends Panel {
                     }
                 },
                 fail:()=>{
-                    Top.ins.showToast("分享失败");
+                    Top.showToast("分享失败");
                 }
             });
         }else if(this.type == "ad"){
@@ -139,17 +139,17 @@ export default class GameOverPanel extends Panel {
                     }
                 },
                 fail:()=>{
-                    Top.ins.showToast("分享失败");
+                    Top.showToast("分享失败");
                 }
             });
         }else if(this.type == "video"){
             GameRecorder.share(()=>{
-                Top.ins.showToast("分享成功");
+                Top.showToast("分享成功");
                 if(this.onGiveUpCallback){
                     this.onGiveUpCallback();
                 }
             },()=>{
-                Top.ins.showToast("分享失败");
+                Top.showToast("分享失败");
             });
         }
     }

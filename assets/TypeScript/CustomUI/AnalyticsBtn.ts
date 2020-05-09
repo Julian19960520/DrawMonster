@@ -8,16 +8,21 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+import { crossPlatform } from "../Frame/CrossPlatform";
+
+const {ccclass, menu, property} = cc._decorator;
 
 @ccclass
-export default class Button extends cc.Button {
-
-
-
-    start () {
-
+@menu("自定义UI/AnalyticsBtn")
+export default class AnalyticsBtn extends cc.Component {
+    onLoad(){
+        this.node.on("click", this.onClick, this);
     }
-
-    // update (dt) {}
+    onClick(){
+        console.log("clickBtn", this.node.name);
+        crossPlatform.reportAnalytics('clickBtn', {
+            timeStamp: new Date().getTime(),
+            btnName: this.node.name,
+        });
+    };
 }

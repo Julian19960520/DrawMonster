@@ -55,7 +55,7 @@ export default class EditDramaPanel extends Panel {
                 this.playCallback();
             }
         }else{
-            Top.ins.showToast("最少选择1个");
+            Top.showToast("最少选择1个");
         }
     }
 

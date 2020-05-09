@@ -175,12 +175,12 @@ export default class MenuScene extends Scene {
     private onDrawBtnTap(){
         // var bezier = [cc.v2(0, 0), cc.v2(200, 300), cc.v2(0, 500)];
         // this.drawBtn.node.runAction(cc.sequence(cc.bezierTo(2, bezier), cc.callFunc(()=>{
-        //     Top.ins.showToast("asdf");
+        //     Top.showToast("asdf");
         // })));
-        // Top.ins.bezierSprite({
+        // Top.bezierSprite({
         //     url:"Atlas/UI/coin",
-        //     from:Util.convertPosition(this.drawBtn.node, Top.ins.node),
-        //     to:Util.convertPosition(Top.ins.coinBar.iconPos, Top.ins.node),
+        //     from:Util.convertPosition(this.drawBtn.node, Top.node),
+        //     to:Util.convertPosition(Top.coinBar.iconPos, Top.node),
         // });
         // return;
         Sound.play("clickBtn");

@@ -176,13 +176,14 @@ export default class Hero extends DB.DataBindComponent {
             }
             if(other.node.name == "CoinBag"){
                 let playScene = SceneManager.ins.findScene(PlayScene);
-                Top.ins.bezierSprite({
+                Top.bezierSprite({
                     url:"Atlas/UI/coin",
-                    from:Util.convertPosition(this.node, Top.ins.node),
-                    to:Util.convertPosition(playScene.coinBar.iconPos, Top.ins.node),
+                    from:Util.convertPosition(this.node, Top.node),
+                    to:Util.convertPosition(playScene.coinBar.iconPos, Top.node),
                     cnt:5,
                     time:0.8,
-                    callback:(finish)=>{
+                    onEnd:(finish)=>{
+                        Sound.play("gainCoin");
                         let coin = DB.Get("user/coin");
                         DB.SetLoacl("user/coin", coin+50);
                     }

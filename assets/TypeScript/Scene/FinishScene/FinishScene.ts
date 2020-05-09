@@ -102,12 +102,13 @@ export default class FinishScene extends Scene {
                     icon.active = false;
                     chestNode.getComponent(cc.Button).enabled = false;
                     chestNode.getComponent(cc.Animation).play("openChest");
-                    Top.ins.bezierSprite({
+                    Top.bezierSprite({
                         url:"Atlas/UI/coin",
-                        from:Util.convertPosition(chestNode, Top.ins.node),
-                        to:Util.convertPosition(this.coinBar.iconPos, Top.ins.node),
+                        from:Util.convertPosition(chestNode, Top.node),
+                        to:Util.convertPosition(this.coinBar.iconPos, Top.node),
                         cnt:Math.floor(coinCnt/50),
-                        callback:(finish)=>{
+                        onEnd:(finish)=>{
+                            Sound.play("gainCoin");
                             let coin = DB.Get("user/coin");
                             DB.SetLoacl("user/coin", coin+50);
                         }
@@ -127,7 +128,7 @@ export default class FinishScene extends Scene {
                     }
                 }
             }else{
-                Top.ins.showToast("没有钥匙了");
+                Top.showToast("没有钥匙了");
             }
         }
     }
@@ -142,16 +143,16 @@ export default class FinishScene extends Scene {
                     this.openAllBtn.node.active = false;
                 },
                 fail:()=>{
-                    Top.ins.showToast("分享失败");
+                    Top.showToast("分享失败");
                 }
             });
         }else if(this.type == "video"){
             AD.showVideoAd(AdUnitId.OpenAllChest, ()=>{
-                Top.ins.showToast("播放成功");
+                Top.showToast("播放成功");
                 this.openAllChest();
                 this.openAllBtn.node.active = false;
             },(err)=>{
-                Top.ins.showToast("播放失败"+err);
+                Top.showToast("播放失败"+err);
             })
         }
     }
@@ -168,12 +169,13 @@ export default class FinishScene extends Scene {
             let coinCnt = this.rewards[this.openCnt].cnt;
             if(!chestNode["isOpen"]){
                 chestNode.getComponent(cc.Animation).play("openChest");
-                Top.ins.bezierSprite({
+                Top.bezierSprite({
                     url:"Atlas/UI/coin",
-                    from:Util.convertPosition(chestNode, Top.ins.node),
-                    to:Util.convertPosition(this.coinBar.iconPos, Top.ins.node),
+                    from:Util.convertPosition(chestNode, Top.node),
+                    to:Util.convertPosition(this.coinBar.iconPos, Top.node),
                     cnt:Math.floor(coinCnt/50),
-                    callback:(finish)=>{
+                    onEnd:(finish)=>{
+                        Sound.play("gainCoin");
                         let coin = DB.Get("user/coin");
                         DB.SetLoacl("user/coin", coin+50);
                     }
@@ -206,7 +208,7 @@ export default class FinishScene extends Scene {
     
     private titleTw = null;
     playAnim(time, killerName:string){
-        Top.ins.blockInput(true);
+        Top.blockInput(true);
         //隐藏标题字
         let labels = this.titleNode.getComponentsInChildren(cc.Label); 
         for(let i=0;i<labels.length;i++){
@@ -272,7 +274,7 @@ export default class FinishScene extends Scene {
             }})
             .delay(0.3)
             .call(()=>{
-                Top.ins.blockInput(false);
+                Top.blockInput(false);
                 this.buttonLayout.active = true;
                 if(this.keyCnt>=3){
                     this.freeOpenAllBtn.node.active = true;

@@ -131,7 +131,7 @@ export default class PlayScene extends Scene {
             this.time += dt;
             this.timeLabel.string = `${Util.fixedNum(this.time, 2)}秒`;
             if(this.hero){
-                let pos = Util.lerpVec2(this.hero.node.position, this.targetPos, 20*dt);
+                let pos = Util.lerpVec2(this.hero.node.position, this.targetPos, 1);
                 this.hero.node.position = pos;
             }
         }

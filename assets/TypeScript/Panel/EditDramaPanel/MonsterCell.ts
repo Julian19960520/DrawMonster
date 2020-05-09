@@ -82,7 +82,7 @@ export default class MonsterCell extends cc.Component {
                     Local.setDirty("user/customDramas");
                     this.setUsingState(true);
                 }else{
-                    Top.ins.showToast("最多选择5个");
+                    Top.showToast("最多选择5个");
                 }
             }
         }
