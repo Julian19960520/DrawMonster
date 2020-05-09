@@ -8,15 +8,15 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Panel from "../../CocosFrame/Panel";
-import SceneManager from "../../CocosFrame/SceneManager";
+import Panel from "../../Frame/Panel";
+import SceneManager from "../../Frame/SceneManager";
 import PlayScene from "../../PlayScene/PlayScene";
-import { Util } from "../../CocosFrame/Util";
-import { Game } from "../../Game";
-import { Sound } from "../../CocosFrame/Sound";
-import { GameRecorder } from "../../GameRecorder";
-import { crossPlatform, wx, tt, Ease } from "../../CocosFrame/dts";
-import Top from "../../CocosFrame/Top";
+import { Util } from "../../Frame/Util";
+import { Game } from "../../Game/Game";
+import { Sound } from "../../Frame/Sound";
+import Top from "../../Frame/Top";
+import { GameRecorder } from "../../Frame/GameRecorder";
+import { tt, wx, crossPlatform } from "../../Frame/CrossPlatform";
 
 const {ccclass, menu, property} = cc._decorator;
 

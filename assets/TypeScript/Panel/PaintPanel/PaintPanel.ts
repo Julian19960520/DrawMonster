@@ -1,20 +1,16 @@
-import Panel from "../../CocosFrame/Panel";
+import Panel from "../../Frame/Panel";
 import Graphics from "../../CustomUI/Graphics";
 import ScrollList from "../../CustomUI/ScrollList";
 import Slider from "../../CustomUI/Slider";
-import { Local } from "../../CocosFrame/Local";
-import { crossPlatform } from "../../CocosFrame/dts";
-import { Util } from "../../CocosFrame/Util";
-import SceneManager from "../../CocosFrame/SceneManager";
-import MessageBox from "../../CocosFrame/MessageBox";
+import SceneManager from "../../Frame/SceneManager";
+import MessageBox from "../../Frame/MessageBox";
 import ToggleGroup from "../../CustomUI/ToggleGroup";
-import Monster from "../../PlayScene/Monster";
-import { DB } from "../../CocosFrame/DataBind";
-import { Config } from "../../CocosFrame/Config";
-import Toggle from "../../CustomUI/Toggle";
-import { Game } from "../../Game";
-import { Sound } from "../../CocosFrame/Sound";
-import Top from "../../CocosFrame/Top";
+import { DB } from "../../Frame/DataBind";
+import { Config } from "../../Frame/Config";
+import { Game } from "../../Game/Game";
+import { Sound } from "../../Frame/Sound";
+import { crossPlatform } from "../../Frame/CrossPlatform";
+import Monster from "../../Scene/PlayScene/Monster";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -173,9 +169,9 @@ export default class PaintPanel extends Panel {
     }
     saveCallback = null;
     onSaveBtnTap(){
-        if(this.graphics.opStack.length<3){
+        if(this.graphics.opStack.length<1){
             SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
-                messageBox.toOkStyle("多画几笔吧（最少3笔）")
+                messageBox.toOkStyle("多画几笔吧（最少1笔）")
             });
             return;
         }

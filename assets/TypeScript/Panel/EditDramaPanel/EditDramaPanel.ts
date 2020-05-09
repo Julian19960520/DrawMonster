@@ -8,13 +8,13 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Panel from "../../CocosFrame/Panel";
+import Panel from "../../Frame/Panel";
 import ScrollList from "../../CustomUI/ScrollList";
-import { Game } from "../../Game";
-import { DB } from "../../CocosFrame/DataBind";
-import SceneManager from "../../CocosFrame/SceneManager";
-import { Sound } from "../../CocosFrame/Sound";
-import Top from "../../CocosFrame/Top";
+import { Game } from "../../Game/Game";
+import { DB } from "../../Frame/DataBind";
+import SceneManager from "../../Frame/SceneManager";
+import { Sound } from "../../Frame/Sound";
+import Top from "../../Frame/Top";
 
 const {ccclass, menu, property} = cc._decorator;
 

@@ -8,9 +8,9 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Panel from "../CocosFrame/Panel";
-import SceneManager, { ShiftAnima } from "../CocosFrame/SceneManager";
-import { Sound } from "../CocosFrame/Sound";
+import Panel from "../Frame/Panel";
+import SceneManager, { ShiftAnima } from "../Frame/SceneManager";
+import { Sound } from "../Frame/Sound";
 
 const {ccclass, menu, property} = cc._decorator;
 

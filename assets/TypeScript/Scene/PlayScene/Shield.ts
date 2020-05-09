@@ -8,31 +8,28 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import ScrollList from "../../CustomUI/ScrollList";
+import Monster from "./Monster";
 import { Util } from "../../Frame/Util";
+
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class RankItem extends cc.Component {
-
-    @property(cc.Label)
-    rankLabel: cc.Label = null;
-    @property(cc.Label)
-    timeLabel: cc.Label = null;
-    @property(cc.Node)
-    selectBox: cc.Node = null;
-
-    onLoad () {
-        this.node.on(ScrollList.SET_DATA, this.setData, this);
-        this.node.on(ScrollList.STATE_CHANGE, this.onStateChange, this);
+export default class Shield extends cc.Component {
+    beginAnim(){
+        this.getComponent(cc.Animation).play("shield");
     }
-
-    setData (data) {
-        this.rankLabel.string = "#"+data.rank;
-        this.timeLabel.string =  `${Util.fixedNum(data.time, 2)}秒`;
+    endAnim(){
+        this.getComponent(cc.Animation).stop();
     }
-    onStateChange(select){
-        this.selectBox.active = select;
+    onCollisionEnter(other:cc.Collider, self){
+        if(other.node.group == "Monster"){
+            let monster = other.node.getComponent(Monster);
+            if(monster && monster.active){
+                monster.active = false;
+                monster.beginDrop();
+                this.node.dispatchEvent(Util.customEvent("shakeScene", true, 0.5));
+            }
+        }
     }
 }

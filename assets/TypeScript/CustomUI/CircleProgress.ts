@@ -8,7 +8,7 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { DB } from "../CocosFrame/DataBind";
+import { DB } from "../Frame/DataBind";
 
 const {ccclass, menu, property} = cc._decorator;
 

@@ -9,13 +9,13 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import ScrollList from "../../CustomUI/ScrollList";
-import SceneManager from "../../CocosFrame/SceneManager";
+import SceneManager from "../../Frame/SceneManager";
 import PaintPanel from "../PaintPanel/PaintPanel";
-import { DB } from "../../CocosFrame/DataBind";
-import { Game } from "../../Game";
-import { Sound } from "../../CocosFrame/Sound";
-import Top from "../../CocosFrame/Top";
-import { Local } from "../../CocosFrame/Local";
+import { DB } from "../../Frame/DataBind";
+import { Game } from "../../Game/Game";
+import { Sound } from "../../Frame/Sound";
+import Top from "../../Frame/Top";
+import { Local } from "../../Frame/Local";
 
 const {ccclass, property} = cc._decorator;
 

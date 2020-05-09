@@ -8,14 +8,14 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Panel from "../CocosFrame/Panel";
+import Panel from "../Frame/Panel";
 import Slider from "../CustomUI/Slider";
-import { DB } from "../CocosFrame/DataBind";
-import SceneManager from "../CocosFrame/SceneManager";
-import { Sound } from "../CocosFrame/Sound";
-import Music from "../CocosFrame/Music";
-import { Local } from "../CocosFrame/Local";
-import { tt } from "../CocosFrame/dts";
+import { DB } from "../Frame/DataBind";
+import SceneManager from "../Frame/SceneManager";
+import { Sound } from "../Frame/Sound";
+import Music from "../Frame/Music";
+import { Local } from "../Frame/Local";
+import { tt } from "../Frame/dts";
 
 const {ccclass, menu, property} = cc._decorator;
 

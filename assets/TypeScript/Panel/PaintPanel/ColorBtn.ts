@@ -9,7 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import ScrollList from "../../CustomUI/ScrollList";
-import { Config } from "../../CocosFrame/Config";
+import { Config } from "../../Frame/Config";
 
 const {ccclass, property} = cc._decorator;
 

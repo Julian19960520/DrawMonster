@@ -1,4 +1,4 @@
-import { Util } from "../CocosFrame/Util";
+import { Util } from "../Frame/Util";
 
 const {ccclass,menu, property} = cc._decorator;
 

@@ -8,31 +8,28 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import ScrollList from "../../CustomUI/ScrollList";
+import PhyObject from "../PlayScene/PhyObject";
 import { Util } from "../../Frame/Util";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class RankItem extends cc.Component {
-
-    @property(cc.Label)
-    rankLabel: cc.Label = null;
-    @property(cc.Label)
-    timeLabel: cc.Label = null;
-    @property(cc.Node)
-    selectBox: cc.Node = null;
-
-    onLoad () {
-        this.node.on(ScrollList.SET_DATA, this.setData, this);
-        this.node.on(ScrollList.STATE_CHANGE, this.onStateChange, this);
+export default class TitleWordBtn extends cc.Component {
+    @property
+    private hp = 2;
+    onLoad(){
+        this.node.on("click", this.onClick, this)
     }
-
-    setData (data) {
-        this.rankLabel.string = "#"+data.rank;
-        this.timeLabel.string =  `${Util.fixedNum(data.time, 2)}秒`;
-    }
-    onStateChange(select){
-        this.selectBox.active = select;
+    onClick(){
+        this.hp--;
+        if(this.hp<=0){
+            this.node.off("click", this.onClick, this)
+            let phyObject = this.node.addComponent(PhyObject);
+            phyObject.velocity = cc.v2( Util.randomInt(-100, 100), Util.randomInt(300, 500));
+            phyObject.g = 1200;
+            setTimeout(() => {
+                this.node.removeFromParent();
+            }, 3000);
+        }
     }
 }

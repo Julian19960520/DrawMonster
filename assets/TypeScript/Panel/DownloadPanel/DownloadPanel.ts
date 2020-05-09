@@ -8,7 +8,7 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Panel from "../../CocosFrame/Panel";
+import Panel from "../../Frame/Panel";
 import ScrollList from "../../CustomUI/ScrollList";
 
 const {ccclass, menu, property} = cc._decorator;
