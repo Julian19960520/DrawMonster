@@ -20,8 +20,8 @@ import { Key } from "../../Game/Key";
 const {ccclass, menu, property} = cc._decorator;
 
 @ccclass
-@menu("面板/EditDramaPanel")
-export default class EditDramaPanel extends Panel {
+@menu("面板/EditThemePanel")
+export default class EditThemePanel extends Panel {
     @property(ScrollList)
     usingMonsterList:ScrollList = null;
     @property(ScrollList)
@@ -37,9 +37,9 @@ export default class EditDramaPanel extends Panel {
             let arr:any[] = [{createNew:true}].concat(Game.allMonsters);
             this.allMonsterList.setDataArr(arr);
         });
-        this.Bind(Key.DramaId, (dramaId)=>{
-            let drama = Game.findDramaConf(dramaId);
-            let monsterIds = drama.monsterIds.concat();
+        this.Bind(Key.ThemeId, (themeId)=>{
+            let theme = Game.findThemeConf(themeId);
+            let monsterIds = theme.monsterIds.concat();
             let arr = [];
             for(let i=0; i<monsterIds.length; i++){
                 arr.push({id:monsterIds[i]});
@@ -49,9 +49,9 @@ export default class EditDramaPanel extends Panel {
     }
     onPlayBtnTap(){
         Sound.play("clickBtn");
-        let dramaId = DB.Get(Key.DramaId);
-        let drama = Game.findDramaConf(dramaId);
-        if(drama.monsterIds.length>0){
+        let themeId = DB.Get(Key.ThemeId);
+        let theme = Game.findThemeConf(themeId);
+        if(theme.monsterIds.length>0){
             if(this.playCallback){
                 this.playCallback();
             }

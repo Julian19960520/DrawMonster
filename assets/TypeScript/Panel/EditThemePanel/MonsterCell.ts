@@ -49,38 +49,38 @@ export default class MonsterCell extends cc.Component {
                 this.monsterSprite.spriteFrame = frame;
             });
 
-            let dramaId  = DB.Get(Key.DramaId);
-            let drama = Game.findDramaConf(dramaId);
-            let idx = drama.monsterIds.indexOf(this.data.id);
+            let themeId  = DB.Get(Key.ThemeId);
+            let theme = Game.findThemeConf(themeId);
+            let idx = theme.monsterIds.indexOf(this.data.id);
             this.setUsingState(idx>=0);
         }
     }
     onClick(){
         Sound.play("clickBtn");
-        let dramaId  = DB.Get(Key.DramaId);
-        let drama = Game.findDramaConf(dramaId);
+        let themeId  = DB.Get(Key.ThemeId);
+        let theme = Game.findThemeConf(themeId);
         if(this.data.createNew){
             SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
                 panel.saveCallback = (path)=>{
                     let monster = Game.newMonsterConf(path);
-                    drama.monsterIds.push(monster.id);
-                    DB.Invoke(Key.DramaId);
+                    theme.monsterIds.push(monster.id);
+                    DB.Invoke(Key.ThemeId);
                     DB.Invoke(Key.CustomMonsters);
-                    Local.setDirty(Key.CustomDramas);
+                    Local.setDirty(Key.CustomThemes);
                 }
             });
         }else{
-            let idx = drama.monsterIds.indexOf(this.data.id);
+            let idx = theme.monsterIds.indexOf(this.data.id);
             if(idx>=0){
-                drama.monsterIds.splice(idx, 1);
+                theme.monsterIds.splice(idx, 1);
                 this.setUsingState(false);
-                DB.Invoke(Key.DramaId);
-                Local.setDirty(Key.CustomDramas);
+                DB.Invoke(Key.ThemeId);
+                Local.setDirty(Key.CustomThemes);
             }else{
-                if(drama.monsterIds.length<5){
-                    drama.monsterIds.push(this.data.id);
-                    DB.Invoke(Key.DramaId);
-                    Local.setDirty(Key.CustomDramas);
+                if(theme.monsterIds.length<5){
+                    theme.monsterIds.push(this.data.id);
+                    DB.Invoke(Key.ThemeId);
+                    Local.setDirty(Key.CustomThemes);
                     this.setUsingState(true);
                 }else{
                     Top.showToast("最多选择5个");

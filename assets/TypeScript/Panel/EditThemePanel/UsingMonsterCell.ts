@@ -59,12 +59,12 @@ export default class UsingMonsterCell extends cc.Component {
     }
     onClick(){
         Sound.play("clickBtn");
-        let dramaId  = DB.Get(Key.DramaId);
-        let drama = Game.findDramaConf(dramaId);
-        let idx = drama.monsterIds.indexOf(this.data.id);
-        drama.monsterIds.splice(idx, 1);
-        DB.SetLoacl(Key.DramaId,dramaId);
+        let themeId  = DB.Get(Key.ThemeId);
+        let theme = Game.findThemeConf(themeId);
+        let idx = theme.monsterIds.indexOf(this.data.id);
+        theme.monsterIds.splice(idx, 1);
+        DB.SetLoacl(Key.ThemeId,themeId);
         DB.Invoke(Key.CustomMonsters);
-        Local.setDirty(Key.CustomDramas);
+        Local.setDirty(Key.CustomThemes);
     }
 }

@@ -1,4 +1,4 @@
-import { ColorData, DramaData, MonsterConfig } from "./dts";
+import { ColorData, ThemeData, MonsterConfig } from "./dts";
 export enum PrefabPath{
     heart = "Prefab/Prop/Heart",
     shield = "Prefab/Prop/Shield",
@@ -13,7 +13,7 @@ export enum DirType{
     Rotate,     //旋转
 }
 export namespace Config{
-    export let dramas:DramaData[]=[
+    export let themes:ThemeData[]=[
         {id:1, heroId:1, cost:0, monsterIds:[11,12,13]},
         {id:9, heroId:9, cost:0, monsterIds:[91,92,93]},
         {id:3, heroId:3, cost:0, monsterIds:[31,32,33]},

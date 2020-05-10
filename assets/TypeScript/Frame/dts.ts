@@ -24,7 +24,7 @@ export class RankData{
     rank:number;
     time:number;
 };
-export class DramaData{
+export class ThemeData{
     id:number;
     heroId:number;
     monsterIds:number[];

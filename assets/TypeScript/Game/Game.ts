@@ -1,4 +1,4 @@
-import { RankData, DramaData, MonsterConfig, HeroConfig } from "../Frame/dts";
+import { RankData, ThemeData, MonsterConfig, HeroConfig } from "../Frame/dts";
 import { DB } from "../Frame/DataBind";
 import { Config, DirType } from "../Frame/Config";
 import { crossPlatform } from "../Frame/CrossPlatform";
@@ -186,10 +186,10 @@ export namespace Game{
      ****************************/
     let heroConfigMap = new Map<number, HeroConfig>();
     let monsterConfigMap = new Map<number, MonsterConfig>();
-    let dramaConfigMap = new Map<number, DramaData>();
+    let themeConfigMap = new Map<number, ThemeData>();
     export let allHeros = [];
     export let allMonsters = [];
-    export let allDramas = [];
+    export let allThemes = [];
     //初始化
     function initHeroAndMonsterConfig(){
         allHeros = DB.Get(Key.CustomHeros).concat(Config.heros);
@@ -202,10 +202,10 @@ export namespace Game{
             let monster = allMonsters[i];
             monsterConfigMap.set(monster.id, monster);
         }
-        allDramas = DB.Get(Key.CustomDramas).concat(Config.dramas);
-        for(let i=0; i<allDramas.length; i++){
-            let drama = allDramas[i];
-            dramaConfigMap.set(drama.id, drama);
+        allThemes = DB.Get(Key.CustomThemes).concat(Config.themes);
+        for(let i=0; i<allThemes.length; i++){
+            let theme = allThemes[i];
+            themeConfigMap.set(theme.id, theme);
         }
     }
     //找到配置
@@ -215,8 +215,8 @@ export namespace Game{
     export function findMonsterConf(id){
         return monsterConfigMap.get(id);
     }
-    export function findDramaConf(id){
-        return dramaConfigMap.get(id);
+    export function findThemeConf(id){
+        return themeConfigMap.get(id);
     }
     //新建配置
     export function newHeroConf(name, url){
@@ -251,23 +251,23 @@ export namespace Game{
         return monster;
     }
 
-    export function newDramaConf(heroId){
+    export function newThemeConf(heroId){
         let id = newUuid();
         let monsterIds = [];
         monsterIds.push(allMonsters[0].id);
         monsterIds.push(allMonsters[1].id);
         monsterIds.push(allMonsters[2].id);
-        let drama:DramaData = {id:id, heroId:heroId, monsterIds:monsterIds, isCustom:true, cost:0};
-        dramaConfigMap.set(id, drama);
+        let theme:ThemeData = {id:id, heroId:heroId, monsterIds:monsterIds, isCustom:true, cost:0};
+        themeConfigMap.set(id, theme);
 
-        let customDramas:any[] = DB.Get(Key.CustomDramas);
-        customDramas.unshift(drama);
-        allDramas.unshift(drama);
-        DB.SetLoacl(Key.CustomDramas, customDramas);
+        let customThemes:any[] = DB.Get(Key.CustomThemes);
+        customThemes.unshift(theme);
+        allThemes.unshift(theme);
+        DB.SetLoacl(Key.CustomThemes, customThemes);
         let openThemeIds = DB.Get(Key.OpenThemeIds);
         openThemeIds.push(id);
         DB.SetLoacl(Key.OpenThemeIds, openThemeIds);
-        return drama;
+        return theme;
     }
     export function isThemeOpen(id){
         let openIds:number[] = DB.Get(Key.OpenThemeIds);

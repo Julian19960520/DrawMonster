@@ -51,9 +51,9 @@ export default class GameOverPanel extends Panel {
         this.rebornBtn.node.on("click", this.onRebornBtnTap, this);
         this.giveupBtn.node.on("click", this.onGiveupBtnTap, this);
 
-        this.Bind(Key.DramaId, (dramaId)=>{
-            let drama = Game.findDramaConf(dramaId);
-            let hero = Game.findHeroConf(drama.heroId);
+        this.Bind(Key.ThemeId, (themeId)=>{
+            let theme = Game.findThemeConf(themeId);
+            let hero = Game.findHeroConf(theme.heroId);
             if(hero){
                 Game.loadTexture(hero.url, (texture)=>{
                     this.heroSprite.spriteFrame = new cc.SpriteFrame(texture);

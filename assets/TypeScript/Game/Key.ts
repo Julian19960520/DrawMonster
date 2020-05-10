@@ -1,11 +1,11 @@
 export enum Key{
     Coin = "user/coin",
-    DramaId = "user/dramaId",
+    ThemeId = "user/themeId",
     ColorIds = "user/colorIds",
     RankDatas = "user/rankDatas",
     CustomMonsters = "user/customMonsters",
     CustomHeros = "user/customHeros",
-    CustomDramas = "user/customDramas",
+    CustomThemes = "user/customThemes",
     OpenThemeIds = "user/openThemeIds",
 
     Sound = "option/Sound",

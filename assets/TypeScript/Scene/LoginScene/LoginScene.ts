@@ -47,12 +47,12 @@ export default class LoginScene extends Scene {
         this.loadValue(Key.Sensitivity, 1.5);
 
         this.loadValue(Key.Coin, 100);
-        this.loadValue(Key.DramaId, 9);
+        this.loadValue(Key.ThemeId, 9);
         this.loadValue(Key.ColorIds, [1,2,3,4,5,6,7,8,9,10, 11,12,13,14,15,16,17,18,19,20, 21,22,23,24,25,26,27,28,29,30, 31,32]);
         this.loadValue(Key.RankDatas, []);
         this.loadValue(Key.CustomMonsters, []);
         this.loadValue(Key.CustomHeros, []);
-        this.loadValue(Key.CustomDramas, []);
+        this.loadValue(Key.CustomThemes, []);
         this.loadValue(Key.OpenThemeIds, [9,1,3]);
 
         Game.Init();

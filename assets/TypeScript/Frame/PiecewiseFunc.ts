@@ -10,9 +10,6 @@
 
 import { Util } from "./Util";
 
-const {ccclass, property} = cc._decorator;
-
-@ccclass
 export default class PiecewiseFunc {
     constructor(public points:cc.Vec2[]){
         points.sort((a, b) => {

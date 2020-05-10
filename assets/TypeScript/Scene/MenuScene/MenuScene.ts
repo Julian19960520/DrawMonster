@@ -2,18 +2,18 @@ import Scene from "../../Frame/Scene";
 import ScrollList from "../../CustomUI/ScrollList";
 import { Game } from "../../Game/Game";
 import { DB } from "../../Frame/DataBind";
-import { DramaData, RankData } from "../../Frame/dts";
+import { ThemeData, RankData } from "../../Frame/dts";
 import { Util } from "../../Frame/Util";
 import { Sound } from "../../Frame/Sound";
 import SceneManager from "../../Frame/SceneManager";
 import LoadingScene from "../LoadingScene/LoadingScene";
 import { PrefabPath } from "../../Frame/Config";
 import PlayScene from "../PlayScene/PlayScene";
-import EditDramaPanel from "../../Panel/EditDramaPanel/EditDramaPanel";
 import MessageBox from "../../Frame/MessageBox";
 import PaintPanel from "../../Panel/PaintPanel/PaintPanel";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
+import EditThemePanel from "../../Panel/EditThemePanel/EditThemePanel";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -38,7 +38,7 @@ export default class MenuScene extends Scene {
     highScoreLabel: cc.Label = null;
 
     @property(ScrollList)
-    dramaList:ScrollList = null;
+    themeList:ScrollList = null;
 
     @property(cc.Node)
     title:cc.Node = null;
@@ -48,21 +48,21 @@ export default class MenuScene extends Scene {
         this.rankBtn.node.on("click", this.onRankBtnTap, this);
         this.optionBtn.node.on("click", this.onOptionBtnTap, this);
         this.drawBtn.node.on("click", this.onDrawBtnTap, this);
-        this.dramaList.node.on(ScrollList.SELECT_CHILD, this.onSelectChild, this);
+        this.themeList.node.on(ScrollList.SELECT_CHILD, this.onSelectChild, this);
         this.initHighScoreLabel();
-        this.updateDramaList();
+        this.updateThemeList();
     }
-    public updateDramaList(){
-        let arr = [null].concat(Game.allDramas).concat([null]);
-        this.dramaList.setDataArr(arr);
-        let dramaId = DB.Get(Key.DramaId);
-        let drama = Game.findDramaConf(dramaId);
-        this.dramaList.centerOnData(drama);
-        this.dramaList.selectItemByData(drama);
+    public updateThemeList(){
+        let arr = [null].concat(Game.allThemes).concat([null]);
+        this.themeList.setDataArr(arr);
+        let themeId = DB.Get(Key.ThemeId);
+        let theme = Game.findThemeConf(themeId);
+        this.themeList.centerOnData(theme);
+        this.themeList.selectItemByData(theme);
     }
-    onSelectChild(item, data:DramaData){
+    onSelectChild(item, data:ThemeData){
         if(data){
-            DB.SetLoacl(Key.DramaId, data.id);
+            DB.SetLoacl(Key.ThemeId, data.id);
             let open = Game.isThemeOpen(data.id);
             this.playBtn.node.active = open;
             this.buyBtn.node.active = !open;
@@ -75,7 +75,7 @@ export default class MenuScene extends Scene {
             cc.tween(node).delay(delay).to(0.5,{scale:1, angle:0},{easing:cc.easing.backOut}).start();
         }
         this.playTitleAnim();
-        btnAnim(this.dramaList.node, 0.2);
+        btnAnim(this.themeList.node, 0.2);
         btnAnim(this.playBtn.node, 0.4);
         btnAnim(this.drawBtn.node, 0.5);
         btnAnim(this.rankBtn.node, 0);
@@ -137,9 +137,9 @@ export default class MenuScene extends Scene {
                 });
             });
         }
-        let drama = Game.findDramaConf(DB.Get(Key.DramaId));
-        if(drama.isCustom){
-            this.OpenPanelByName("EditDramaPanel",(panel:EditDramaPanel)=>{
+        let theme = Game.findThemeConf(DB.Get(Key.ThemeId));
+        if(theme.isCustom){
+            this.OpenPanelByName("EditThemePanel",(panel:EditThemePanel)=>{
                 panel.playCallback = func;
             });
         }else{
@@ -149,8 +149,8 @@ export default class MenuScene extends Scene {
     private onBuyBtnTap(){
         Sound.play("clickBtn");
         let coin = DB.Get(Key.Coin);
-        let dramaId = DB.Get(Key.DramaId);
-        let conf = Game.findDramaConf(dramaId);
+        let themeId = DB.Get(Key.ThemeId);
+        let conf = Game.findThemeConf(themeId);
         if(coin < conf.cost){
             SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
                 messageBox.label.string = "金币不足";
@@ -161,7 +161,7 @@ export default class MenuScene extends Scene {
                 messageBox.onOk = ()=>{
                     DB.SetLoacl(Key.Coin, coin-conf.cost);
                     Game.openTheme(conf.id);
-                    this.updateDramaList();
+                    this.updateThemeList();
                 }
             })
         }
@@ -189,9 +189,9 @@ export default class MenuScene extends Scene {
         SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
             panel.saveCallback = (path)=>{
                 let hero = Game.newHeroConf("角色", path);
-                let drama = Game.newDramaConf(hero.id);
-                DB.SetLoacl(Key.DramaId, drama.id);
-                this.updateDramaList();
+                let theme = Game.newThemeConf(hero.id);
+                DB.SetLoacl(Key.ThemeId, theme.id);
+                this.updateThemeList();
             }
         });
     }

@@ -63,9 +63,9 @@ export default class Hero extends DB.DataBindComponent {
         this.initHeart();
         this.closeShield();
         this.shieldTime = 0;
-        this.Bind(Key.DramaId,(dramaId)=>{
-            let drama = Game.findDramaConf(dramaId);
-            let hero = Game.findHeroConf(drama.heroId);
+        this.Bind(Key.ThemeId,(themeId)=>{
+            let theme = Game.findThemeConf(themeId);
+            let hero = Game.findHeroConf(theme.heroId);
             Game.loadTexture(hero.url, (texture)=>{
                 this.setTexture(texture);
             });

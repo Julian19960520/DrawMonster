@@ -9,14 +9,14 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import ScrollList from "../../CustomUI/ScrollList";
-import { DramaData } from "../../Frame/dts";
+import { ThemeData } from "../../Frame/dts";
 import { Game } from "../../Game/Game";
 import { Util } from "../../Frame/Util";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class DramaCell extends cc.Component {
+export default class ThemeCell extends cc.Component {
     // @property(cc.Node)
     // normalNode:cc.Node = null;
     @property(cc.Node)
@@ -53,7 +53,7 @@ export default class DramaCell extends cc.Component {
         let scale = 1 - 0.7*cc.easing.quartInOut(dx/half);
         this.scaleNode.scale = scale;
     }
-    setData(data:DramaData){
+    setData(data:ThemeData){
         if(!data){
             this.scaleNode.active = false;
             this.lockNode.active = false;

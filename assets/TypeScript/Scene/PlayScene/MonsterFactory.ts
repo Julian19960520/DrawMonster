@@ -86,9 +86,9 @@ export default class MonsterFactory extends cc.Component {
         this.timer = 0;
         this.time = 0;
         this.playing = true;
-        let dramaId  = DB.Get(Key.DramaId);
-        let drama = Game.findDramaConf(dramaId);
-        let usingMonstersIds:number[] = drama.monsterIds;
+        let themeId  = DB.Get(Key.ThemeId);
+        let theme = Game.findThemeConf(themeId);
+        let usingMonstersIds:number[] = theme.monsterIds;
         this.usingMonsters = [];
         usingMonstersIds.forEach((id)=>{
             let monster = Game.findMonsterConf(id);
