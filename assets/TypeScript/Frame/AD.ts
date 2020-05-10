@@ -1,8 +1,9 @@
-import { VideoAd, tt, crossPlatform } from "./CrossPlatform";
+import { VideoAd, tt, crossPlatform, systemInfo } from "./CrossPlatform";
 
 export enum AdUnitId{
     OpenAllChest = "1f2a4ppm2abh4bgeal",
     Reborn = "15k0a126hpl1k4178l",
+    FinishBottom = "faa789b9d3d8nf7alm",
 }
 export enum VideoError{
     UserCancel,
@@ -10,7 +11,6 @@ export enum VideoError{
 }
 export namespace AD{
     export function showVideoAd(id:AdUnitId, succ, fail){
-        console.log("createRewardedVideoAd", crossPlatform.createRewardedVideoAd);
         //创建视频组件（单例）
         let videoAd = crossPlatform.createRewardedVideoAd({adUnitId:id});        
         //点击关闭视频组件时回调
@@ -46,5 +46,27 @@ export namespace AD{
                         fail(VideoError.NoAd);
                     });
             });
+    }
+    export function showBanner(id:AdUnitId, succ, fail){
+        let width = 128;
+        let bannerAd = crossPlatform.createBannerAd({
+            adUnitId: id,
+            style: {
+                width: width,
+                top: systemInfo.windowHeight - width*(9/16)
+            }
+        });
+        let loadedCall = () => {
+            bannerAd.show()
+                .then(() => {
+                    console.log("广告显示成功");
+                })
+                .catch(err => {
+                    console.log("广告组件出现问题", err);
+                });
+            bannerAd.offLoad(loadedCall);
+        }
+        bannerAd.onLoad(loadedCall);
+        return bannerAd;
     }
 }

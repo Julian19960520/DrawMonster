@@ -16,6 +16,24 @@ export class VideoAd{
     onClose(listener){};
     offClose(listener){};
 }
+export class BannerAd{
+    style:{
+        top:number, left:number, width:number
+    }
+    show(){
+        return new Promise((resolve, reject)=>{
+            resolve();
+        })
+    };
+    hide(){};
+    destroy(){};
+    onLoad(listener){};
+    offLoad(listener){};
+    onError(listener){};
+    offError(listener){};
+    onResize(listener){};
+    offResize(listener){};
+}
 export class SystemInfo{
     system:	        string;//	操作系统版本	"11.4" | "8.0.0"	1.0.0
     platform:	    string;//	操作系统类型	"ios" | "android"	1.0.0
@@ -222,6 +240,9 @@ export class CrossPlatform{
     }
     createRewardedVideoAd(data:{adUnitId:string}){
         return new VideoAd();
+    }
+    createBannerAd(data:{adUnitId: string, adIntervals?:string, style?:{ width?:number, left?:number, top?:number} }){
+        return new BannerAd();
     }
     reportAnalytics(evtName:string, obj:Object){
         console.log("Analytics", evtName, obj);

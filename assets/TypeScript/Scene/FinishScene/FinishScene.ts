@@ -54,7 +54,7 @@ export default class FinishScene extends Scene {
     @property(CoinBar)
     coinBar:CoinBar = null;
 
-    private type:"share"|"video" = "share";
+    private type:"share"|"video"|"ad" = "share";
     // private gainKeyCosts = [10, 20, 40];
     private keyCnt = 0;
     private openCnt = 0;
@@ -64,7 +64,7 @@ export default class FinishScene extends Scene {
         this.openAllBtn.node.on("click",this.onOpenAllBtnTap, this);
         this.freeOpenAllBtn.node.on("click",this.onFreeOpenAllBtnTap, this);
         if(tt){
-            this.setBtnType("video");
+            this.setBtnType(Math.random()>0.2?"ad":"share");
         }else if(wx){
             this.setBtnType("share");
         }
@@ -148,7 +148,7 @@ export default class FinishScene extends Scene {
                     Top.showToast("分享失败");
                 }
             });
-        }else if(this.type == "video"){
+        }else if(this.type == "ad"){
             AD.showVideoAd(AdUnitId.OpenAllChest, ()=>{
                 Top.showToast("播放成功");
                 this.openAllChest();

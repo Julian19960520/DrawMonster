@@ -66,7 +66,7 @@ export default class GameOverPanel extends Panel {
                 this.setRebornBtnType("video");
             }else{
                 //录屏时间太短，转分享或视频
-                this.setRebornBtnType("share");
+                this.setRebornBtnType(Math.random()>0.2?"ad":"share");
             }
         }
         else if(wx){
@@ -87,12 +87,12 @@ export default class GameOverPanel extends Panel {
             let sprite = Util.searchChild(this.rebornBtn.node, "icon").getComponent(cc.Sprite);
             sprite.spriteFrame = spriteFrame;
         });
-        let label = this.rebornBtn.getComponentInChildren(cc.Label);
-        if(this.type == "video"){
-            label.string = "分享录屏";
-        }else{
-            label.string = "复活";
-        }
+        // let label = this.rebornBtn.getComponentInChildren(cc.Label);
+        // if(this.type == "video"){
+        //     label.string = "分享录屏";
+        // }else{
+        //     label.string = "复活";
+        // }
     }
 
     onRebornBtnTap(){
@@ -115,7 +115,7 @@ export default class GameOverPanel extends Panel {
         }else if(this.type == "ad"){
             //广告
             AD.showVideoAd(AdUnitId.Reborn, ()=>{
-                Top.showToast("播放成功");
+                SceneManager.ins.popPanel();
                 if(this.onRebornCallback){
                     this.onRebornCallback();
                 }
@@ -125,7 +125,7 @@ export default class GameOverPanel extends Panel {
         }else if(this.type == "video"){
             //录屏
             GameRecorder.share(()=>{
-                Top.showToast("分享成功");
+                SceneManager.ins.popPanel();
                 if(this.onRebornCallback){
                     this.onRebornCallback();
                 }

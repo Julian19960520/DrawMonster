@@ -187,7 +187,8 @@ export default class PlayScene extends Scene {
         Sound.play("gameStartBtn");
         this.reborned = true;
         this.hero.openShield(3);
-        this.hero.node.position = this.targetPos;
+        this.targetPos = cc.Vec2.ZERO;
+        this.hero.node.position = cc.Vec2.ZERO;
         this.resume();
     }
     gameOver(killerName){

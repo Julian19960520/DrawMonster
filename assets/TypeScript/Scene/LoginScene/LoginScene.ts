@@ -7,6 +7,7 @@ import Music from "../../Frame/Music";
 import { Game } from "../../Game/Game";
 import SceneManager from "../../Frame/SceneManager";
 import { Key } from "../../Game/Key";
+import { Vibrate } from "../../Frame/Vibrate";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -31,7 +32,14 @@ export default class LoginScene extends Scene {
         DB.Set(key, value);
         return value;
     }
-
+    loadBoolValue(key, def){
+        let value = Local.Get(key);
+        if(value === undefined){
+            value = def;
+        }
+        DB.Set(key, value);
+        return value;
+    }
     login(){
         let version = Local.Get(Key.Version) || 0;
         if(version == 0){
@@ -44,6 +52,7 @@ export default class LoginScene extends Scene {
 
         Sound.volume = this.loadValue(Key.Sound, 0.5);
         Music.volume = this.loadValue(Key.Music, 0.5);
+        Vibrate.enable = this.loadBoolValue(Key.Vibrate, true);
         this.loadValue(Key.Sensitivity, 1.5);
 
         this.loadValue(Key.Coin, 100);

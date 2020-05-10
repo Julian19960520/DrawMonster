@@ -21,6 +21,7 @@ import Top from "../../Frame/Top";
 import PhyObject from "./PhyObject";
 import { crossPlatform } from "../../Frame/CrossPlatform";
 import { Key } from "../../Game/Key";
+import { Vibrate } from "../../Frame/Vibrate";
 
 const {ccclass, property} = cc._decorator;
 
@@ -142,7 +143,7 @@ export default class Hero extends DB.DataBindComponent {
                         this.playDropSprite(child.getComponent(cc.Sprite).spriteFrame, 0.5);
                         this.node.dispatchEvent(Util.customEvent("shakeScene", true, 1));
                         Sound.play("dorpHeart");
-                        crossPlatform.vibrateShort();
+                        Vibrate.short();
                         break;
                     }
                 }
@@ -151,13 +152,13 @@ export default class Hero extends DB.DataBindComponent {
                     let dir = this.node.x - other.node.x;
                     this.beginDrop(dir);
                     this.node.dispatchEvent(Util.customEvent("shakeScene", true, 1));
-                    crossPlatform.vibrateLong();
+                    Vibrate.short();
                 }
             }
         }
         //碰到道具，处理获得道具
         if(other.node.group == "Prop"){
-            crossPlatform.vibrateShort();
+            Vibrate.short();
             if(other.node.name == "Heart"){
                 let find = false;
                 for(let i=0;i<this.heartGroup.childrenCount; i++){

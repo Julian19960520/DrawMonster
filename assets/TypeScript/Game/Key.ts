@@ -8,10 +8,11 @@ export enum Key{
     CustomThemes = "user/customThemes",
     OpenThemeIds = "user/openThemeIds",
 
-    Sound = "option/Sound",
+    Sound = "option/sound",
     Music = "option/music",
     Sensitivity = "option/sensitivity",
-
+    Vibrate = "option/vibrate",
+    
     Uuid = "uuid",
     Version = "version",
 }

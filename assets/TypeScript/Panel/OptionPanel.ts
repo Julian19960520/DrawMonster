@@ -17,6 +17,8 @@ import Music from "../Frame/Music";
 import Button from "../CustomUI/Button";
 import Top from "../Frame/Top";
 import { Key } from "../Game/Key";
+import Toggle from "../CustomUI/Toggle";
+import { Vibrate } from "../Frame/Vibrate";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -38,6 +40,8 @@ export default class OptionPanel extends Panel {
 
     @property(Slider)
     sensitivitySlider: Slider = null;
+    @property(Toggle)
+    vibrateToggle: Toggle = null;
 
     onLoad () {
         super.onLoad();
@@ -48,16 +52,18 @@ export default class OptionPanel extends Panel {
         this.soundSlider.node.on(Slider.MOVE, this.onSoundSliderMove, this);
         this.musicSlider.node.on(Slider.MOVE, this.onMusicSliderMove, this);
         this.sensitivitySlider.node.on(Slider.MOVE, this.onSensitivitySliderMove, this);
-
+        this.vibrateToggle.node.on(Toggle.STATE_CHANGE, this.onVibrateToggleChange, this);
         this.soundSlider.value = DB.Get(Key.Sound);
         this.musicSlider.value = DB.Get(Key.Music);
         this.sensitivitySlider.value = DB.Get(Key.Sensitivity);
+        this.vibrateToggle.isChecked = DB.Get(Key.Vibrate);
     }
     onResetBtnTap(){
         Sound.play("clickBtn");
         this.musicSlider.value = 0.5;
         this.soundSlider.value = 0.5;
-        this.sensitivitySlider.value = 1;
+        this.sensitivitySlider.value = 1.5;
+        this.vibrateToggle.isChecked = true;
         Top.showToast("已重置");
     }
     onSaveBtnTap(){
@@ -77,5 +83,12 @@ export default class OptionPanel extends Panel {
     onSensitivitySliderMove(value){
         Sound.play("clickBtn");
         DB.SetLoacl(Key.Sensitivity, value);
+    }
+    onVibrateToggleChange(b, click){
+        if(click){
+            Sound.play("clickBtn");
+            DB.SetLoacl(Key.Vibrate, b);
+            Vibrate.enable = b;
+        }
     }
 }

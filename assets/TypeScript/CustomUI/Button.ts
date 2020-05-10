@@ -3,6 +3,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
 import { crossPlatform } from "../Frame/CrossPlatform";
+import { Vibrate } from "../Frame/Vibrate";
 const {ccclass, menu, property} = cc._decorator;
 
 @ccclass
@@ -12,7 +13,7 @@ export default class Button extends cc.Button {
         this.node.on("click", this.onClick, this);
     }
     onClick(){
-        crossPlatform.vibrateShort();
+        Vibrate.short();
         this.reportAnalytics();
     };
     reportAnalytics(){

@@ -15,6 +15,7 @@ import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import EditThemePanel from "../../Panel/EditThemePanel/EditThemePanel";
 import { crossPlatform } from "../../Frame/CrossPlatform";
+import { AD, AdUnitId } from "../../Frame/AD";
 
 
 const {ccclass, menu, property} = cc._decorator;
