@@ -2,6 +2,7 @@ import PanelStack from "./PanelStack";
 import { DB } from "./DataBind";
 import SceneManager from "./SceneManager";
 import { Sound } from "./Sound";
+import Button from "../CustomUI/Button";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -20,8 +21,8 @@ export default class Panel extends DB.DataBindComponent {
 
     @property
     public autoHidePrePanel = true;        //当打开此面板时，是否自动隐藏前一个面板（隐藏不会引起关闭）
-    @property(cc.Button)
-    public closeBtn:cc.Button = null;
+    @property(Button)
+    public closeBtn:Button = null;
     
     public panelStack:PanelStack = null;
     public closeCallback = null;

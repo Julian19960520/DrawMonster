@@ -11,6 +11,7 @@
 import Panel from "../Frame/Panel";
 import SceneManager, { ShiftAnima } from "../Frame/SceneManager";
 import { Sound } from "../Frame/Sound";
+import Button from "../CustomUI/Button";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -18,11 +19,11 @@ const {ccclass, menu, property} = cc._decorator;
 @menu("面板/PausePanel")
 export default class PausePanel extends Panel {
 
-    @property(cc.Button)
-    backBtn: cc.Button = null;
+    @property(Button)
+    backBtn: Button = null;
 
-    @property(cc.Button)
-    resumeBtn: cc.Button = null;
+    @property(Button)
+    resumeBtn: Button = null;
 
     backHomeCallback = null;
     onLoad () {

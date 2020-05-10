@@ -15,6 +15,7 @@ import SceneManager from "../Frame/SceneManager";
 import MessageBox from "../Frame/MessageBox";
 import { DB } from "../Frame/DataBind";
 import { Sound } from "../Frame/Sound";
+import Button from "../CustomUI/Button";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -22,11 +23,11 @@ const {ccclass, menu, property} = cc._decorator;
 @menu("面板/RankPanel")
 export default class RankPanel extends Panel {
 
-    @property(cc.Button)
-    clearBtn: cc.Button = null;
+    @property(Button)
+    clearBtn: Button = null;
 
-    @property(cc.Button)
-    okBtn: cc.Button = null;
+    @property(Button)
+    okBtn: Button = null;
 
     @property(ScrollList)
     scrollList: ScrollList = null;

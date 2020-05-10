@@ -19,6 +19,7 @@ import Monster from "./Monster";
 import SceneManager from "../../Frame/SceneManager";
 import Top from "../../Frame/Top";
 import PhyObject from "./PhyObject";
+import { crossPlatform } from "../../Frame/CrossPlatform";
 
 const {ccclass, property} = cc._decorator;
 
@@ -140,6 +141,7 @@ export default class Hero extends DB.DataBindComponent {
                         this.playDropSprite(child.getComponent(cc.Sprite).spriteFrame, 0.5);
                         this.node.dispatchEvent(Util.customEvent("shakeScene", true, 1));
                         Sound.play("dorpHeart");
+                        crossPlatform.vibrateShort();
                         break;
                     }
                 }
@@ -148,11 +150,13 @@ export default class Hero extends DB.DataBindComponent {
                     let dir = this.node.x - other.node.x;
                     this.beginDrop(dir);
                     this.node.dispatchEvent(Util.customEvent("shakeScene", true, 1));
+                    crossPlatform.vibrateLong();
                 }
             }
         }
         //碰到道具，处理获得道具
         if(other.node.group == "Prop"){
+            crossPlatform.vibrateShort();
             if(other.node.name == "Heart"){
                 let find = false;
                 for(let i=0;i<this.heartGroup.childrenCount; i++){
@@ -161,7 +165,7 @@ export default class Hero extends DB.DataBindComponent {
                         find = true;
                         child.active = true;
                         other.node.dispatchEvent(Util.customEvent("returnPool"));
-                        Sound.play("getHeart");
+                        Sound.play("gainProp");
                         break;
                     }
                 }
@@ -172,9 +176,10 @@ export default class Hero extends DB.DataBindComponent {
             if(other.node.name == "Shield"){
                 this.openShield(3);
                 other.node.dispatchEvent(Util.customEvent("returnPool"));
-                Sound.play("getHeart");
+                Sound.play("gainProp");
             }
             if(other.node.name == "CoinBag"){
+                Sound.play("gainProp");
                 let playScene = SceneManager.ins.findScene(PlayScene);
                 Top.bezierSprite({
                     url:"Atlas/UI/coin",

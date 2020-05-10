@@ -12,6 +12,7 @@ import PlayScene from "../PlayScene/PlayScene";
 import EditDramaPanel from "../../Panel/EditDramaPanel/EditDramaPanel";
 import MessageBox from "../../Frame/MessageBox";
 import PaintPanel from "../../Panel/PaintPanel/PaintPanel";
+import Button from "../../CustomUI/Button";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -20,17 +21,17 @@ const {ccclass, menu, property} = cc._decorator;
 @menu("场景/MenuScene")
 export default class MenuScene extends Scene {
 
-    @property(cc.Button)
-    playBtn: cc.Button = null;
-    @property(cc.Button)
-    buyBtn: cc.Button = null;
-    @property(cc.Button)
-    drawBtn: cc.Button = null;
+    @property(Button)
+    playBtn: Button = null;
+    @property(Button)
+    buyBtn: Button = null;
+    @property(Button)
+    drawBtn: Button = null;
 
-    @property(cc.Button)
-    optionBtn: cc.Button = null;
-    @property(cc.Button)
-    rankBtn: cc.Button = null;
+    @property(Button)
+    optionBtn: Button = null;
+    @property(Button)
+    rankBtn: Button = null;
 
     @property(cc.Label)
     highScoreLabel: cc.Label = null;

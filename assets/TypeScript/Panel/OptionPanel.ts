@@ -14,8 +14,8 @@ import { DB } from "../Frame/DataBind";
 import SceneManager from "../Frame/SceneManager";
 import { Sound } from "../Frame/Sound";
 import Music from "../Frame/Music";
-import { Local } from "../Frame/Local";
-import { tt } from "../Frame/dts";
+import Button from "../CustomUI/Button";
+import Top from "../Frame/Top";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -23,11 +23,11 @@ const {ccclass, menu, property} = cc._decorator;
 @menu("面板/OptionPanel")
 export default class OptionPanel extends Panel {
 
-    @property(cc.Button)
-    resetBtn: cc.Button = null;
+    @property(Button)
+    resetBtn: Button = null;
 
-    @property(cc.Button)
-    saveBtn: cc.Button = null;
+    @property(Button)
+    saveBtn: Button = null;
 
     @property(Slider)
     soundSlider: Slider = null;
@@ -57,6 +57,7 @@ export default class OptionPanel extends Panel {
         this.musicSlider.value = 0.5;
         this.soundSlider.value = 0.5;
         this.sensitivitySlider.value = 1;
+        Top.showToast("已重置");
     }
     onSaveBtnTap(){
         Sound.play("clickBtn");

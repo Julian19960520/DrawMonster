@@ -11,6 +11,7 @@ import { Game } from "../../Game/Game";
 import { Sound } from "../../Frame/Sound";
 import { crossPlatform } from "../../Frame/CrossPlatform";
 import Monster from "../../Scene/PlayScene/Monster";
+import Button from "../../CustomUI/Button";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -28,18 +29,18 @@ export default class PaintPanel extends Panel {
     colorList:ScrollList = null;
 
     //绘画
-    @property(cc.Button)
-    pencilBtn:cc.Button = null;
-    @property(cc.Button)
-    eraserBtn:cc.Button = null;
-    @property(cc.Button)
-    revertBtn:cc.Button = null;
-    @property(cc.Button)
-    clearBtn:cc.Button = null;
-    @property(cc.Button)
-    bucketBtn:cc.Button = null;
-    @property(cc.Button)
-    saveBtn:cc.Button = null;
+    @property(Button)
+    pencilBtn:Button = null;
+    @property(Button)
+    eraserBtn:Button = null;
+    @property(Button)
+    revertBtn:Button = null;
+    @property(Button)
+    clearBtn:Button = null;
+    @property(Button)
+    bucketBtn:Button = null;
+    @property(Button)
+    saveBtn:Button = null;
     @property(Graphics)
     graphics:Graphics = null;
     @property(Slider)
@@ -185,7 +186,7 @@ export default class PaintPanel extends Panel {
         }
         SceneManager.ins.popPanel();
     }
-    highLightBtn(targetBtn:cc.Button){
+    highLightBtn(targetBtn:Button){
         let btns = [this.pencilBtn, this.eraserBtn, this.bucketBtn];
         for(let i=0; i<btns.length; i++){
             let btn = btns[i];

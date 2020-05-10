@@ -9,8 +9,6 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import ScrollList from "../../CustomUI/ScrollList";
-import { Util } from "../../Frame/Util";
-import Toggle from "../../CustomUI/Toggle";
 import SceneManager from "../../Frame/SceneManager";
 import PaintPanel from "../PaintPanel/PaintPanel";
 import { DB } from "../../Frame/DataBind";

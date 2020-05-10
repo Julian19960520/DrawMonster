@@ -10,6 +10,7 @@
 
 import Monster from "./Monster";
 import { Util } from "../../Frame/Util";
+import { crossPlatform } from "../../Frame/CrossPlatform";
 
 
 const {ccclass, property} = cc._decorator;
@@ -29,6 +30,7 @@ export default class Shield extends cc.Component {
                 monster.active = false;
                 monster.beginDrop();
                 this.node.dispatchEvent(Util.customEvent("shakeScene", true, 0.5));
+                crossPlatform.vibrateShort();
             }
         }
     }

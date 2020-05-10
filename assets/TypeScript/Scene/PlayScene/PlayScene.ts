@@ -1,4 +1,5 @@
 import Scene from "../../Frame/Scene";import Hero, { State } from "./Hero";import MonsterFactory from "./MonsterFactory";import PropFactory from "./PropFactory";import CoinBar from "../../Game/CoinBar";import Music from "../../Frame/Music";import { Sound } from "../../Frame/Sound";import PausePanel from "../../Panel/PausePanel";import SceneManager from "../../Frame/SceneManager";import { Game } from "../../Game/Game";import { Util } from "../../Frame/Util";import GameOverPanel from "../../Panel/GameOverPanel/GameOverPanel";import FinishScene from "../FinishScene/FinishScene";import { GameRecorder } from "../../Frame/GameRecorder";
+import Button from "../../CustomUI/Button";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -6,8 +7,8 @@ const {ccclass, menu, property} = cc._decorator;
 @ccclass
 @menu('场景/PlayScene') 
 export default class PlayScene extends Scene {
-    @property(cc.Button)
-    pauseBtn: cc.Button = null;
+    @property(Button)
+    pauseBtn: Button = null;
 
     @property(cc.Label)
     timeLabel: cc.Label = null;

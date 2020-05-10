@@ -19,6 +19,7 @@ import CoinBar from "../../Game/CoinBar";
 import { Config } from "../../Frame/Config";
 import { crossPlatform, tt, wx } from "../../Frame/CrossPlatform";
 import { AD, AdUnitId } from "../../Frame/AD";
+import Button from "../../CustomUI/Button";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -31,14 +32,14 @@ export default class FinishScene extends Scene {
     @property(cc.ProgressBar)
     timeProgress: cc.ProgressBar = null;
 
-    @property(cc.Button)
-    openAllBtn: cc.Button = null;
+    @property(Button)
+    openAllBtn: Button = null;
 
-    @property(cc.Button)
-    freeOpenAllBtn: cc.Button = null;
+    @property(Button)
+    freeOpenAllBtn: Button = null;
 
-    @property(cc.Button)
-    backBtn: cc.Button = null;
+    @property(Button)
+    backBtn: Button = null;
 
     @property(cc.Node)
     buttonLayout: cc.Node = null;
@@ -46,8 +47,8 @@ export default class FinishScene extends Scene {
     @property(cc.Node)
     keyNode: cc.Node = null;
 
-    @property(cc.Button)
-    chestBtn: cc.Button = null;
+    @property(Button)
+    chestBtn: Button = null;
     
     @property(CoinBar)
     coinBar:CoinBar = null;
@@ -100,7 +101,7 @@ export default class FinishScene extends Scene {
                 .call(()=>{
                     Sound.play("openChest");
                     icon.active = false;
-                    chestNode.getComponent(cc.Button).enabled = false;
+                    chestNode.getComponent(Button).enabled = false;
                     chestNode.getComponent(cc.Animation).play("openChest");
                     Top.bezierSprite({
                         url:"Atlas/UI/coin",

@@ -12,9 +12,9 @@ import Panel from "../../Frame/Panel";
 import ScrollList from "../../CustomUI/ScrollList";
 import { Game } from "../../Game/Game";
 import { DB } from "../../Frame/DataBind";
-import SceneManager from "../../Frame/SceneManager";
 import { Sound } from "../../Frame/Sound";
 import Top from "../../Frame/Top";
+import Button from "../../CustomUI/Button";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -26,8 +26,8 @@ export default class EditDramaPanel extends Panel {
     @property(ScrollList)
     allMonsterList:ScrollList = null;
 
-    @property(cc.Button)
-    playBtn:cc.Button = null;
+    @property(Button)
+    playBtn:Button = null;
     playCallback = null;
     onLoad(){
         super.onLoad();

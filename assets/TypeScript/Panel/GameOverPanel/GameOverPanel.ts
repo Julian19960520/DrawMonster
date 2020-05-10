@@ -10,13 +10,13 @@
 
 import Panel from "../../Frame/Panel";
 import SceneManager from "../../Frame/SceneManager";
-import PlayScene from "../../PlayScene/PlayScene";
 import { Util } from "../../Frame/Util";
 import { Game } from "../../Game/Game";
 import { Sound } from "../../Frame/Sound";
 import Top from "../../Frame/Top";
 import { GameRecorder } from "../../Frame/GameRecorder";
 import { tt, wx, crossPlatform } from "../../Frame/CrossPlatform";
+import Button from "../../CustomUI/Button";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -24,14 +24,14 @@ const {ccclass, menu, property} = cc._decorator;
 @menu("面板/GameOverPanel")
 export default class GameOverPanel extends Panel {
 
-    @property(cc.Button)
-    giveupBtn: cc.Button = null;
+    @property(Button)
+    giveupBtn: Button = null;
 
-    @property(cc.Button)
-    rebornBtn: cc.Button = null;
+    @property(Button)
+    rebornBtn: Button = null;
 
-    @property(cc.Button)
-    videoBtn: cc.Button = null;
+    @property(Button)
+    videoBtn: Button = null;
 
     @property(cc.Node)
     titleNode: cc.Node = null;

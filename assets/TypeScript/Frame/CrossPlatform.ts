@@ -226,6 +226,8 @@ export class CrossPlatform{
     reportAnalytics(evtName:string, obj:Object){
         console.log("Analytics", evtName, obj);
     };
+    vibrateShort(){};
+    vibrateLong(){};
 }
 
 export let crossPlatform:CrossPlatform = new CrossPlatform();

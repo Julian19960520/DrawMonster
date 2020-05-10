@@ -1,6 +1,7 @@
 import Panel from "../Frame/Panel";
 import SceneManager from "./SceneManager";
 import { Sound } from "./Sound";
+import Button from "../CustomUI/Button";
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
@@ -18,10 +19,10 @@ const {ccclass, menu, property} = cc._decorator;
 export default class MessageBox extends Panel {
     @property(cc.Label)
     public label:cc.Label = null;
-    @property(cc.Button)
-    public okBtn:cc.Button = null;
-    @property(cc.Button)
-    public cancelBtn:cc.Button = null;
+    @property(Button)
+    public okBtn:Button = null;
+    @property(Button)
+    public cancelBtn:Button = null;
 
     public onOk = null;
     public onCancel = null;
