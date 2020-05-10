@@ -19,6 +19,7 @@ import SceneManager from "../../Frame/SceneManager";
 import PlayScene from "./PlayScene";
 import { PoolManager } from "../../Frame/PoolManager";
 import { PrefabPath } from "../../Frame/Config";
+import { Key } from "../../Game/Key";
 
 
 
@@ -85,7 +86,7 @@ export default class MonsterFactory extends cc.Component {
         this.timer = 0;
         this.time = 0;
         this.playing = true;
-        let dramaId  = DB.Get("user/dramaId");
+        let dramaId  = DB.Get(Key.DramaId);
         let drama = Game.findDramaConf(dramaId);
         let usingMonstersIds:number[] = drama.monsterIds;
         this.usingMonsters = [];

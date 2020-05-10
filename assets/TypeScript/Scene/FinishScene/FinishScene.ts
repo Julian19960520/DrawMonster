@@ -20,6 +20,7 @@ import { Config } from "../../Frame/Config";
 import { crossPlatform, tt, wx } from "../../Frame/CrossPlatform";
 import { AD, AdUnitId } from "../../Frame/AD";
 import Button from "../../CustomUI/Button";
+import { Key } from "../../Game/Key";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -110,8 +111,8 @@ export default class FinishScene extends Scene {
                         cnt:Math.floor(coinCnt/50),
                         onEnd:(finish)=>{
                             Sound.play("gainCoin");
-                            let coin = DB.Get("user/coin");
-                            DB.SetLoacl("user/coin", coin+50);
+                            let coin = DB.Get(Key.Coin);
+                            DB.SetLoacl(Key.Coin, coin+50);
                         }
                     });
                 }).start();
@@ -177,8 +178,8 @@ export default class FinishScene extends Scene {
                     cnt:Math.floor(coinCnt/50),
                     onEnd:(finish)=>{
                         Sound.play("gainCoin");
-                        let coin = DB.Get("user/coin");
-                        DB.SetLoacl("user/coin", coin+50);
+                        let coin = DB.Get(Key.Coin);
+                        DB.SetLoacl(Key.Coin, coin+50);
                     }
                 });
                 this.openCnt++;

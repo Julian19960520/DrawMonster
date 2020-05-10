@@ -20,6 +20,7 @@ import SceneManager from "../../Frame/SceneManager";
 import Top from "../../Frame/Top";
 import PhyObject from "./PhyObject";
 import { crossPlatform } from "../../Frame/CrossPlatform";
+import { Key } from "../../Game/Key";
 
 const {ccclass, property} = cc._decorator;
 
@@ -62,7 +63,7 @@ export default class Hero extends DB.DataBindComponent {
         this.initHeart();
         this.closeShield();
         this.shieldTime = 0;
-        this.Bind("user/dramaId",(dramaId)=>{
+        this.Bind(Key.DramaId,(dramaId)=>{
             let drama = Game.findDramaConf(dramaId);
             let hero = Game.findHeroConf(drama.heroId);
             Game.loadTexture(hero.url, (texture)=>{
@@ -189,8 +190,8 @@ export default class Hero extends DB.DataBindComponent {
                     time:0.8,
                     onEnd:(finish)=>{
                         Sound.play("gainCoin");
-                        let coin = DB.Get("user/coin");
-                        DB.SetLoacl("user/coin", coin+50);
+                        let coin = DB.Get(Key.Coin);
+                        DB.SetLoacl(Key.Coin, coin+50);
                     }
                 });
                 other.node.dispatchEvent(Util.customEvent("returnPool"));

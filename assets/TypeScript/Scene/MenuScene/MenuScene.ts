@@ -13,6 +13,7 @@ import EditDramaPanel from "../../Panel/EditDramaPanel/EditDramaPanel";
 import MessageBox from "../../Frame/MessageBox";
 import PaintPanel from "../../Panel/PaintPanel/PaintPanel";
 import Button from "../../CustomUI/Button";
+import { Key } from "../../Game/Key";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -54,14 +55,14 @@ export default class MenuScene extends Scene {
     public updateDramaList(){
         let arr = [null].concat(Game.allDramas).concat([null]);
         this.dramaList.setDataArr(arr);
-        let dramaId = DB.Get("user/dramaId");
+        let dramaId = DB.Get(Key.DramaId);
         let drama = Game.findDramaConf(dramaId);
         this.dramaList.centerOnData(drama);
         this.dramaList.selectItemByData(drama);
     }
     onSelectChild(item, data:DramaData){
         if(data){
-            DB.SetLoacl("user/dramaId", data.id);
+            DB.SetLoacl(Key.DramaId, data.id);
             let open = Game.isThemeOpen(data.id);
             this.playBtn.node.active = open;
             this.buyBtn.node.active = !open;
@@ -109,7 +110,7 @@ export default class MenuScene extends Scene {
         this.optionBtn.node.off("click", this.onOptionBtnTap, this);
     }
     private initHighScoreLabel(){
-        let rankDatas:RankData[] = DB.Get("user/rankDatas");
+        let rankDatas:RankData[] = DB.Get(Key.RankDatas);
         if(rankDatas.length == 0){
             this.highScoreLabel.node.active = false;
         }else{
@@ -131,12 +132,12 @@ export default class MenuScene extends Scene {
                     PrefabPath.monster,
                 ]).then(()=>{
                     SceneManager.ins.Enter("PlayScene").then((playScene:PlayScene)=>{
-                        playScene.restart(DB.Get("user/dramaId"));
+                        playScene.restart();
                     });
                 });
             });
         }
-        let drama = Game.findDramaConf(DB.Get("user/dramaId"));
+        let drama = Game.findDramaConf(DB.Get(Key.DramaId));
         if(drama.isCustom){
             this.OpenPanelByName("EditDramaPanel",(panel:EditDramaPanel)=>{
                 panel.playCallback = func;
@@ -147,8 +148,8 @@ export default class MenuScene extends Scene {
     }
     private onBuyBtnTap(){
         Sound.play("clickBtn");
-        let coin = DB.Get("user/coin");
-        let dramaId = DB.Get("user/dramaId");
+        let coin = DB.Get(Key.Coin);
+        let dramaId = DB.Get(Key.DramaId);
         let conf = Game.findDramaConf(dramaId);
         if(coin < conf.cost){
             SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
@@ -158,7 +159,7 @@ export default class MenuScene extends Scene {
             SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
                 messageBox.label.string = "是否购买主题？";
                 messageBox.onOk = ()=>{
-                    DB.SetLoacl("user/coin", coin-conf.cost);
+                    DB.SetLoacl(Key.Coin, coin-conf.cost);
                     Game.openTheme(conf.id);
                     this.updateDramaList();
                 }
@@ -189,7 +190,7 @@ export default class MenuScene extends Scene {
             panel.saveCallback = (path)=>{
                 let hero = Game.newHeroConf("角色", path);
                 let drama = Game.newDramaConf(hero.id);
-                DB.SetLoacl("user/dramaId", drama.id);
+                DB.SetLoacl(Key.DramaId, drama.id);
                 this.updateDramaList();
             }
         });

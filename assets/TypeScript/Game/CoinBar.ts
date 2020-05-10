@@ -9,6 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { DB } from "../Frame/DataBind";
+import { Key } from "./Key";
 
 const {ccclass, property} = cc._decorator;
 
@@ -19,7 +20,7 @@ export default class CoinBar extends DB.DataBindComponent {
     @property(cc.Node)
     public iconPos: cc.Node = null;
     onLoad () {
-        this.Bind("user/coin",(coin)=>{
+        this.Bind(Key.Coin,(coin)=>{
             this.label.string = coin;
         });
     }

@@ -16,6 +16,7 @@ import { Game } from "../../Game/Game";
 import { Sound } from "../../Frame/Sound";
 import Top from "../../Frame/Top";
 import { Local } from "../../Frame/Local";
+import { Key } from "../../Game/Key";
 
 const {ccclass, property} = cc._decorator;
 
@@ -48,7 +49,7 @@ export default class MonsterCell extends cc.Component {
                 this.monsterSprite.spriteFrame = frame;
             });
 
-            let dramaId  = DB.Get("user/dramaId");
+            let dramaId  = DB.Get(Key.DramaId);
             let drama = Game.findDramaConf(dramaId);
             let idx = drama.monsterIds.indexOf(this.data.id);
             this.setUsingState(idx>=0);
@@ -56,16 +57,16 @@ export default class MonsterCell extends cc.Component {
     }
     onClick(){
         Sound.play("clickBtn");
-        let dramaId  = DB.Get("user/dramaId");
+        let dramaId  = DB.Get(Key.DramaId);
         let drama = Game.findDramaConf(dramaId);
         if(this.data.createNew){
             SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
                 panel.saveCallback = (path)=>{
                     let monster = Game.newMonsterConf(path);
                     drama.monsterIds.push(monster.id);
-                    DB.Invoke("user/dramaId");
-                    DB.Invoke("user/customMonsters");
-                    Local.setDirty("user/customDramas");
+                    DB.Invoke(Key.DramaId);
+                    DB.Invoke(Key.CustomMonsters);
+                    Local.setDirty(Key.CustomDramas);
                 }
             });
         }else{
@@ -73,13 +74,13 @@ export default class MonsterCell extends cc.Component {
             if(idx>=0){
                 drama.monsterIds.splice(idx, 1);
                 this.setUsingState(false);
-                DB.Invoke("user/dramaId");
-                Local.setDirty("user/customDramas");
+                DB.Invoke(Key.DramaId);
+                Local.setDirty(Key.CustomDramas);
             }else{
                 if(drama.monsterIds.length<5){
                     drama.monsterIds.push(this.data.id);
-                    DB.Invoke("user/dramaId");
-                    Local.setDirty("user/customDramas");
+                    DB.Invoke(Key.DramaId);
+                    Local.setDirty(Key.CustomDramas);
                     this.setUsingState(true);
                 }else{
                     Top.showToast("最多选择5个");

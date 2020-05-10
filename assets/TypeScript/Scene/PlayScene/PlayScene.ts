@@ -1,5 +1,6 @@
 import Scene from "../../Frame/Scene";import Hero, { State } from "./Hero";import MonsterFactory from "./MonsterFactory";import PropFactory from "./PropFactory";import CoinBar from "../../Game/CoinBar";import Music from "../../Frame/Music";import { Sound } from "../../Frame/Sound";import PausePanel from "../../Panel/PausePanel";import SceneManager from "../../Frame/SceneManager";import { Game } from "../../Game/Game";import { Util } from "../../Frame/Util";import GameOverPanel from "../../Panel/GameOverPanel/GameOverPanel";import FinishScene from "../FinishScene/FinishScene";import { GameRecorder } from "../../Frame/GameRecorder";
 import Button from "../../CustomUI/Button";
+import { Key } from "../../Game/Key";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -33,6 +34,7 @@ export default class PlayScene extends Scene {
 
     private time = 0;
     private playing = false;
+    private reborned = false;   //是否已经复活过
     private targetPos:cc.Vec2 = cc.Vec2.ZERO;
     private sensitivity = 1;
     private oriPos:cc.Vec2 = null;
@@ -45,7 +47,7 @@ export default class PlayScene extends Scene {
         this.touchNode.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.on("shakeScene", this.onShakeScene, this);
         this.node.on("gameOver", this.onGameOver, this);
-        this.Bind("option/sensitivity", (sensitivity)=>{
+        this.Bind(Key.Sensitivity, (sensitivity)=>{
             this.sensitivity = sensitivity;
         });
     }
@@ -95,32 +97,28 @@ export default class PlayScene extends Scene {
             if(current>=1){
                 if(opend)return;
                     opend = true;
-                this.onGameOverPanel(evt.detail.monsterName);
+                let killerName = evt.detail.monsterName;
+                if(!this.reborned){
+                    //还没重生过，则给一次重生机会
+                    this.OpenPanelByName("GameOverPanel",(panel:GameOverPanel)=>{
+                        //重试
+                        panel.onRebornCallback = ()=>{
+                            this.reborn();
+                        }
+                        //放弃
+                        panel.onGiveUpCallback = ()=>{
+                            this.gameOver(killerName);
+                        };
+                    });
+                }else{
+                    //已经重生过了，直接今日结算界面
+                    this.gameOver(killerName);
+                }
             }
             return current;
         }}).start();
     }
-    private onGameOverPanel(killerName){
-        let time = Util.fixedNum(this.time, 2);
-        this.OpenPanelByName("GameOverPanel",(panel:GameOverPanel)=>{
-            //重试
-            panel.onRebornCallback = ()=>{
-                this.reborn();
-            }
-            //放弃
-            panel.onGiveUpCallback = ()=>{
-                Game.addRankData(time);
-                SceneManager.ins.findScene(PlayScene).savelyExit(()=>{
-                    SceneManager.ins.Enter("FinishScene").then((finish:FinishScene)=>{
-                        finish.setData({
-                            time:time,
-                            killerName:killerName,
-                        })
-                    });
-                });
-            };
-        });
-    }
+
     private onTouchMove(event:cc.Event.EventTouch){
         if(this.playing){
             this.targetPos.addSelf(event.getDelta().mul(this.sensitivity));
@@ -137,7 +135,7 @@ export default class PlayScene extends Scene {
             }
         }
     }
-    restart(dramaId = 1){
+    restart(){
         this.music.play();
         this.time = 0;
         this.monsterFactory.clear();
@@ -147,6 +145,7 @@ export default class PlayScene extends Scene {
         this.hero.setState(State.active);
         this.hero.node.position = this.targetPos = cc.Vec2.ZERO;
         this.playing = true;
+        this.reborned = false;
         GameRecorder.start();
     }
     pause(){
@@ -180,8 +179,21 @@ export default class PlayScene extends Scene {
     }
     reborn(){
         Sound.play("gameStartBtn");
+        this.reborned = true;
         this.hero.openShield(3);
         this.hero.node.position = this.targetPos;
         this.resume();
+    }
+    gameOver(killerName){
+        let time = Util.fixedNum(this.time, 2);
+        Game.addRankData(time);
+        SceneManager.ins.findScene(PlayScene).savelyExit(()=>{
+            SceneManager.ins.Enter("FinishScene").then((finish:FinishScene)=>{
+                finish.setData({
+                    time:time,
+                    killerName:killerName,
+                })
+            });
+        });
     }
 }

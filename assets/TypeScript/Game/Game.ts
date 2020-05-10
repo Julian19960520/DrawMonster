@@ -2,6 +2,7 @@ import { RankData, DramaData, MonsterConfig, HeroConfig } from "../Frame/dts";
 import { DB } from "../Frame/DataBind";
 import { Config, DirType } from "../Frame/Config";
 import { crossPlatform } from "../Frame/CrossPlatform";
+import { Key } from "./Key";
 
 export namespace Game{
     export let timeScale = 1;
@@ -191,17 +192,17 @@ export namespace Game{
     export let allDramas = [];
     //初始化
     function initHeroAndMonsterConfig(){
-        allHeros = DB.Get("user/customHeros").concat(Config.heros);
+        allHeros = DB.Get(Key.CustomHeros).concat(Config.heros);
         for(let i=0; i<allHeros.length; i++){
             let hero = allHeros[i];
             heroConfigMap.set(hero.id, hero);
         }
-        allMonsters = DB.Get("user/customMonsters").concat(Config.monsters);
+        allMonsters = DB.Get(Key.CustomMonsters).concat(Config.monsters);
         for(let i=0; i<allMonsters.length; i++){
             let monster = allMonsters[i];
             monsterConfigMap.set(monster.id, monster);
         }
-        allDramas = DB.Get("user/customDramas").concat(Config.dramas);
+        allDramas = DB.Get(Key.CustomDramas).concat(Config.dramas);
         for(let i=0; i<allDramas.length; i++){
             let drama = allDramas[i];
             dramaConfigMap.set(drama.id, drama);
@@ -223,10 +224,10 @@ export namespace Game{
         let hero = {id:id, name:name, url:url};
         heroConfigMap.set(id, hero);
 
-        let customHeros:any[] = DB.Get("user/customHeros");
+        let customHeros:any[] = DB.Get(Key.CustomHeros);
         customHeros.unshift(hero);
         allHeros.unshift(hero);
-        DB.SetLoacl("user/customHeros", customHeros);
+        DB.SetLoacl(Key.CustomHeros, customHeros);
 
         return hero;
     }
@@ -242,10 +243,10 @@ export namespace Game{
         };
         monsterConfigMap.set(id, monster);
 
-        let customMonsters:any[] = DB.Get("user/customMonsters");
+        let customMonsters:any[] = DB.Get(Key.CustomMonsters);
         customMonsters.unshift(monster);
         allMonsters.unshift(monster);
-        DB.SetLoacl("user/customMonsters", customMonsters);
+        DB.SetLoacl(Key.CustomMonsters, customMonsters);
 
         return monster;
     }
@@ -259,23 +260,23 @@ export namespace Game{
         let drama:DramaData = {id:id, heroId:heroId, monsterIds:monsterIds, isCustom:true, cost:0};
         dramaConfigMap.set(id, drama);
 
-        let customDramas:any[] = DB.Get("user/customDramas");
+        let customDramas:any[] = DB.Get(Key.CustomDramas);
         customDramas.unshift(drama);
         allDramas.unshift(drama);
-        DB.SetLoacl("user/customDramas", customDramas);
-        let openThemeIds = DB.Get("user/openThemeIds");
+        DB.SetLoacl(Key.CustomDramas, customDramas);
+        let openThemeIds = DB.Get(Key.OpenThemeIds);
         openThemeIds.push(id);
-        DB.SetLoacl("user/openThemeIds", openThemeIds);
+        DB.SetLoacl(Key.OpenThemeIds, openThemeIds);
         return drama;
     }
     export function isThemeOpen(id){
-        let openIds:number[] = DB.Get("user/openThemeIds");
+        let openIds:number[] = DB.Get(Key.OpenThemeIds);
         return openIds.indexOf(id) >= 0;
     }
     export function openTheme(id){
-        let openIds:number[] = DB.Get("user/openThemeIds");
+        let openIds:number[] = DB.Get(Key.OpenThemeIds);
         openIds.push(id);
-        DB.SetLoacl("user/openThemeIds", openIds);
+        DB.SetLoacl(Key.OpenThemeIds, openIds);
     }
     /*****************************
      * 排行榜
@@ -285,7 +286,7 @@ export namespace Game{
             rank:1,
             time:time
         }
-        let rankDatas:RankData[] = DB.Get("user/rankDatas");
+        let rankDatas:RankData[] = DB.Get(Key.RankDatas);
         for(let i=0; i<rankDatas.length; i++){
             let p = rankDatas[i];
             if(p.time > newData.time){
@@ -295,7 +296,7 @@ export namespace Game{
             }
         }
         rankDatas.splice(newData.rank-1, 0, newData);
-        DB.SetLoacl("user/rankDatas", rankDatas);
+        DB.SetLoacl(Key.RankDatas, rankDatas);
     }
     /*****************************
      * 结束奖励

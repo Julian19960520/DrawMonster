@@ -17,6 +17,7 @@ import { DB } from "../../Frame/DataBind";
 import { Game } from "../../Game/Game";
 import { Sound } from "../../Frame/Sound";
 import { Local } from "../../Frame/Local";
+import { Key } from "../../Game/Key";
 
 const {ccclass, property} = cc._decorator;
 
@@ -58,12 +59,12 @@ export default class UsingMonsterCell extends cc.Component {
     }
     onClick(){
         Sound.play("clickBtn");
-        let dramaId  = DB.Get("user/dramaId");
+        let dramaId  = DB.Get(Key.DramaId);
         let drama = Game.findDramaConf(dramaId);
         let idx = drama.monsterIds.indexOf(this.data.id);
         drama.monsterIds.splice(idx, 1);
-        DB.SetLoacl("user/dramaId",dramaId);
-        DB.Invoke("user/customMonsters");
-        Local.setDirty("user/customDramas");
+        DB.SetLoacl(Key.DramaId,dramaId);
+        DB.Invoke(Key.CustomMonsters);
+        Local.setDirty(Key.CustomDramas);
     }
 }

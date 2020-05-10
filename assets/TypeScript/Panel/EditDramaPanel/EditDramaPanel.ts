@@ -15,6 +15,7 @@ import { DB } from "../../Frame/DataBind";
 import { Sound } from "../../Frame/Sound";
 import Top from "../../Frame/Top";
 import Button from "../../CustomUI/Button";
+import { Key } from "../../Game/Key";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -32,11 +33,11 @@ export default class EditDramaPanel extends Panel {
     onLoad(){
         super.onLoad();
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
-        this.Bind("user/customMonsters",()=>{
+        this.Bind(Key.CustomMonsters,()=>{
             let arr:any[] = [{createNew:true}].concat(Game.allMonsters);
             this.allMonsterList.setDataArr(arr);
         });
-        this.Bind("user/dramaId", (dramaId)=>{
+        this.Bind(Key.DramaId, (dramaId)=>{
             let drama = Game.findDramaConf(dramaId);
             let monsterIds = drama.monsterIds.concat();
             let arr = [];
@@ -48,7 +49,7 @@ export default class EditDramaPanel extends Panel {
     }
     onPlayBtnTap(){
         Sound.play("clickBtn");
-        let dramaId = DB.Get("user/dramaId");
+        let dramaId = DB.Get(Key.DramaId);
         let drama = Game.findDramaConf(dramaId);
         if(drama.monsterIds.length>0){
             if(this.playCallback){

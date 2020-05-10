@@ -6,7 +6,7 @@
   "padding": 2,
   "allowRotation": true,
   "forceSquared": false,
-  "powerOfTwo": false,
+  "powerOfTwo": true,
   "algorithm": "MaxRects",
   "format": "png",
   "quality": 80,

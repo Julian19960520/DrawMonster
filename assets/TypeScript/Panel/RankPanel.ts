@@ -16,6 +16,7 @@ import MessageBox from "../Frame/MessageBox";
 import { DB } from "../Frame/DataBind";
 import { Sound } from "../Frame/Sound";
 import Button from "../CustomUI/Button";
+import { Key } from "../Game/Key";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -39,7 +40,7 @@ export default class RankPanel extends Panel {
         super.onLoad();
         this.clearBtn.node.on("click", this.onClearBtnTap, this);
         this.okBtn.node.on("click", this.onOkBtnTap, this);
-        let rankDatas:RankData[] = DB.Get("user/rankDatas");
+        let rankDatas:RankData[] = DB.Get(Key.RankDatas);
         this.emptyNode.active = (rankDatas.length == 0);
         this.scrollList.setDataArr(rankDatas);
         this.scrollList.selectItemByData(null);
@@ -49,7 +50,7 @@ export default class RankPanel extends Panel {
         SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
             messageBox.label.string = "是否清空排行榜";
             messageBox.onOk = ()=>{
-                DB.SetLoacl("user/rankDatas", []);
+                DB.SetLoacl(Key.RankDatas, []);
                 this.scrollList.setDataArr([]);
                 this.scrollList.selectItemByData(null);
             };

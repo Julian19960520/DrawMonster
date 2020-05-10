@@ -12,6 +12,7 @@ import { Sound } from "../../Frame/Sound";
 import { crossPlatform } from "../../Frame/CrossPlatform";
 import Monster from "../../Scene/PlayScene/Monster";
 import Button from "../../CustomUI/Button";
+import { Key } from "../../Game/Key";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -108,7 +109,7 @@ export default class PaintPanel extends Panel {
         this.colorList.node.off(ScrollList.SELECT_CHILD, this.selectColorChild, this)
     }
     initColorBtns(){
-        let colorIds = DB.Get("user/colorIds");
+        let colorIds = DB.Get(Key.ColorIds);
         this.colorList.node.on(ScrollList.SELECT_CHILD, this.selectColorChild, this)
         this.colorList.setDataArr(colorIds);
         this.colorList.selectItemByData(Config.getColorDataByID(1));

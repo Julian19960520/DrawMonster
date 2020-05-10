@@ -15,8 +15,10 @@ import { Game } from "../../Game/Game";
 import { Sound } from "../../Frame/Sound";
 import Top from "../../Frame/Top";
 import { GameRecorder } from "../../Frame/GameRecorder";
-import { tt, wx, crossPlatform } from "../../Frame/CrossPlatform";
+import { tt, wx, crossPlatform, VideoAd } from "../../Frame/CrossPlatform";
 import Button from "../../CustomUI/Button";
+import { AdUnitId, AD } from "../../Frame/AD";
+import { Key } from "../../Game/Key";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -29,9 +31,6 @@ export default class GameOverPanel extends Panel {
 
     @property(Button)
     rebornBtn: Button = null;
-
-    @property(Button)
-    videoBtn: Button = null;
 
     @property(cc.Node)
     titleNode: cc.Node = null;
@@ -51,9 +50,8 @@ export default class GameOverPanel extends Panel {
         super.onLoad();
         this.rebornBtn.node.on("click", this.onRebornBtnTap, this);
         this.giveupBtn.node.on("click", this.onGiveupBtnTap, this);
-        this.videoBtn.node.on("click", this.onVideoBtnTap, this);
-        
-        this.Bind("user/dramaId", (dramaId)=>{
+
+        this.Bind(Key.DramaId, (dramaId)=>{
             let drama = Game.findDramaConf(dramaId);
             let hero = Game.findHeroConf(drama.heroId);
             if(hero){
@@ -63,19 +61,17 @@ export default class GameOverPanel extends Panel {
             }
         });
         if(tt){
-            this.rebornBtn.node.active = false;
-            if(Util.getTimeStamp() - GameRecorder.startStamp < 4000){
-                //录屏时间太短，转分享
-                this.setVideoBtnType("share");
+            if(Util.getTimeStamp() - GameRecorder.startStamp > 4000){
+                //录制视频
+                this.setRebornBtnType("video");
             }else{
-                this.setVideoBtnType("video");
+                //录屏时间太短，转分享或视频
+                this.setRebornBtnType("share");
             }
         }
         else if(wx){
-            this.videoBtn.node.active = false;
             this.setRebornBtnType("share");
         }else{
-            this.videoBtn.node.active = false;
             this.setRebornBtnType("share");
         }
         GameRecorder.stop();
@@ -91,24 +87,18 @@ export default class GameOverPanel extends Panel {
             let sprite = Util.searchChild(this.rebornBtn.node, "icon").getComponent(cc.Sprite);
             sprite.spriteFrame = spriteFrame;
         });
-    }
-    setVideoBtnType(type){
-        this.type = type;
-        Util.loadRes("Atlas/UI/"+type,cc.SpriteFrame).then((spriteFrame:cc.SpriteFrame)=>{
-            let sprite = Util.searchChild(this.videoBtn.node, "icon").getComponent(cc.Sprite);
-            sprite.spriteFrame = spriteFrame;
-        });
-        let label = this.videoBtn.getComponentInChildren(cc.Label);
+        let label = this.rebornBtn.getComponentInChildren(cc.Label);
         if(this.type == "video"){
             label.string = "分享录屏";
-        }else if(this.type == "share"){
-            label.string = "分享";
+        }else{
+            label.string = "复活";
         }
     }
 
     onRebornBtnTap(){
         Sound.play("clickBtn");
         if(this.type == "share"){
+            //分享
             crossPlatform.share({
                 imageUrl:Util.rawUrl('resources/Atlas/ShareImg/1.png'),
                 templateId:"6deh5ubi85226of3co",
@@ -123,36 +113,28 @@ export default class GameOverPanel extends Panel {
                 }
             });
         }else if(this.type == "ad"){
-
-        }
-    }
-    onVideoBtnTap(){
-        Sound.play("clickBtn");
-        if(this.type == "share"){
-            crossPlatform.share({
-                imageUrl:Util.rawUrl('resources/Atlas/ShareImg/1.png'),
-                templateId:"6deh5ubi85226of3co",
-                success:()=>{
-                    SceneManager.ins.popPanel();
-                    if(this.onRebornCallback){
-                        this.onRebornCallback();
-                    }
-                },
-                fail:()=>{
-                    Top.showToast("分享失败");
+            //广告
+            AD.showVideoAd(AdUnitId.Reborn, ()=>{
+                Top.showToast("播放成功");
+                if(this.onRebornCallback){
+                    this.onRebornCallback();
                 }
-            });
+            },(err)=>{
+                Top.showToast("播放失败"+err);
+            })
         }else if(this.type == "video"){
+            //录屏
             GameRecorder.share(()=>{
                 Top.showToast("分享成功");
-                if(this.onGiveUpCallback){
-                    this.onGiveUpCallback();
+                if(this.onRebornCallback){
+                    this.onRebornCallback();
                 }
             },()=>{
                 Top.showToast("分享失败");
             });
         }
     }
+
     onGiveupBtnTap(){
         if(this.onGiveUpCallback){
             this.onGiveUpCallback();

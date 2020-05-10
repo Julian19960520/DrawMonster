@@ -16,6 +16,7 @@ import { Sound } from "../Frame/Sound";
 import Music from "../Frame/Music";
 import Button from "../CustomUI/Button";
 import Top from "../Frame/Top";
+import { Key } from "../Game/Key";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -48,9 +49,9 @@ export default class OptionPanel extends Panel {
         this.musicSlider.node.on(Slider.MOVE, this.onMusicSliderMove, this);
         this.sensitivitySlider.node.on(Slider.MOVE, this.onSensitivitySliderMove, this);
 
-        this.soundSlider.value = DB.Get("option/sound");
-        this.musicSlider.value = DB.Get("option/music");
-        this.sensitivitySlider.value = DB.Get("option/sensitivity");
+        this.soundSlider.value = DB.Get(Key.Sound);
+        this.musicSlider.value = DB.Get(Key.Music);
+        this.sensitivitySlider.value = DB.Get(Key.Sensitivity);
     }
     onResetBtnTap(){
         Sound.play("clickBtn");
@@ -66,15 +67,15 @@ export default class OptionPanel extends Panel {
     onSoundSliderMove(value){
         Sound.play("clickBtn");
         Sound.volume = value;
-        DB.SetLoacl("option/sound", value);
+        DB.SetLoacl(Key.Sound, value);
     }
     onMusicSliderMove(value){
         Sound.play("clickBtn");
         Music.volume = value;
-        DB.SetLoacl("option/music", value);
+        DB.SetLoacl(Key.Music, value);
     }
     onSensitivitySliderMove(value){
         Sound.play("clickBtn");
-        DB.SetLoacl("option/sensitivity", value);
+        DB.SetLoacl(Key.Sensitivity, value);
     }
 }
