@@ -25,7 +25,6 @@ export namespace GameRecorder {
     }
     //录屏开始时触发
     function onStart(){
-        console.log("onStart");
         videoPath = "";
         onStartListenrs.forEach((func)=>{
             func();
@@ -33,7 +32,6 @@ export namespace GameRecorder {
     }
     //录屏结束时触发
     function onStop(res){
-        console.log("onStop", res);
         videoPath = res.videoPath;
         onStopListenrs.forEach((func)=>{
             func(res);
@@ -64,7 +62,6 @@ export namespace GameRecorder {
     //分享视频
     export function share(success = null, fail = null){
         Init();
-        console.log(videoPath);
         crossPlatform.shareAppMessage({
             title: "抓到你就完蛋了", 
             channel:"video",

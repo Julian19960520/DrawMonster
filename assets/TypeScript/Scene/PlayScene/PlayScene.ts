@@ -1,6 +1,8 @@
 import Scene from "../../Frame/Scene";import Hero, { State } from "./Hero";import MonsterFactory from "./MonsterFactory";import PropFactory from "./PropFactory";import CoinBar from "../../Game/CoinBar";import Music from "../../Frame/Music";import { Sound } from "../../Frame/Sound";import PausePanel from "../../Panel/PausePanel";import SceneManager from "../../Frame/SceneManager";import { Game } from "../../Game/Game";import { Util } from "../../Frame/Util";import GameOverPanel from "../../Panel/GameOverPanel/GameOverPanel";import FinishScene from "../FinishScene/FinishScene";import { GameRecorder } from "../../Frame/GameRecorder";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
+import { crossPlatform } from "../../Frame/CrossPlatform";
+import { DB } from "../../Frame/DataBind";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -147,6 +149,10 @@ export default class PlayScene extends Scene {
         this.playing = true;
         this.reborned = false;
         GameRecorder.start();
+        crossPlatform.reportAnalytics('play', {
+            timeStamp: new Date().getTime(),
+            themeId: DB.Get(Key.ThemeId),
+        });
     }
     pause(){
         this.music.pause();
@@ -194,6 +200,11 @@ export default class PlayScene extends Scene {
                     killerName:killerName,
                 })
             });
+        });
+        crossPlatform.reportAnalytics('play', {
+            timeStamp: new Date().getTime(),
+            themeId: DB.Get(Key.ThemeId),
+            time:time
         });
     }
 }

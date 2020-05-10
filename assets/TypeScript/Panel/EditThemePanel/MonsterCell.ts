@@ -25,6 +25,8 @@ export default class MonsterCell extends cc.Component {
     @property(cc.Node)
     normalNode:cc.Node = null;
     @property(cc.Node)
+    mark:cc.Node = null;
+    @property(cc.Node)
     emptyNode:cc.Node = null;
     @property(cc.Sprite)
     monsterSprite:cc.Sprite = null;
@@ -90,5 +92,6 @@ export default class MonsterCell extends cc.Component {
     }
     setUsingState(b){
         this.node.color = b?cc.color(237,245,142):cc.Color.WHITE;
+        this.mark.active = b;
     }
 }

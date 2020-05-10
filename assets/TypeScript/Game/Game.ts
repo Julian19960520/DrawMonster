@@ -68,7 +68,6 @@ export namespace Game{
     }
     let compressVersion = 1;
     export function compressPixels(pixels:Uint8Array){
-        console.log(pixels);
         let colors = [];        //四个一组，分别为rgba，颜色下标即为在此数组出现的顺序
         let sections = [];        //每两个一组，分别为 相同颜色像素连续个数，颜色下标
 

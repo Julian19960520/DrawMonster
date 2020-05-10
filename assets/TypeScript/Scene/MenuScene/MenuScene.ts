@@ -14,6 +14,7 @@ import PaintPanel from "../../Panel/PaintPanel/PaintPanel";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import EditThemePanel from "../../Panel/EditThemePanel/EditThemePanel";
+import { crossPlatform } from "../../Frame/CrossPlatform";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -162,6 +163,10 @@ export default class MenuScene extends Scene {
                     DB.SetLoacl(Key.Coin, coin-conf.cost);
                     Game.openTheme(conf.id);
                     this.updateThemeList();
+                    crossPlatform.reportAnalytics('buyTheme', {
+                        timeStamp: new Date().getTime(),
+                        themeId: DB.Get(Key.ThemeId),
+                    });
                 }
             })
         }

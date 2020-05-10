@@ -12,10 +12,13 @@ export default class Button extends cc.Button {
         this.node.on("click", this.onClick, this);
     }
     onClick(){
+        crossPlatform.vibrateShort();
+        this.reportAnalytics();
+    };
+    reportAnalytics(){
         crossPlatform.reportAnalytics('clickBtn', {
             timeStamp: new Date().getTime(),
             btnName: this.node.name,
         });
-        crossPlatform.vibrateShort();
-    };
+    }
 }
