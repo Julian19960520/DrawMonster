@@ -43,8 +43,8 @@ export default class PlayScene extends Scene {
     onLoad () {
         this.oriPos = this.node.position;
         cc.director.getCollisionManager().enabled = true; //开启碰撞检测，默认为关闭
-        cc.director.getCollisionManager().enabledDebugDraw = true; //开启碰撞检测范围的绘制
-        cc.director.getCollisionManager().enabledDrawBoundingBox = true; //开启碰撞组件的包围盒绘制
+        // cc.director.getCollisionManager().enabledDebugDraw = true; //开启碰撞检测范围的绘制
+        // cc.director.getCollisionManager().enabledDrawBoundingBox = true; //开启碰撞组件的包围盒绘制
         this.pauseBtn.node.on("click", this.onPauseBtnTap, this);
         this.touchNode.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.on("shakeScene", this.onShakeScene, this);

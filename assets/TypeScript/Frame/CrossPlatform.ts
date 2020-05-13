@@ -241,7 +241,7 @@ export class CrossPlatform{
     createRewardedVideoAd(data:{adUnitId:string}){
         return new VideoAd();
     }
-    createBannerAd(data:{adUnitId: string, adIntervals?:string, style?:{ width?:number, left?:number, top?:number} }){
+    createBannerAd(data:{adUnitId: string, adIntervals?:number, style?:{ width?:number, left?:number, top?:number} }){
         return new BannerAd();
     }
     reportAnalytics(evtName:string, obj:Object){

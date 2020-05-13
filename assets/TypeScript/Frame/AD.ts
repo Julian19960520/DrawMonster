@@ -1,4 +1,5 @@
 import { VideoAd, tt, crossPlatform, systemInfo } from "./CrossPlatform";
+import { Util } from "./Util";
 
 export enum AdUnitId{
     OpenAllChest = "1f2a4ppm2abh4bgeal",
@@ -47,14 +48,11 @@ export namespace AD{
                     });
             });
     }
-    export function showBanner(id:AdUnitId, succ, fail){
-        let width = 128;
+    export function showBanner(id:AdUnitId, style, succ, fail){
         let bannerAd = crossPlatform.createBannerAd({
             adUnitId: id,
-            style: {
-                width: width,
-                top: systemInfo.windowHeight - width*(9/16)
-            }
+            adIntervals:30,
+            style: style
         });
         let loadedCall = () => {
             bannerAd.show()

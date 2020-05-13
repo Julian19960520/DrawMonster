@@ -17,7 +17,7 @@ import { Game } from "../../Game/Game";
 import { DB } from "../../Frame/DataBind";
 import CoinBar from "../../Game/CoinBar";
 import { Config } from "../../Frame/Config";
-import { crossPlatform, tt, wx } from "../../Frame/CrossPlatform";
+import { crossPlatform, tt, wx, BannerAd } from "../../Frame/CrossPlatform";
 import { AD, AdUnitId } from "../../Frame/AD";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
@@ -57,11 +57,15 @@ export default class FinishScene extends Scene {
     @property(cc.Label)
     highScoreLabel:cc.Label = null;
 
+    @property(cc.Node)
+    bannerPos:cc.Node = null;
+
     private type:"share"|"video"|"ad" = "share";
     // private gainKeyCosts = [10, 20, 40];
     private keyCnt = 0;
     private openCnt = 0;
     private rewards = null;
+    private bannerAd:BannerAd = null;
     onLoad(){
         this.backBtn.node.on("click",this.onBackBtnTap, this);
         this.openAllBtn.node.on("click",this.onOpenAllBtnTap, this);
@@ -73,6 +77,15 @@ export default class FinishScene extends Scene {
         }
         this.initChestBtn();
         this.rewards = Game.randomFinishRewards();
+        let style = Util.convertToWindowSpace(this.bannerPos);
+        console.log(style);
+        this.bannerAd = AD.showBanner(AdUnitId.FinishBottom,style, ()=>{}, ()=>{});
+    }
+    onExitScene(){
+        if(this.bannerAd){
+            this.bannerAd.hide();
+            this.bannerAd.destroy();
+        }
     }
     initChestBtn(){
         let chestParent = this.chestBtn.node.parent;

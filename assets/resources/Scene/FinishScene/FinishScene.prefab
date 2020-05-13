@@ -31,23 +31,26 @@
       },
       {
         "__id__": 79
+      },
+      {
+        "__id__": 124
       }
     ],
     "_active": true,
     "_level": 1,
     "_components": [
       {
-        "__id__": 124
-      },
-      {
-        "__id__": 125
-      },
-      {
         "__id__": 126
+      },
+      {
+        "__id__": 127
+      },
+      {
+        "__id__": 128
       }
     ],
     "_prefab": {
-      "__id__": 127
+      "__id__": 129
     },
     "_opacity": 255,
     "_color": {
@@ -773,7 +776,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 296.07,
+      "y": 333.682,
       "z": 0
     },
     "_scale": {
@@ -932,7 +935,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": -225.812,
-      "y": 193.381,
+      "y": 224.441,
       "z": 0
     },
     "_scale": {
@@ -1515,7 +1518,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -82,
+      "y": -32.304,
       "z": 0
     },
     "_scale": {
@@ -2737,7 +2740,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -321.818,
+      "y": -303.182,
       "z": 0
     },
     "_scale": {
@@ -4374,6 +4377,73 @@
     "sync": false
   },
   {
+    "__type__": "cc.Node",
+    "_name": "bannerPos",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": true,
+    "_level": 2,
+    "_components": [],
+    "_prefab": {
+      "__id__": 125
+    },
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 500,
+      "height": 225
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_position": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": -499.753,
+      "z": 0
+    },
+    "_scale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "groupIndex": 0,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "06cee00d-bb9a-4a91-a176-00325e96ee5e"
+    },
+    "fileId": "5beR0pU6lHAJ63zHJs92Rc",
+    "sync": false
+  },
+  {
     "__type__": "cc.Sprite",
     "_name": "",
     "_objFlags": 0,
@@ -4474,6 +4544,9 @@
     },
     "highScoreLabel": {
       "__id__": 22
+    },
+    "bannerPos": {
+      "__id__": 124
     },
     "_id": ""
   },
