@@ -4,10 +4,12 @@ import { Util } from "./Util";
 
 export namespace GameRecorder {
     let impl = crossPlatform.getGameRecorderManager();
+    
     let videoPath = "";
     let onStartListenrs = [];
     let onStopListenrs = [];
     let _inited = false;
+    export let recordering = false;
     export let startStamp = 0;
     export function Init(){
         if(_inited){
@@ -32,6 +34,7 @@ export namespace GameRecorder {
     }
     //录屏结束时触发
     function onStop(res){
+        console.log("onStop", res);
         videoPath = res.videoPath;
         onStopListenrs.forEach((func)=>{
             func(res);
@@ -46,7 +49,8 @@ export namespace GameRecorder {
             //impl.start({duration:3000});  
         }
         if(tt){
-            impl.start({duration:300});  
+            impl.start({duration:15});  
+            recordering = true;
         }
     }
     //结束录屏
@@ -57,6 +61,8 @@ export namespace GameRecorder {
         }
         if(tt){
             impl.stop();  
+            recordering = false;
+            console.log("stop");
         }
     }
     //分享视频
@@ -65,6 +71,7 @@ export namespace GameRecorder {
         crossPlatform.shareAppMessage({
             title: "抓到你就完蛋了", 
             channel:"video",
+
             extra:{
                 videoPath:videoPath,
                 videoTopics:["抓到你就完蛋了", "抖音小游戏"]

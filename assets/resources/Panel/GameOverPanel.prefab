@@ -770,7 +770,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 200,
+      "width": 150,
       "height": 90
     },
     "_anchorPoint": {
@@ -780,7 +780,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -115,
+      "x": -140,
       "y": 10,
       "z": 0
     },
@@ -837,7 +837,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 200,
+      "width": 150,
       "height": 90
     },
     "_anchorPoint": {
@@ -1151,7 +1151,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 200,
+      "width": 250,
       "height": 90
     },
     "_anchorPoint": {
@@ -1161,7 +1161,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 115,
+      "x": 90,
       "y": 10,
       "z": 0
     },
@@ -1218,7 +1218,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 200,
+      "width": 250,
       "height": 90
     },
     "_anchorPoint": {
@@ -1285,7 +1285,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 118,
+      "width": 178,
       "height": 80
     },
     "_anchorPoint": {
@@ -1355,7 +1355,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -35,
+      "x": -65,
       "y": 0,
       "z": 0
     },
@@ -1448,7 +1448,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 60,
+      "width": 120,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1494,8 +1494,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "复活",
-    "_N$string": "复活",
+    "_string": "无敌复活",
+    "_N$string": "无敌复活",
     "_fontSize": 30,
     "_lineHeight": 40,
     "_enableWrapText": false,
@@ -1531,7 +1531,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 118,
+      "width": 178,
       "height": 80
     },
     "_resize": 1,

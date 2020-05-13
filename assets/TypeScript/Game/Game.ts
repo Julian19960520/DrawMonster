@@ -236,7 +236,7 @@ export namespace Game{
             id:id, 
             name:"ID:"+id,
             url:url,
-            dirType:DirType.Forwards,
+            dirType:DirType.Upward,
             circle:{radius:50},
             isUserPainting:true,
         };
@@ -296,6 +296,16 @@ export namespace Game{
         }
         rankDatas.splice(newData.rank-1, 0, newData);
         DB.SetLoacl(Key.RankDatas, rankDatas);
+    }
+    export function getHighScroe(){
+        let rankDatas:RankData[] = DB.Get(Key.RankDatas);
+        let max = 0;
+        for(let i=0;i<rankDatas.length;i++){
+            if(max < rankDatas[i].time){
+                max = rankDatas[i].time;
+            }
+        }
+        return max;
     }
     /*****************************
      * 结束奖励

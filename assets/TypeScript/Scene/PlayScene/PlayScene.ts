@@ -43,8 +43,8 @@ export default class PlayScene extends Scene {
     onLoad () {
         this.oriPos = this.node.position;
         cc.director.getCollisionManager().enabled = true; //开启碰撞检测，默认为关闭
-        // cc.director.getCollisionManager().enabledDebugDraw = true; //开启碰撞检测范围的绘制
-        // cc.director.getCollisionManager().enabledDrawBoundingBox = true; //开启碰撞组件的包围盒绘制
+        cc.director.getCollisionManager().enabledDebugDraw = true; //开启碰撞检测范围的绘制
+        cc.director.getCollisionManager().enabledDrawBoundingBox = true; //开启碰撞组件的包围盒绘制
         this.pauseBtn.node.on("click", this.onPauseBtnTap, this);
         this.touchNode.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.on("shakeScene", this.onShakeScene, this);
@@ -132,10 +132,14 @@ export default class PlayScene extends Scene {
             this.time += dt;
             this.timeLabel.string = `${Util.fixedNum(this.time, 2)}秒`;
             if(this.hero){
-                let pos = Util.lerpVec2(this.hero.node.position, this.targetPos, 1);
+                let pos = Util.lerpVec2(this.hero.node.position, this.targetPos, 20*dt);
                 this.hero.node.position = pos;
             }
+            if(this.time > 5 && !GameRecorder.recordering){
+                GameRecorder.start();
+            }
         }
+        
     }
     restart(){
         this.music.play();
@@ -148,7 +152,6 @@ export default class PlayScene extends Scene {
         this.hero.node.position = this.targetPos = cc.Vec2.ZERO;
         this.playing = true;
         this.reborned = false;
-        GameRecorder.start();
         crossPlatform.reportAnalytics('play', {
             timeStamp: new Date().getTime(),
             themeId: DB.Get(Key.ThemeId),
@@ -193,7 +196,6 @@ export default class PlayScene extends Scene {
     }
     gameOver(killerName){
         let time = Util.fixedNum(this.time, 2);
-        Game.addRankData(time);
         SceneManager.ins.findScene(PlayScene).savelyExit(()=>{
             SceneManager.ins.Enter("FinishScene").then((finish:FinishScene)=>{
                 finish.setData({

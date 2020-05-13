@@ -15,4 +15,6 @@ export enum Key{
     
     Uuid = "uuid",
     Version = "version",
+
+    PlayTims = "user/playTimes",
 }

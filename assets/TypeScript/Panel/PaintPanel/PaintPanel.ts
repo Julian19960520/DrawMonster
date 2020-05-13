@@ -68,6 +68,9 @@ export default class PaintPanel extends Panel {
     @property(cc.Node)
     eraserTool:cc.Node = null;
 
+    @property(cc.Graphics)
+    colliderSize:cc.Graphics = null;
+    
     state:State = State.Pencil;
 
     onLoad () {
@@ -88,6 +91,7 @@ export default class PaintPanel extends Panel {
         this.mainToggle.node.on(ToggleGroup.TOGGLE_CHANGE, this.onMainToggleChange, this);
         this.initColorBtns();
         this.highLightBtn(this.pencilBtn);
+        this.drawColliderSize();
         this.bucketTool.active = false;
         this.eraserTool.active = false;
         this.state = State.Pencil;
@@ -203,6 +207,14 @@ export default class PaintPanel extends Panel {
         Sound.play("clickBtn");
         this.graphics.lineWidth = size;
     }
+
+    drawColliderSize(){
+        this.colliderSize.strokeColor = cc.color(91,110,225,150);
+        this.colliderSize.lineWidth = 6;
+        this.colliderSize.circle(0,0,200);
+        this.colliderSize.stroke();
+    }
+
     private pencilColor:cc.Color = null;
 
     private onTouchStart(event:cc.Event.EventTouch){

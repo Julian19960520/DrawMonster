@@ -69,6 +69,11 @@ export default class Hero extends DB.DataBindComponent {
             let hero = Game.findHeroConf(theme.heroId);
             Game.loadTexture(hero.url, (texture)=>{
                 this.setTexture(texture);
+                if(hero.id >= 1000){
+                    this.sprite.node.scale = 0.6;
+                }else{
+                    this.sprite.node.scale = 1;
+                }
             });
         });
     }
@@ -160,19 +165,33 @@ export default class Hero extends DB.DataBindComponent {
         if(other.node.group == "Prop"){
             Vibrate.short();
             if(other.node.name == "Heart"){
+                other.node.dispatchEvent(Util.customEvent("returnPool"));
                 let find = false;
                 for(let i=0;i<this.heartGroup.childrenCount; i++){
                     let child = this.heartGroup.children[i];
                     if(!child.active){
                         find = true;
                         child.active = true;
-                        other.node.dispatchEvent(Util.customEvent("returnPool"));
                         Sound.play("gainProp");
                         break;
                     }
                 }
                 if(!find){
-                    
+                    Sound.play("gainProp");
+                    let playScene = SceneManager.ins.findScene(PlayScene);
+                    Top.bezierSprite({
+                        url:"Atlas/UI/coin",
+                        from:Util.convertPosition(this.node, Top.node),
+                        to:Util.convertPosition(playScene.coinBar.iconPos, Top.node),
+                        cnt:2,
+                        time:0.8,
+                        scale:0.6,
+                        onEnd:(finish)=>{
+                            Sound.play("gainCoin");
+                            let coin = DB.Get(Key.Coin);
+                            DB.SetLoacl(Key.Coin, coin+10);
+                        }
+                    });
                 }
             }
             if(other.node.name == "Shield"){
@@ -187,8 +206,9 @@ export default class Hero extends DB.DataBindComponent {
                     url:"Atlas/UI/coin",
                     from:Util.convertPosition(this.node, Top.node),
                     to:Util.convertPosition(playScene.coinBar.iconPos, Top.node),
-                    cnt:5,
+                    cnt:10,
                     time:0.8,
+                    scale:0.6,
                     onEnd:(finish)=>{
                         Sound.play("gainCoin");
                         let coin = DB.Get(Key.Coin);

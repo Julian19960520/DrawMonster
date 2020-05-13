@@ -64,13 +64,15 @@ export default class Top extends DB.DataBindComponent {
         ).start();
         return label;
     }
-    public static bezierSprite(data:{url:string, from:cc.Vec2, to:cc.Vec2, onBegin?, onEnd?, cnt?:number, time?:number}){
+    public static bezierSprite(data:{url:string, from:cc.Vec2, to:cc.Vec2, onBegin?, onEnd?, cnt?:number, time?:number, scale?:number}){
         data.cnt = data.cnt || 1;
         data.time = data.time || 1;
+        data.scale = data.scale || 1;
         cc.loader.loadRes(data.url, cc.SpriteFrame, (err, sf)=>{
             for(let i=0; i<data.cnt; i++){
                 setTimeout(() => {
                     let node = new cc.Node();
+                    node.scale = data.scale;
                     Top.ins.node.addChild(node);
                     let sprite = node.addComponent(cc.Sprite);
                     sprite.spriteFrame = sf;

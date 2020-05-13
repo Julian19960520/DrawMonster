@@ -15,8 +15,6 @@ import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import EditThemePanel from "../../Panel/EditThemePanel/EditThemePanel";
 import { crossPlatform } from "../../Frame/CrossPlatform";
-import { AD, AdUnitId } from "../../Frame/AD";
-
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -44,6 +42,13 @@ export default class MenuScene extends Scene {
 
     @property(cc.Node)
     title:cc.Node = null;
+
+    @property(cc.Node)
+    leftTriangle:cc.Node = null;
+
+    @property(cc.Node)
+    rightTriangle:cc.Node = null;
+
     onLoad () {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
         this.buyBtn.node.on("click", this.onBuyBtnTap, this);
@@ -52,7 +57,7 @@ export default class MenuScene extends Scene {
         this.drawBtn.node.on("click", this.onDrawBtnTap, this);
         this.themeList.node.on(ScrollList.SELECT_CHILD, this.onSelectChild, this);
         this.initHighScoreLabel();
-        this.updateThemeList();
+        // this.updateThemeList();
     }
     public updateThemeList(){
         let arr = [null].concat(Game.allThemes).concat([null]);
@@ -71,6 +76,7 @@ export default class MenuScene extends Scene {
         }
     }
     onEnterScene(){
+        this.updateThemeList();
         let btnAnim = (node:cc.Node, delay)=>{
             node.scale = 0;
             node.angle = 20;
@@ -79,6 +85,7 @@ export default class MenuScene extends Scene {
         this.playTitleAnim();
         btnAnim(this.themeList.node, 0.2);
         btnAnim(this.playBtn.node, 0.4);
+        btnAnim(this.buyBtn.node, 0.4);
         btnAnim(this.drawBtn.node, 0.5);
         btnAnim(this.rankBtn.node, 0);
         btnAnim(this.optionBtn.node, 0);

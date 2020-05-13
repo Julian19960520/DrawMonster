@@ -54,6 +54,9 @@ export default class FinishScene extends Scene {
     @property(CoinBar)
     coinBar:CoinBar = null;
 
+    @property(cc.Label)
+    highScoreLabel:cc.Label = null;
+
     private type:"share"|"video"|"ad" = "share";
     // private gainKeyCosts = [10, 20, 40];
     private keyCnt = 0;
@@ -204,12 +207,12 @@ export default class FinishScene extends Scene {
         });
     }
 
-    setData(data){
-        this.playAnim(data.time, data.killerName);
-    }
-    
     private titleTw = null;
-    playAnim(time, killerName:string){
+    setData(data){
+        let oldHighScroe = Game.getHighScroe();
+        this.highScoreLabel.string = `最高分：${oldHighScroe}秒！`;
+        Game.addRankData(data.time);
+        let time = data.time;
         Top.blockInput(true);
         //隐藏标题字
         let labels = this.titleNode.getComponentsInChildren(cc.Label); 
@@ -274,6 +277,12 @@ export default class FinishScene extends Scene {
                 }
                 return current;
             }})
+            .call(()=>{
+                if(time>oldHighScroe){
+                    this.highScoreLabel.string = `最高分：${time}秒！`;
+                    cc.tween(this.highScoreLabel.node).to(0.2, {scale:1.5}).to(0.2, {scale:1}).start();
+                }
+            })
             .delay(0.3)
             .call(()=>{
                 Top.blockInput(false);
@@ -303,7 +312,7 @@ export default class FinishScene extends Scene {
             .call(()=>{
                 Sound.play("word");
                 labels[3].node.active = true;
-                labels[3].string = killerName;
+                labels[3].string = data.killerName;
                 labels[3].node.opacity = 0;
                 labels[3].node.scale = 2;
                 cc.tween(labels[3].node).to(0.2,{scale:1.1,opacity:255}, {easing:cc.easing.backOut}).start();

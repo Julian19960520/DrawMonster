@@ -12,6 +12,12 @@ import Monster from "./Monster";
 import { Util } from "../../Frame/Util";
 import { crossPlatform } from "../../Frame/CrossPlatform";
 import { Vibrate } from "../../Frame/Vibrate";
+import Top from "../../Frame/Top";
+import SceneManager from "../../Frame/SceneManager";
+import PlayScene from "./PlayScene";
+import { Sound } from "../../Frame/Sound";
+import { DB } from "../../Frame/DataBind";
+import { Key } from "../../Game/Key";
 
 
 const {ccclass, property} = cc._decorator;
@@ -32,6 +38,21 @@ export default class Shield extends cc.Component {
                 monster.beginDrop();
                 this.node.dispatchEvent(Util.customEvent("shakeScene", true, 0.5));
                 Vibrate.short();
+                //加5金币
+                let playScene = SceneManager.ins.findScene(PlayScene);
+                Top.bezierSprite({
+                    url:"Atlas/UI/coin",
+                    from:Util.convertPosition(this.node, Top.node),
+                    to:Util.convertPosition(playScene.coinBar.iconPos, Top.node),
+                    cnt:1,
+                    time:0.8,
+                    scale:0.6,
+                    onEnd:(finish)=>{
+                        Sound.play("gainCoin");
+                        let coin = DB.Get(Key.Coin);
+                        DB.SetLoacl(Key.Coin, coin+5);
+                    }
+                });
             }
         }
     }

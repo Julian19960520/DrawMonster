@@ -9,10 +9,6 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import ScrollList from "../../CustomUI/ScrollList";
-import { Util } from "../../Frame/Util";
-import Toggle from "../../CustomUI/Toggle";
-import SceneManager from "../../Frame/SceneManager";
-import PaintPanel from "../PaintPanel/PaintPanel";
 import { DB } from "../../Frame/DataBind";
 import { Game } from "../../Game/Game";
 import { Sound } from "../../Frame/Sound";
@@ -55,6 +51,13 @@ export default class UsingMonsterCell extends cc.Component {
                 frame.setTexture(texture);
                 this.monsterSprite.spriteFrame = frame;
             });
+            if(monster.isUserPainting){
+                this.monsterSprite.node.width = 100;
+                this.monsterSprite.node.height = 100;
+            }else{
+                this.monsterSprite.node.width = 150;
+                this.monsterSprite.node.height = 150;
+            }
         }
     }
     onClick(){

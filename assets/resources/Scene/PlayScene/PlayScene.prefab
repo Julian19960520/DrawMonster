@@ -39,21 +39,21 @@
         "__id__": 71
       },
       {
-        "__id__": 74
+        "__id__": 75
       }
     ],
     "_active": true,
     "_level": 1,
     "_components": [
       {
-        "__id__": 85
+        "__id__": 86
       },
       {
-        "__id__": 86
+        "__id__": 87
       }
     ],
     "_prefab": {
-      "__id__": 87
+      "__id__": 88
     },
     "_opacity": 255,
     "_color": {
@@ -2156,9 +2156,7 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_spriteFrame": {
-      "__uuid__": "230b47c3-6142-4394-bf64-7a21b412b1ee"
-    },
+    "_spriteFrame": null,
     "_type": 0,
     "_sizeMode": 1,
     "_fillType": 0,
@@ -2308,10 +2306,13 @@
     "_components": [
       {
         "__id__": 72
+      },
+      {
+        "__id__": 73
       }
     ],
     "_prefab": {
-      "__id__": 73
+      "__id__": 74
     },
     "_opacity": 255,
     "_color": {
@@ -2323,8 +2324,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 155.7,
-      "height": 50.4
+      "width": 157.7,
+      "height": 52.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2386,6 +2387,24 @@
     "_id": ""
   },
   {
+    "__type__": "cc.LabelOutline",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 71
+    },
+    "_enabled": true,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_width": 1,
+    "_id": ""
+  },
+  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
@@ -2405,21 +2424,21 @@
     },
     "_children": [
       {
-        "__id__": 75
+        "__id__": 76
       }
     ],
     "_active": true,
     "_level": 2,
     "_components": [
       {
-        "__id__": 82
+        "__id__": 83
       },
       {
-        "__id__": 83
+        "__id__": 84
       }
     ],
     "_prefab": {
-      "__id__": 84
+      "__id__": 85
     },
     "_opacity": 255,
     "_color": {
@@ -2468,25 +2487,25 @@
     "_name": "Background",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 74
+      "__id__": 75
     },
     "_children": [
       {
-        "__id__": 76
+        "__id__": 77
       }
     ],
     "_active": true,
     "_level": 2,
     "_components": [
       {
-        "__id__": 79
+        "__id__": 80
       },
       {
-        "__id__": 80
+        "__id__": 81
       }
     ],
     "_prefab": {
-      "__id__": 81
+      "__id__": 82
     },
     "_opacity": 255,
     "_color": {
@@ -2535,18 +2554,18 @@
     "_name": "pause",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 75
+      "__id__": 76
     },
     "_children": [],
     "_active": true,
     "_level": 3,
     "_components": [
       {
-        "__id__": 77
+        "__id__": 78
       }
     ],
     "_prefab": {
-      "__id__": 78
+      "__id__": 79
     },
     "_opacity": 255,
     "_color": {
@@ -2595,7 +2614,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 76
+      "__id__": 77
     },
     "_enabled": true,
     "_materials": [
@@ -2638,7 +2657,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 75
+      "__id__": 76
     },
     "_enabled": true,
     "_materials": [
@@ -2670,7 +2689,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 75
+      "__id__": 76
     },
     "_enabled": true,
     "alignMode": 1,
@@ -2708,7 +2727,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 74
+      "__id__": 75
     },
     "_enabled": true,
     "alignMode": 1,
@@ -2735,7 +2754,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 74
+      "__id__": 75
     },
     "_enabled": true,
     "duration": 0.1,
@@ -2794,7 +2813,7 @@
     "hoverSprite": null,
     "_N$disabledSprite": null,
     "_N$target": {
-      "__id__": 75
+      "__id__": 76
     },
     "_id": ""
   },
@@ -2850,7 +2869,7 @@
     "showEnergyBar": true,
     "showCoinBar": false,
     "pauseBtn": {
-      "__id__": 83
+      "__id__": 84
     },
     "timeLabel": {
       "__id__": 72
