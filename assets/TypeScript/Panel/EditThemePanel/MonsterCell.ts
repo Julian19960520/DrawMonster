@@ -43,9 +43,8 @@ export default class MonsterCell extends cc.Component {
         if(data.createNew){
             this.node.color = cc.color(171,226,175);
         }else{
-            this.monsterSprite.node.active = false;
+            this.monsterSprite.spriteFrame = null;
             Game.loadTexture(data.url,(texture)=>{
-                this.monsterSprite.node.active = true;
                 let frame = new cc.SpriteFrame();
                 frame.setTexture(texture);
                 this.monsterSprite.spriteFrame = frame;
@@ -65,7 +64,11 @@ export default class MonsterCell extends cc.Component {
             SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
                 panel.saveCallback = (path)=>{
                     let monster = Game.newMonsterConf(path);
-                    theme.monsterIds.push(monster.id);
+                    if(theme.monsterIds.length<5){
+                        theme.monsterIds.push(monster.id);
+                    }else{
+                        Top.showToast("最多选择5个");
+                    }
                     DB.Invoke(Key.ThemeId);
                     DB.Invoke(Key.CustomMonsters);
                     Local.setDirty(Key.CustomThemes);

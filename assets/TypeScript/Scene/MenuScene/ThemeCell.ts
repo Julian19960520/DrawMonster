@@ -23,8 +23,8 @@ export default class ThemeCell extends cc.Component {
     scaleNode:cc.Node = null;
     @property(cc.Sprite)
     sprite:cc.Sprite = null;
-    @property(cc.Sprite)
-    selectBox:cc.Sprite = null;
+    // @property(cc.Sprite)
+    // selectBox:cc.Sprite = null;
     @property(cc.Node)
     lockNode:cc.Node = null;
     @property(cc.Label)
@@ -32,7 +32,7 @@ export default class ThemeCell extends cc.Component {
     // @property(cc.Node)
     // youMark:cc.Node = null;
 
-    data = null
+    data:ThemeData = null
 
     onLoad () {
         this.node.on(ScrollList.SET_DATA, this.setData, this);
@@ -41,7 +41,7 @@ export default class ThemeCell extends cc.Component {
         this.node.on("click", this.onClick, this);
     }
     onStateChange(b) {
-        this.selectBox.node.active = b;
+        // this.selectBox.node.active = b;
     }
     onClick(){
 
@@ -54,6 +54,7 @@ export default class ThemeCell extends cc.Component {
         this.scaleNode.scale = scale;
     }
     setData(data:ThemeData){
+        this.data = data;
         if(!data){
             this.scaleNode.active = false;
             this.lockNode.active = false;

@@ -15,6 +15,9 @@ import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import EditThemePanel from "../../Panel/EditThemePanel/EditThemePanel";
 import { crossPlatform } from "../../Frame/CrossPlatform";
+import ThemeCell from "./ThemeCell";
+import { TweenUtil } from "../../Frame/TweenUtil";
+import Top from "../../Frame/Top";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -37,17 +40,20 @@ export default class MenuScene extends Scene {
     @property(cc.Label)
     highScoreLabel: cc.Label = null;
 
-    @property(ScrollList)
-    themeList:ScrollList = null;
+    @property(cc.Node)
+    themesCell:cc.Node = null;
+
+    @property(cc.Node)
+    themesContent:cc.Node = null;
 
     @property(cc.Node)
     title:cc.Node = null;
 
-    @property(cc.Node)
-    leftTriangle:cc.Node = null;
+    @property(Button)
+    leftTriangle:Button = null;
 
-    @property(cc.Node)
-    rightTriangle:cc.Node = null;
+    @property(Button)
+    rightTriangle:Button = null;
 
     onLoad () {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
@@ -55,24 +61,80 @@ export default class MenuScene extends Scene {
         this.rankBtn.node.on("click", this.onRankBtnTap, this);
         this.optionBtn.node.on("click", this.onOptionBtnTap, this);
         this.drawBtn.node.on("click", this.onDrawBtnTap, this);
-        this.themeList.node.on(ScrollList.SELECT_CHILD, this.onSelectChild, this);
+        this.leftTriangle.node.on("click", this.moveLeft, this);
+        this.rightTriangle.node.on("click", this.moveRight, this);
         this.initHighScoreLabel();
-        // this.updateThemeList();
+
+        while(this.themesContent.childrenCount<4){
+            let cell = cc.instantiate(this.themesCell);
+            this.themesContent.addChild(cell,0);
+        }
     }
+
     public updateThemeList(){
-        let arr = [null].concat(Game.allThemes).concat([null]);
-        this.themeList.setDataArr(arr);
         let themeId = DB.Get(Key.ThemeId);
-        let theme = Game.findThemeConf(themeId);
-        this.themeList.centerOnData(theme);
-        this.themeList.selectItemByData(theme);
+        let centerIdx = Game.allThemes.findIndex((theme)=>{
+            return theme.id == themeId;
+        });
+        let func = (centerOffset)=>{
+            let childIdx = centerOffset+1;
+            let scale = (centerOffset == 0? 1.2 : 0.5);
+            let x = centerOffset * 200;
+            let cell = this.themesContent.children[childIdx].getComponent(ThemeCell);
+            let idx = (centerIdx+centerOffset+Game.allThemes.length)%Game.allThemes.length;
+            let conf = Game.allThemes[idx];
+            cell.setData(conf);
+            cell.node.scale = scale;
+            cell.node.x = x;
+        }
+        func(-1);
+        func(0);
+        func(1);
+        func(2);
+        let open = Game.isThemeOpen(themeId);
+        this.playBtn.node.active = open;
+        this.buyBtn.node.active = !open;
     }
-    onSelectChild(item, data:ThemeData){
-        if(data){
-            DB.SetLoacl(Key.ThemeId, data.id);
-            let open = Game.isThemeOpen(data.id);
-            this.playBtn.node.active = open;
-            this.buyBtn.node.active = !open;
+    public moveRight(){
+        this.move(1);
+    }
+    public moveLeft(){
+        this.move(-1);
+    }
+    public move(dir){
+        Top.blockInput(true);
+        let themeId = DB.Get(Key.ThemeId);
+        let idx = Game.allThemes.findIndex((theme)=>{
+            return theme.id == themeId;
+        });
+        //屏幕外移入的cell
+        let newIdx = (idx+dir*2+Game.allThemes.length)%Game.allThemes.length;
+        let temp = this.themesContent.children[3].getComponent(ThemeCell);
+        temp.setData(Game.allThemes[newIdx]);
+        temp.node.scale = 0.5;
+        temp.node.x = dir*2 * 200;
+        //新的选择的cell
+        newIdx = (idx+dir+Game.allThemes.length)%Game.allThemes.length;
+        themeId = Game.allThemes[newIdx].id;
+        DB.Set(Key.ThemeId, themeId);
+        let open = Game.isThemeOpen(themeId);
+        this.playBtn.node.active = open;
+        this.buyBtn.node.active = !open;
+
+        for(let i=0; i<this.themesContent.childrenCount; i++){
+            let cellNode = this.themesContent.children[i];
+            let cell = cellNode.getComponent(ThemeCell);
+            let scale = (cell.data.id == themeId? 1.2 : 0.5);
+            let tw = cc.tween(cellNode)
+                .to(0.1,{x:cellNode.x-200*dir, scale:scale},{easing:cc.easing.cubicOut})
+                .call(()=>{
+                    //移除的cell
+                    if(Math.abs(cellNode.x) > this.themesContent.width/2){
+                        Top.blockInput(false);
+                        cellNode.setSiblingIndex(3);
+                    }
+                });
+            tw.start();
         }
     }
     onEnterScene(){
@@ -83,9 +145,11 @@ export default class MenuScene extends Scene {
             cc.tween(node).delay(delay).to(0.5,{scale:1, angle:0},{easing:cc.easing.backOut}).start();
         }
         this.playTitleAnim();
-        btnAnim(this.themeList.node, 0.2);
+        btnAnim(this.themesContent, 0.2);
         btnAnim(this.playBtn.node, 0.4);
         btnAnim(this.buyBtn.node, 0.4);
+        btnAnim(this.leftTriangle.node, 0.5);
+        btnAnim(this.rightTriangle.node, 0.5);
         btnAnim(this.drawBtn.node, 0.5);
         btnAnim(this.rankBtn.node, 0);
         btnAnim(this.optionBtn.node, 0);
@@ -188,16 +252,6 @@ export default class MenuScene extends Scene {
         this.OpenPanelByName("OptionPanel");
     }
     private onDrawBtnTap(){
-        // var bezier = [cc.v2(0, 0), cc.v2(200, 300), cc.v2(0, 500)];
-        // this.drawBtn.node.runAction(cc.sequence(cc.bezierTo(2, bezier), cc.callFunc(()=>{
-        //     Top.showToast("asdf");
-        // })));
-        // Top.bezierSprite({
-        //     url:"Atlas/UI/coin",
-        //     from:Util.convertPosition(this.drawBtn.node, Top.node),
-        //     to:Util.convertPosition(Top.coinBar.iconPos, Top.node),
-        // });
-        // return;
         Sound.play("clickBtn");
         SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
             panel.saveCallback = (path)=>{

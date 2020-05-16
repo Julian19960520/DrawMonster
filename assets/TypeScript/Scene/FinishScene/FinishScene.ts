@@ -16,11 +16,13 @@ import SceneManager from "../../Frame/SceneManager";
 import { Game } from "../../Game/Game";
 import { DB } from "../../Frame/DataBind";
 import CoinBar from "../../Game/CoinBar";
-import { Config } from "../../Frame/Config";
+import { Config, PrefabPath } from "../../Frame/Config";
 import { crossPlatform, tt, wx, BannerAd } from "../../Frame/CrossPlatform";
 import { AD, AdUnitId } from "../../Frame/AD";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
+import LoadingScene from "../LoadingScene/LoadingScene";
+import PlayScene from "../PlayScene/PlayScene";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -40,7 +42,7 @@ export default class FinishScene extends Scene {
     freeOpenAllBtn: Button = null;
 
     @property(Button)
-    backBtn: Button = null;
+    homeBtn: Button = null;
 
     @property(cc.Node)
     buttonLayout: cc.Node = null;
@@ -67,7 +69,7 @@ export default class FinishScene extends Scene {
     private rewards = null;
     private bannerAd:BannerAd = null;
     onLoad(){
-        this.backBtn.node.on("click",this.onBackBtnTap, this);
+        this.homeBtn.node.on("click",this.onHomeBtnTap, this);
         this.openAllBtn.node.on("click",this.onOpenAllBtnTap, this);
         this.freeOpenAllBtn.node.on("click",this.onFreeOpenAllBtnTap, this);
         if(tt){
@@ -138,11 +140,11 @@ export default class FinishScene extends Scene {
                     if(this.openCnt < 3){
                         this.openAllBtn.node.active = true;
                         this.freeOpenAllBtn.node.active = false;
-                        this.backBtn.node.active = true;
+                        this.homeBtn.node.active = true;
                     }else{
                         this.openAllBtn.node.active = false;
                         this.freeOpenAllBtn.node.active = false;
-                        this.backBtn.node.active = true;
+                        this.homeBtn.node.active = true;
                     }
                 }
             }else{
@@ -178,7 +180,7 @@ export default class FinishScene extends Scene {
     onFreeOpenAllBtnTap(){
         this.openAllChest();
         this.freeOpenAllBtn.node.active = false;
-        this.backBtn.node.active = true;
+        this.homeBtn.node.active = true;
     }
     openAllChest(){
         let chestParent = this.chestBtn.node.parent;
@@ -202,8 +204,16 @@ export default class FinishScene extends Scene {
             }
         }
     }
-    onBackBtnTap(){
-        SceneManager.ins.BackTo("MenuScene");
+    onHomeBtnTap(){
+        Sound.play("clickBtn");
+        SceneManager.ins.goHome();
+    }
+
+    onReplayBtnTap(){
+        Sound.play("gameStartBtn");
+        SceneManager.ins.BackTo("PlayScene").then((playScene:PlayScene)=>{
+            playScene.restart();
+        });
     }
 
     onDestroy(){
@@ -251,8 +261,7 @@ export default class FinishScene extends Scene {
         this.buttonLayout.active = false;
         this.openAllBtn.node.active = false;
         this.freeOpenAllBtn.node.active = false;
-        this.backBtn.node.active = false;
-        
+        this.homeBtn.node.active = false;
         let obj = {progress:0};
         //开始动画
         this.titleTw = cc.tween(obj)
@@ -304,7 +313,7 @@ export default class FinishScene extends Scene {
                     this.freeOpenAllBtn.node.active = true;
                 }else if(this.keyCnt == 0){
                     this.openAllBtn.node.active = true; 
-                    this.backBtn.node.active = true;
+                    this.homeBtn.node.active = true;
                 }
                 Sound.play("word");
                 labels[2].node.active = true;
