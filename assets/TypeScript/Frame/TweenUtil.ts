@@ -1,16 +1,18 @@
 import { Util } from "./Util";
 
 export namespace TweenUtil{
-    export function applyJump(node:cc.Node){
+    export function applyBreath(node:cc.Node){
         if(!node){
             return;
         }
-        node.scale = 1;
-        cc.tween(node)
-            .to(0.05, {scale: 1.2}, { easing: 'quintOut'})
-            .to(0.1, {scale: 1}, { easing: 'quintOut'})
-            .call(()=>{
-        }).start();
+        return node.runAction(
+            cc.repeatForever(
+                cc.sequence(
+                    cc.scaleTo(1, 1.1, 1.1),
+                    cc.scaleTo(1, 1, 1)
+                )
+            )
+        );
     }
     export function applyScaleBounce(node:cc.Node, oriScale, tarScale, onCenter = null, onEnd = null){
         if(!node){

@@ -23,6 +23,7 @@ import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import LoadingScene from "../LoadingScene/LoadingScene";
 import PlayScene from "../PlayScene/PlayScene";
+import { TweenUtil } from "../../Frame/TweenUtil";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -140,11 +141,11 @@ export default class FinishScene extends Scene {
                     if(this.openCnt < 3){
                         this.openAllBtn.node.active = true;
                         this.freeOpenAllBtn.node.active = false;
-                        this.homeBtn.node.active = true;
+                        this.showHomeBtn();
                     }else{
                         this.openAllBtn.node.active = false;
                         this.freeOpenAllBtn.node.active = false;
-                        this.homeBtn.node.active = true;
+                        this.showHomeBtn();
                     }
                 }
             }else{
@@ -180,7 +181,7 @@ export default class FinishScene extends Scene {
     onFreeOpenAllBtnTap(){
         this.openAllChest();
         this.freeOpenAllBtn.node.active = false;
-        this.homeBtn.node.active = true;
+        this.showHomeBtn();
     }
     openAllChest(){
         let chestParent = this.chestBtn.node.parent;
@@ -230,11 +231,24 @@ export default class FinishScene extends Scene {
         });
     }
 
+    showHomeBtn(){
+        this.homeBtn.node.active = true;
+        if( DB.Get(Key.PlayTimes) >= Config.unlockPaintTimes && !DB.Get(Key.guideUnlockPaint)){
+            Util.instantPrefab("Prefab/Guide/unlockPaint").then((node:cc.Node)=>{
+                this.homeBtn.node.addChild(node);
+                node.y = 30;
+                TweenUtil.applyBreath(node);
+            });
+            
+        }
+    }
+
     private titleTw = null;
     setData(data){
         let oldHighScroe = Game.getHighScroe();
         this.highScoreLabel.string = `最高分：${oldHighScroe}秒！`;
         Game.addRankData(data.time);
+        DB.SetLoacl(Key.PlayTimes, DB.Get(Key.PlayTimes)+1);
         let time = data.time;
         Top.blockInput(true);
         //隐藏标题字
@@ -313,7 +327,7 @@ export default class FinishScene extends Scene {
                     this.freeOpenAllBtn.node.active = true;
                 }else if(this.keyCnt == 0){
                     this.openAllBtn.node.active = true; 
-                    this.homeBtn.node.active = true;
+                    this.showHomeBtn();
                 }
                 Sound.play("word");
                 labels[2].node.active = true;

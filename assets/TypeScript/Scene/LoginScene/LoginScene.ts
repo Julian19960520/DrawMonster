@@ -47,14 +47,12 @@ export default class LoginScene extends Scene {
                 tt.clearStorage();
             }
         }
+
+        //
         DB.SetLoacl(Key.Version, "0.1.3");
         this.loadValue("uuid", 1000);
 
-        Sound.volume = this.loadValue(Key.Sound, 0.5);
-        Music.volume = this.loadValue(Key.Music, 0.5);
-        Vibrate.enable = this.loadBoolValue(Key.Vibrate, true);
-        this.loadValue(Key.Sensitivity, 1.5);
-
+        //用户属性
         this.loadValue(Key.Coin, 100);
         this.loadValue(Key.ThemeId, 9);
         this.loadValue(Key.ColorIds, [1,2,3,4,5,6,7,8,9,10, 11,12,13,14,15,16,17,18,19,20, 21,22,23,24,25,26,27,28,29,30, 31,32]);
@@ -63,6 +61,16 @@ export default class LoginScene extends Scene {
         this.loadValue(Key.CustomHeros, []);
         this.loadValue(Key.CustomThemes, []);
         this.loadValue(Key.OpenThemeIds, [9,1,3]);
+        this.loadValue(Key.PlayTimes, 0);
+
+        //设置
+        Sound.volume = this.loadValue(Key.Sound, 0.5);
+        Music.volume = this.loadValue(Key.Music, 0.5);
+        Vibrate.enable = this.loadBoolValue(Key.Vibrate, true);
+        this.loadValue(Key.Sensitivity, 1.5);
+
+        //引导变量
+        this.loadBoolValue(Key.guideUnlockPaint, false);
 
         Game.Init();
         SceneManager.ins.Enter("MenuScene");

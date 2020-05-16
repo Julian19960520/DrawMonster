@@ -229,4 +229,12 @@ export namespace Util{
     export function compareAppName(appName:string){
         return appName == systemInfo.appName;
     }
+    export function newSprite(url){
+        let node = new cc.Node();
+        let sprite = node.addComponent(cc.Sprite);
+        cc.loader.loadRes(url, cc.SpriteFrame, (err, sf)=>{
+            sprite.spriteFrame = sf;
+        });
+        return sprite;
+    }
 }

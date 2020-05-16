@@ -1,13 +1,12 @@
 import Scene from "../../Frame/Scene";
-import ScrollList from "../../CustomUI/ScrollList";
 import { Game } from "../../Game/Game";
 import { DB } from "../../Frame/DataBind";
-import { ThemeData, RankData } from "../../Frame/dts";
+import { RankData } from "../../Frame/dts";
 import { Util } from "../../Frame/Util";
 import { Sound } from "../../Frame/Sound";
 import SceneManager from "../../Frame/SceneManager";
 import LoadingScene from "../LoadingScene/LoadingScene";
-import { PrefabPath } from "../../Frame/Config";
+import { PrefabPath, Config } from "../../Frame/Config";
 import PlayScene from "../PlayScene/PlayScene";
 import MessageBox from "../../Frame/MessageBox";
 import PaintPanel from "../../Panel/PaintPanel/PaintPanel";
@@ -139,20 +138,38 @@ export default class MenuScene extends Scene {
     }
     onEnterScene(){
         this.updateThemeList();
-        let btnAnim = (node:cc.Node, delay)=>{
+        let btnAnim = (node:cc.Node, delay, callback = null)=>{
             node.scale = 0;
             node.angle = 20;
-            cc.tween(node).delay(delay).to(0.5,{scale:1, angle:0},{easing:cc.easing.backOut}).start();
+            cc.tween(node).delay(delay).to(0.5,{scale:1, angle:0},{easing:cc.easing.backOut}).call(()=>{
+                if(callback){
+                    callback();
+                }
+            }).start();
         }
         this.playTitleAnim();
+        let playTimes = DB.Get(Key.PlayTimes);
+        this.drawBtn.node.active = playTimes >= Config.unlockPaintTimes;  //新玩家，不显示画笔按钮
         btnAnim(this.themesContent, 0.2);
-        btnAnim(this.playBtn.node, 0.4);
+        btnAnim(this.playBtn.node, 0.4, ()=>{
+            if(playTimes < 1){
+                TweenUtil.applyBreath(this.playBtn.node);
+            }
+        });
         btnAnim(this.buyBtn.node, 0.4);
         btnAnim(this.leftTriangle.node, 0.5);
         btnAnim(this.rightTriangle.node, 0.5);
-        btnAnim(this.drawBtn.node, 0.5);
+        btnAnim(this.drawBtn.node, 0.5, ()=>{
+            if(playTimes >= Config.unlockPaintTimes && DB.Get(Key.CustomHeros).length < 1){
+                TweenUtil.applyBreath(this.drawBtn.node);
+            }
+        });
         btnAnim(this.rankBtn.node, 0);
         btnAnim(this.optionBtn.node, 0);
+        
+    }
+    showDrawGuid(){
+        
 
     }
     public playTitleAnim(){
@@ -196,19 +213,19 @@ export default class MenuScene extends Scene {
         let func = ()=>{
             Sound.play("gameStartBtn");
             SceneManager.ins.Enter("LoadingScene")
-            .then((loadingScene:LoadingScene)=>{
-                loadingScene.Load([
-                    PrefabPath.shield,
-                    PrefabPath.heart,
-                    PrefabPath.coinBag,
-                    PrefabPath.clock,
-                    PrefabPath.monster,
-                ]).then(()=>{
-                    SceneManager.ins.Enter("PlayScene").then((playScene:PlayScene)=>{
-                        playScene.restart();
+                .then((loadingScene:LoadingScene)=>{
+                    loadingScene.Load([
+                        PrefabPath.shield,
+                        PrefabPath.heart,
+                        PrefabPath.coinBag,
+                        PrefabPath.clock,
+                        PrefabPath.monster,
+                    ]).then(()=>{
+                        SceneManager.ins.Enter("PlayScene").then((playScene:PlayScene)=>{
+                            playScene.restart();
+                        });
                     });
                 });
-            });
         }
         let theme = Game.findThemeConf(DB.Get(Key.ThemeId));
         if(theme.isCustom){

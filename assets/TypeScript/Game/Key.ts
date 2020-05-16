@@ -1,4 +1,8 @@
 export enum Key{
+    Uuid = "uuid",
+    Version = "version",
+
+    //用户属性
     Coin = "user/coin",
     ThemeId = "user/themeId",
     ColorIds = "user/colorIds",
@@ -7,17 +11,22 @@ export enum Key{
     CustomHeros = "user/customHeros",
     CustomThemes = "user/customThemes",
     OpenThemeIds = "user/openThemeIds",
+    PlayTimes = "user/playTimes",
+    DrawTimes = "user/playTimes",
 
+    //设置
     Sound = "option/sound",
     Music = "option/music",
     Sensitivity = "option/sensitivity",
     Vibrate = "option/vibrate",
     
-    Uuid = "uuid",
-    Version = "version",
+    //引导变量
+    guideUnlockPaint = "guide/unlockPaint",
 
-    PlayTims = "user/playTimes",
-
+    //临时变量
     curScene = "temp/curScene",
     gameState = "temp/gameState",
+
+    
+
 }

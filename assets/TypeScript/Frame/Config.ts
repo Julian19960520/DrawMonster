@@ -13,6 +13,7 @@ export enum DirType{
     Rotate,     //旋转
 }
 export namespace Config{
+    export let unlockPaintTimes = 2;
     export let themes:ThemeData[]=[
         {id:1, heroId:1, cost:0, monsterIds:[11,12,13]},
         {id:9, heroId:9, cost:0, monsterIds:[91,92,93]},
