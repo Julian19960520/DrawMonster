@@ -14,24 +14,72 @@ import { crossPlatform } from "../../Frame/CrossPlatform";
 import { Vibrate } from "../../Frame/Vibrate";
 import Top from "../../Frame/Top";
 import SceneManager from "../../Frame/SceneManager";
-import PlayScene from "./PlayScene";
+import PlayScene, { GameState } from "./PlayScene";
 import { Sound } from "../../Frame/Sound";
 import { DB } from "../../Frame/DataBind";
 import { Key } from "../../Game/Key";
+import { Game } from "../../Game/Game";
 
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class Shield extends cc.Component {
-    beginAnim(){
+export default class Shield extends DB.DataBindComponent {
+    state:GameState = GameState.play;
+    shieldTime = 0;
+    @property(cc.Label)
+    label:cc.Label = null;
+    @property(cc.Sprite)
+    sprite:cc.Sprite = null;
+
+    _isInvincible = false;
+    onLoad(){
+        this.shieldTime = 0;
+        this.Bind(Key.gameState,(state)=>{
+            this.state = state;
+        })
+    }
+    update(dt){
+        dt *= Game.timeScale; 
+        switch(this.state){
+            case GameState.play:
+                if(this.shieldTime>=0){
+                    this.shieldTime -= dt;
+                    this.label.string = `${Util.fixedNum(this.shieldTime,1)}`;
+                    let show;
+                    if(this.shieldTime > 1){
+                        show = true;
+                    }else{  
+                        show = Math.floor(this.shieldTime * 10) % 2 == 0;
+                    }
+                    this.sprite.node.active = show;
+                    if(this.shieldTime<0 && this._isInvincible){
+                        this.closeShield();
+                        Sound.play("dorpShield");
+                    }
+                }
+        }
+    }
+    
+    openShield(time){
+        this.shieldTime = time;
+        this._isInvincible = true;
+        this.sprite.node.active = true;
+        this.label.node.active = true;
         this.getComponent(cc.Animation).play("shield");
     }
-    endAnim(){
+
+    closeShield(){
+        this._isInvincible = false;
         this.getComponent(cc.Animation).stop();
+        this.sprite.node.active = false;
+        this.label.node.active = false;
     }
-    onCollisionEnter(other:cc.Collider, self){
-        if(other.node.group == "Monster"){
+    public isInvincible(){
+        return this._isInvincible;
+    }
+    onCollisionEnter(other:cc.Collider){
+        if(other.node.group == "Monster" && this.shieldTime > 0){
             let monster = other.node.getComponent(Monster);
             if(monster && monster.active){
                 monster.active = false;

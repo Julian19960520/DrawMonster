@@ -38,6 +38,7 @@ export default class PropFactory extends cc.Component {
     }
     generateProp(type){
         let node:cc.Node = null;
+        type = 1;
         switch(type){
             case 1:{
                 node = PoolManager.getInstance(PrefabPath.shield);

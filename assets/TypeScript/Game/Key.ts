@@ -17,4 +17,7 @@ export enum Key{
     Version = "version",
 
     PlayTims = "user/playTimes",
+
+    curScene = "temp/curScene",
+    gameState = "temp/gameState",
 }

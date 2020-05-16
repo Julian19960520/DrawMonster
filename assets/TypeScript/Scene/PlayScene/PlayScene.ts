@@ -1,9 +1,13 @@
-import Scene from "../../Frame/Scene";import Hero, { State } from "./Hero";import MonsterFactory from "./MonsterFactory";import PropFactory from "./PropFactory";import CoinBar from "../../Game/CoinBar";import Music from "../../Frame/Music";import { Sound } from "../../Frame/Sound";import PausePanel from "../../Panel/PausePanel";import SceneManager from "../../Frame/SceneManager";import { Game } from "../../Game/Game";import { Util } from "../../Frame/Util";import GameOverPanel from "../../Panel/GameOverPanel/GameOverPanel";import FinishScene from "../FinishScene/FinishScene";import { GameRecorder } from "../../Frame/GameRecorder";
+import Scene from "../../Frame/Scene";import Hero from "./Hero";import MonsterFactory from "./MonsterFactory";import PropFactory from "./PropFactory";import CoinBar from "../../Game/CoinBar";import Music from "../../Frame/Music";import { Sound } from "../../Frame/Sound";import PausePanel from "../../Panel/PausePanel";import SceneManager from "../../Frame/SceneManager";import { Game } from "../../Game/Game";import { Util } from "../../Frame/Util";import GameOverPanel from "../../Panel/GameOverPanel/GameOverPanel";import FinishScene from "../FinishScene/FinishScene";import { GameRecorder } from "../../Frame/GameRecorder";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import { crossPlatform } from "../../Frame/CrossPlatform";
 import { DB } from "../../Frame/DataBind";
 
+export enum GameState{
+    play = "play",
+    pause = "pause",
+}
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -148,7 +152,7 @@ export default class PlayScene extends Scene {
         this.monsterFactory.play();
         this.propFactory.clear();
         this.propFactory.begin();
-        this.hero.setState(State.active);
+        DB.Set(Key.gameState, "play");
         this.hero.node.position = this.targetPos = cc.Vec2.ZERO;
         this.playing = true;
         this.reborned = false;
@@ -162,14 +166,14 @@ export default class PlayScene extends Scene {
         this.playing = false;
         this.monsterFactory.pause();
         this.propFactory.pause();
-        this.hero.setState(State.pause);
+        DB.Set(Key.gameState, "pause");
     }
     resume(){
         this.music.resume();
         this.playing = true;
         this.monsterFactory.resume();
         this.propFactory.resume();
-        this.hero.setState(State.active);
+        DB.Set(Key.gameState, "play");
     }
     onShakeScene(evt:cc.Event.EventCustom){
         this.shakeScene(evt.detail);
@@ -189,7 +193,7 @@ export default class PlayScene extends Scene {
     reborn(){
         Sound.play("gameStartBtn");
         this.reborned = true;
-        this.hero.openShield(3);
+        this.hero.shield.openShield(3);
         this.targetPos = cc.Vec2.ZERO;
         this.hero.node.position = cc.Vec2.ZERO;
         this.resume();

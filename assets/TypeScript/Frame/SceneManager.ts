@@ -13,6 +13,7 @@ import Scene from "./Scene";
 import { DB } from "./DataBind";
 import ScreenRect from "./ScreenRect";
 import { Util } from "./Util";
+import { Key } from "../Game/Key";
 @ccclass
 export default class SceneManager extends cc.Component {
     stack:string[] = [];
@@ -116,7 +117,7 @@ export default class SceneManager extends cc.Component {
                 resolve(newScene);
                 let oldScene = this.curScene;
                 this.curScene = newScene;
-                DB.Set("temp/curScene", this.curScene);
+                DB.Set(Key.curScene, this.curScene);
                 shiftAnima(oldScene, newScene, ()=>{
                     if(oldScene && oldScene.autoDestroy){
                         oldScene.onExitScene();
