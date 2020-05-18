@@ -1,4 +1,4 @@
-import { VideoAd, tt, crossPlatform, systemInfo } from "./CrossPlatform";
+import { VideoAd, tt, crossPlatform, systemInfo, AppName } from "./CrossPlatform";
 import { Util } from "./Util";
 
 export enum AdUnitId{
@@ -49,6 +49,9 @@ export namespace AD{
             });
     }
     export function showBanner(id:AdUnitId, style, succ, fail){
+        if(systemInfo.appName == AppName.Douyin){
+            return;
+        }
         let bannerAd = crossPlatform.createBannerAd({
             adUnitId: id,
             adIntervals:30,

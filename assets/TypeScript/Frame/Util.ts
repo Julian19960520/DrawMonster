@@ -188,7 +188,7 @@ export namespace Util{
         let ratio = cc.view["_devicePixelRatio"];
         let scale = cc.view.getScaleX();
         let factor = scale/ratio;
-        let point = cc.p(rect.x, rect.y);
+        let point = cc.v2(rect.x, rect.y);
         cc.view["_convertPointWithScale"](point);
         return {
             left:rect.x*factor,

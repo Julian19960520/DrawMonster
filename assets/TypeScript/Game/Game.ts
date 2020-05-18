@@ -227,16 +227,15 @@ export namespace Game{
         customHeros.unshift(hero);
         allHeros.unshift(hero);
         DB.SetLoacl(Key.CustomHeros, customHeros);
-
         return hero;
     }
-    export function newMonsterConf(url){
+    export function newMonsterConf(name, url, dirType){
         let id = newUuid();
         let monster:MonsterConfig = {
             id:id, 
-            name:"ID:"+id,
+            name:name,
             url:url,
-            dirType:DirType.Upward,
+            dirType:dirType,
             circle:{radius:50},
             isUserPainting:true,
         };

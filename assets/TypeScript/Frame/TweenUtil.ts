@@ -14,6 +14,20 @@ export namespace TweenUtil{
             )
         );
     }
+    export function applyBubble(node:cc.Node){
+        if(!node){
+            return;
+        }
+        return node.runAction(
+            cc.repeatForever(
+                cc.sequence(
+                    cc.scaleTo(0.5, 1.05, 0.95),
+                    cc.scaleTo(1, 0.95, 1.05),
+                    cc.scaleTo(0.5, 1, 1),
+                )
+            )
+        );
+    }
     export function applyScaleBounce(node:cc.Node, oriScale, tarScale, onCenter = null, onEnd = null){
         if(!node){
             return;

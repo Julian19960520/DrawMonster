@@ -23,12 +23,15 @@ export default class ThemeCell extends cc.Component {
     scaleNode:cc.Node = null;
     @property(cc.Sprite)
     sprite:cc.Sprite = null;
+    @property(cc.Label)
+    nameLabel:cc.Label = null;
     // @property(cc.Sprite)
     // selectBox:cc.Sprite = null;
     @property(cc.Node)
     lockNode:cc.Node = null;
     @property(cc.Label)
     costLabel:cc.Label = null;
+
     // @property(cc.Node)
     // youMark:cc.Node = null;
 
@@ -55,17 +58,13 @@ export default class ThemeCell extends cc.Component {
     }
     setData(data:ThemeData){
         this.data = data;
-        if(!data){
-            this.scaleNode.active = false;
-            this.lockNode.active = false;
-            return;
-        }
         let open = Game.isThemeOpen(data.id);
         Util.grayfiyNode(this.scaleNode, !open);
         this.lockNode.active = !open;
         this.costLabel.string = data.cost.toString();
         this.scaleNode.active = true;
         let hero = Game.findHeroConf(data.heroId);
+        this.nameLabel.string = hero.name;
         this.sprite.node.active = false;
         Game.loadTexture(hero.url,(texture)=>{
             this.sprite.node.active = true;

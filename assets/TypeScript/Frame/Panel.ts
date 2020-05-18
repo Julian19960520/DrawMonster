@@ -46,7 +46,7 @@ export default class Panel extends DB.DataBindComponent {
         this.node.scale = 0;
         cc.tween(this.node).show().to(0.1,{scale:1}).call(callback).start();
     }
-    private onCloseBtnClick(){
+    protected onCloseBtnClick(){
         Sound.play("closeBtn");
         if(this.closeCallback){
             this.closeCallback();

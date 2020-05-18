@@ -74,7 +74,7 @@ export namespace GameRecorder {
 
             extra:{
                 videoPath:videoPath,
-                videoTopics:["抓到你就完蛋了", "抖音小游戏"]
+                videoTopics:["抓到你就完蛋了"]
             },
             success:success,
             fail:fail,

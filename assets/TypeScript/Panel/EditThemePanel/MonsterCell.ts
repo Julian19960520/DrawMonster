@@ -17,6 +17,9 @@ import { Sound } from "../../Frame/Sound";
 import Top from "../../Frame/Top";
 import { Local } from "../../Frame/Local";
 import { Key } from "../../Game/Key";
+import PreviewPanel from "../PreviewPanel/PreviewPanel";
+import { ThemeData } from "../../Frame/dts";
+import { Config } from "../../Frame/Config";
 
 const {ccclass, property} = cc._decorator;
 
@@ -61,19 +64,7 @@ export default class MonsterCell extends cc.Component {
         let themeId  = DB.Get(Key.ThemeId);
         let theme = Game.findThemeConf(themeId);
         if(this.data.createNew){
-            SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
-                panel.saveCallback = (path)=>{
-                    let monster = Game.newMonsterConf(path);
-                    if(theme.monsterIds.length<5){
-                        theme.monsterIds.push(monster.id);
-                    }else{
-                        Top.showToast("最多选择5个");
-                    }
-                    DB.Invoke(Key.ThemeId);
-                    DB.Invoke(Key.CustomMonsters);
-                    Local.setDirty(Key.CustomThemes);
-                }
-            });
+            this.openPaintPanel(theme);
         }else{
             let idx = theme.monsterIds.indexOf(this.data.id);
             if(idx>=0){
@@ -92,6 +83,35 @@ export default class MonsterCell extends cc.Component {
                 }
             }
         }
+    }
+
+    openPaintPanel(theme:ThemeData){
+        SceneManager.ins.OpenPanelByName("PaintPanel",(paintPanel:PaintPanel)=>{
+            paintPanel.beginTip(Config.monsterAdvises);
+            paintPanel.saveCallback = (pixels)=>{
+                //点击画图面板的保存按钮时
+                SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{
+                    previewPanel.initMonster(pixels);
+                    //点击取名面板的确定按钮时
+                    previewPanel.okCallback = (name, dirType)=>{
+                        let path = Game.savePixels(pixels);
+                        let monster = Game.newMonsterConf(name||"我的画作", path, dirType);
+                        if(theme.monsterIds.length<5){
+                            theme.monsterIds.push(monster.id);
+                        }else{
+                            Top.showToast("最多选择5个");
+                        }
+                        DB.Invoke(Key.ThemeId);
+                        DB.Invoke(Key.CustomMonsters);
+                        Local.setDirty(Key.CustomThemes);
+                        //连续关闭两个面板
+                        SceneManager.ins.popPanel();    
+                        SceneManager.ins.popPanel();
+                    };
+                }); 
+                      
+            }
+        });
     }
     setUsingState(b){
         this.node.color = b?cc.color(237,245,142):cc.Color.WHITE;

@@ -42,25 +42,24 @@ export default class LoginScene extends Scene {
     }
     login(){
         let version = Local.Get(Key.Version) || 0;
-        if(version == 0){
+        if(version != "0.1.5"){
             if(tt){
                 tt.clearStorage();
             }
         }
-
         //
-        DB.SetLoacl(Key.Version, "0.1.3");
+        DB.SetLoacl(Key.Version, "0.1.5");
         this.loadValue("uuid", 1000);
 
         //用户属性
         this.loadValue(Key.Coin, 100);
-        this.loadValue(Key.ThemeId, 9);
+        this.loadValue(Key.ThemeId, 1);
         this.loadValue(Key.ColorIds, [1,2,3,4,5,6,7,8,9,10, 11,12,13,14,15,16,17,18,19,20, 21,22,23,24,25,26,27,28,29,30, 31,32]);
         this.loadValue(Key.RankDatas, []);
         this.loadValue(Key.CustomMonsters, []);
         this.loadValue(Key.CustomHeros, []);
         this.loadValue(Key.CustomThemes, []);
-        this.loadValue(Key.OpenThemeIds, [9,1,3]);
+        this.loadValue(Key.OpenThemeIds, [1,2,3]);
         this.loadValue(Key.PlayTimes, 0);
 
         //设置
@@ -71,6 +70,7 @@ export default class LoginScene extends Scene {
 
         //引导变量
         this.loadBoolValue(Key.guideUnlockPaint, false);
+        this.loadBoolValue(Key.guideDrawFish, false);
 
         Game.Init();
         SceneManager.ins.Enter("MenuScene");

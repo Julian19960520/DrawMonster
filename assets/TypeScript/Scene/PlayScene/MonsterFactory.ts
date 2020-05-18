@@ -82,6 +82,7 @@ export default class MonsterFactory extends cc.Component {
             cc.v2(1,  1.5),
         ]);
     }
+
     public play(){
         this.timer = 0;
         this.time = 0;

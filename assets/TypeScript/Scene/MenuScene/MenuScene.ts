@@ -17,6 +17,7 @@ import { crossPlatform } from "../../Frame/CrossPlatform";
 import ThemeCell from "./ThemeCell";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import Top from "../../Frame/Top";
+import PreviewPanel from "../../Panel/PreviewPanel/PreviewPanel";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -270,12 +271,29 @@ export default class MenuScene extends Scene {
     }
     private onDrawBtnTap(){
         Sound.play("clickBtn");
-        SceneManager.ins.OpenPanelByName("PaintPanel",(panel:PaintPanel)=>{
-            panel.saveCallback = (path)=>{
-                let hero = Game.newHeroConf("角色", path);
-                let theme = Game.newThemeConf(hero.id);
-                DB.SetLoacl(Key.ThemeId, theme.id);
-                this.updateThemeList();
+        DB.SetLoacl(Key.guideUnlockPaint, true);
+        SceneManager.ins.OpenPanelByName("PaintPanel",(paintPanel:PaintPanel)=>{
+            paintPanel.beginTip(Config.heroAdvises);
+            paintPanel.saveCallback = (pixels)=>{
+                //点击画图面板的保存按钮时
+                SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{
+                    previewPanel.initHero(pixels);
+                    //点击取名面板的确定按钮时
+                    previewPanel.okCallback = (name)=>{
+                        DB.SetLoacl(Key.guideDrawFish, true);
+                        let path = Game.savePixels(pixels);
+                        let hero = Game.newHeroConf(name||"我的画作", path);
+                        let theme = Game.newThemeConf(hero.id);
+                        DB.SetLoacl(Key.ThemeId, theme.id);
+                        this.updateThemeList();
+                        //连续关闭两个面板
+                        SceneManager.ins.popPanel();
+                        SceneManager.ins.popPanel();
+                        this.drawBtn.node.stopAllActions();
+                        this.drawBtn.node.scale = 1;
+                    };
+                }); 
+                      
             }
         });
     }

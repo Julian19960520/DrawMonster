@@ -20,7 +20,7 @@ export default class PropFactory extends cc.Component {
         this.playing = true;
     }
     public clear(){
-        for(let i=this.node.childrenCount-1;i>=0;i--){
+        for(let i=this.node.childrenCount-1; i>=0; i--){
             this.node.children[i].dispatchEvent(Util.customEvent("returnPool",false));
         }
     }
@@ -36,9 +36,9 @@ export default class PropFactory extends cc.Component {
             this.generateProp(Util.randomInt(1, 3));
         }
     }
+
     generateProp(type){
         let node:cc.Node = null;
-        type = 1;
         switch(type){
             case 1:{
                 node = PoolManager.getInstance(PrefabPath.shield);
@@ -65,6 +65,7 @@ export default class PropFactory extends cc.Component {
         let vy = Util.randomInt(800, 1200);
         prop.velocity = cc.v2(vx, vy);
     }
+
     onCollisionExit(other:cc.Collider, self){
         if(other.node.group == "Prop"){
             other.node.dispatchEvent(Util.customEvent("returnPool",false));

@@ -7,12 +7,12 @@ import MessageBox from "../../Frame/MessageBox";
 import ToggleGroup from "../../CustomUI/ToggleGroup";
 import { DB } from "../../Frame/DataBind";
 import { Config } from "../../Frame/Config";
-import { Game } from "../../Game/Game";
 import { Sound } from "../../Frame/Sound";
-import { crossPlatform } from "../../Frame/CrossPlatform";
 import Monster from "../../Scene/PlayScene/Monster";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
+import { Util } from "../../Frame/Util";
+import { TweenUtil } from "../../Frame/TweenUtil";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -46,19 +46,10 @@ export default class PaintPanel extends Panel {
     graphics:Graphics = null;
     @property(Slider)
     sizeSlider:Slider = null;
-    //动画
-    @property(ToggleGroup)
-    actionToggle:ToggleGroup = null;
-    @property(Monster)
-    monster: Monster = null;
 
-    //
-    @property(ToggleGroup)
-    mainToggle:ToggleGroup = null;
     @property(cc.Node)
     paintGroup:cc.Node = null;
-    @property(cc.Node)
-    animGroup:cc.Node = null;
+
     @property(cc.Node)
     colliderSizePreview:cc.Node = null;
 
@@ -70,8 +61,13 @@ export default class PaintPanel extends Panel {
 
     @property(cc.Graphics)
     colliderSize:cc.Graphics = null;
+
+    @property(cc.Label)
+    tipLabel:cc.Label = null;
     
     state:State = State.Pencil;
+    saveCallback = null;
+    private pencilColor:cc.Color = null;
 
     onLoad () {
         super.onLoad();
@@ -87,8 +83,6 @@ export default class PaintPanel extends Panel {
         this.saveBtn.node.on("click", this.onSaveBtnTap, this);
         this.sizeSlider.node.on(Slider.MOVE, this.onSizeChange, this);
 
-        this.actionToggle.node.on(ToggleGroup.TOGGLE_CHANGE, this.onActionToggleChange, this);
-        this.mainToggle.node.on(ToggleGroup.TOGGLE_CHANGE, this.onMainToggleChange, this);
         this.initColorBtns();
         this.highLightBtn(this.pencilBtn);
         this.drawColliderSize();
@@ -112,28 +106,12 @@ export default class PaintPanel extends Panel {
         this.sizeSlider.node.off(Slider.MOVE, this.onSizeChange, this);
         this.colorList.node.off(ScrollList.SELECT_CHILD, this.selectColorChild, this)
     }
+
     initColorBtns(){
         let colorIds = DB.Get(Key.ColorIds);
         this.colorList.node.on(ScrollList.SELECT_CHILD, this.selectColorChild, this)
         this.colorList.setDataArr(colorIds);
         this.colorList.selectItemByData(Config.getColorDataByID(1));
-    }
-    onMainToggleChange(idx, click){
-        if(click){
-            Sound.play("clickBtn");
-        }
-        this.paintGroup.active = idx==0;
-        this.animGroup.active = idx==1;
-        if(idx == 1){
-            this.monster.setTexture(this.graphics.renderTexture);
-            this.onActionToggleChange(this.actionToggle.idx, false);
-        }
-    }
-    onActionToggleChange(idx,click){
-        if(click){
-            Sound.play("clickBtn");
-        }
-        this.monster.playAnima(`action${idx+1}`);
     }
 
     selectColorChild(item, data){
@@ -168,28 +146,18 @@ export default class PaintPanel extends Panel {
             }
         });
     }
-    private oriPath = "";
-    setBaseTexture(oriPath){
-        this.oriPath =  oriPath;
-        //TODO
-    }
-    saveCallback = null;
+
     onSaveBtnTap(){
+        Sound.play("clickBtn");
         if(this.graphics.opStack.length<1){
             SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
                 messageBox.toOkStyle("多画几笔吧（最少1笔）")
             });
-            return;
+        }else{
+            if(this.saveCallback){
+                this.saveCallback(this.graphics.pixels);
+            }
         }
-        Sound.play("clickBtn");
-        crossPlatform.getOpenDataContext().postMessage({
-            type:"hello"
-        });
-        let path = Game.savePixels(this.graphics.pixels);
-        if(this.saveCallback){
-            this.saveCallback(path);
-        }
-        SceneManager.ins.popPanel();
     }
     highLightBtn(targetBtn:Button){
         let btns = [this.pencilBtn, this.eraserBtn, this.bucketBtn];
@@ -215,7 +183,21 @@ export default class PaintPanel extends Panel {
         this.colliderSize.stroke();
     }
 
-    private pencilColor:cc.Color = null;
+    beginTip(advises:string[]){
+        let b = false;
+        let advise = advises[Util.randomIdx(advises.length)];
+        this.tipLabel.string = `没想好画什么？试试：[${advise}]`;
+        this.schedule(()=>{
+            TweenUtil.applyScaleBounce(this.tipLabel.node,1, 0.2, ()=>{
+                b = !b;
+                if(b){
+                    this.tipLabel.string = Config.paintTips[Util.randomIdx(Config.paintTips.length)];
+                }else{
+                    this.tipLabel.string = `没想好画什么？试试：[${advise}]`;
+                }
+            })
+        }, 10);
+    }
 
     private onTouchStart(event:cc.Event.EventTouch){
         let pos = event.getLocation();

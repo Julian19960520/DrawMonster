@@ -24,6 +24,7 @@ export default class PanelStack extends cc.Component {
         this.OpenByPath(`Panel/${name}`, callback);
     }
     public OpenByPath(path:string, callback = (panel)=>{}){
+        this.blockInput.node.active = true;
         cc.loader.loadRes(path, (err, prefab) => {
             var newNode:cc.Node = cc.instantiate(prefab);
             newNode.name = path.substr(path.lastIndexOf("/")+1);
@@ -39,7 +40,6 @@ export default class PanelStack extends cc.Component {
                 }
                 //打开新面板
                 panel.panelStack = this;
-                this.blockInput.node.active = true;
                 this.blockInput.node.setSiblingIndex(this.node.childrenCount-1);
                 this.node.addChild(panel.node, this.node.childrenCount-1);
                 panel.openAnim();
@@ -47,6 +47,7 @@ export default class PanelStack extends cc.Component {
                 callback(panel);
                 this.printStack();
             }else{
+                this.blockInput.node.active = true;
                 console.error("PanelManager: cannot find panel component on node : " + path);
             }
         });

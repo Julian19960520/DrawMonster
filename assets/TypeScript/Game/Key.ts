@@ -22,6 +22,7 @@ export enum Key{
     
     //引导变量
     guideUnlockPaint = "guide/unlockPaint",
+    guideDrawFish = "guide/drawFish",
 
     //临时变量
     curScene = "temp/curScene",
