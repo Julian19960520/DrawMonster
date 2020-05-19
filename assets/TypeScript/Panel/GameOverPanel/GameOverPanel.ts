@@ -60,8 +60,11 @@ export default class GameOverPanel extends Panel {
                 });
             }
         });
+        if(GameRecorder.recordering){
+            GameRecorder.stop();
+        }
         if(tt){
-            if(Util.getTimeStamp() - GameRecorder.startStamp > 4000){
+            if(GameRecorder.recordering && Util.getTimeStamp() - GameRecorder.startStamp > 4000){
                 //录制视频
                 this.setRebornBtnType("video");
             }else{
@@ -74,9 +77,7 @@ export default class GameOverPanel extends Panel {
         }else{
             this.setRebornBtnType("share");
         }
-        if(GameRecorder.recordering){
-            GameRecorder.stop();
-        }
+
     }
     onDestroy(){
         this.onRebornCallback = null;
@@ -116,7 +117,6 @@ export default class GameOverPanel extends Panel {
                     this.onRebornCallback();
                 }
             },(err)=>{
-                console.log("分享失败：",e);
                 Top.showToast("播放失败"+err);
             })
         }else if(this.type == "video"){
@@ -127,8 +127,7 @@ export default class GameOverPanel extends Panel {
                     this.onRebornCallback();
                 }
             },(e)=>{
-                console.log("分享失败：",e);
-                Top.showToast("分享失败");
+                Top.showToast("分享录屏失败");
             });
         }
     }

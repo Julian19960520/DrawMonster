@@ -10,6 +10,7 @@
 
 import PhyObject from "../PlayScene/PhyObject";
 import { Util } from "../../Frame/Util";
+import Top from "../../Frame/Top";
 
 const {ccclass, property} = cc._decorator;
 
@@ -22,6 +23,11 @@ export default class TitleWordBtn extends cc.Component {
     }
     onClick(){
         this.hp--;
+        Top.showFloatLabel("hp-1",this.node.parent, {
+            offset:this.node.position.add(cc.v2(-10,10)),
+            color:cc.Color.RED,
+            fontSize:20,
+        });
         if(this.hp<=0){
             this.node.off("click", this.onClick, this)
             let phyObject = this.node.addComponent(PhyObject);

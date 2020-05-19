@@ -4,6 +4,7 @@
 // Learn Attribute:
 import { crossPlatform } from "../Frame/CrossPlatform";
 import { Vibrate } from "../Frame/Vibrate";
+import SceneManager from "../Frame/SceneManager";
 const {ccclass, menu, property} = cc._decorator;
 
 @ccclass
@@ -20,6 +21,7 @@ export default class Button extends cc.Button {
         crossPlatform.reportAnalytics('clickBtn', {
             timeStamp: new Date().getTime(),
             btnName: this.node.name,
+            sceneName:SceneManager.ins.curScene.name,
         });
     }
 }

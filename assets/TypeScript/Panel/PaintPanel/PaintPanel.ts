@@ -4,11 +4,9 @@ import ScrollList from "../../CustomUI/ScrollList";
 import Slider from "../../CustomUI/Slider";
 import SceneManager from "../../Frame/SceneManager";
 import MessageBox from "../../Frame/MessageBox";
-import ToggleGroup from "../../CustomUI/ToggleGroup";
 import { DB } from "../../Frame/DataBind";
 import { Config } from "../../Frame/Config";
 import { Sound } from "../../Frame/Sound";
-import Monster from "../../Scene/PlayScene/Monster";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import { Util } from "../../Frame/Util";
@@ -186,17 +184,19 @@ export default class PaintPanel extends Panel {
     beginTip(advises:string[]){
         let b = false;
         let advise = advises[Util.randomIdx(advises.length)];
-        this.tipLabel.string = `没想好画什么？试试：[${advise}]`;
-        this.schedule(()=>{
+        this.tipLabel.string = `没想好画什么？试试：【${advise}】`;
+        let func = ()=>{
             TweenUtil.applyScaleBounce(this.tipLabel.node,1, 0.2, ()=>{
                 b = !b;
                 if(b){
                     this.tipLabel.string = Config.paintTips[Util.randomIdx(Config.paintTips.length)];
                 }else{
-                    this.tipLabel.string = `没想好画什么？试试：[${advise}]`;
+                    this.tipLabel.string = `没想好画什么？试试：【${advise}】`;
                 }
             })
-        }, 10);
+        }
+        this.schedule(func, 10);
+        this.tipLabel.node.on(cc.Node.EventType.TOUCH_START, func, this);
     }
 
     private onTouchStart(event:cc.Event.EventTouch){

@@ -19,6 +19,8 @@ import { Sound } from "../../Frame/Sound";
 import { DB } from "../../Frame/DataBind";
 import { Key } from "../../Game/Key";
 import { Game } from "../../Game/Game";
+import PhyObject from "./PhyObject";
+import Hero from "./Hero";
 
 
 const {ccclass, property} = cc._decorator;
@@ -31,7 +33,8 @@ export default class Shield extends DB.DataBindComponent {
     label:cc.Label = null;
     @property(cc.Sprite)
     sprite:cc.Sprite = null;
-
+    
+    hero:Hero = null;
     _isInvincible = false;
     onLoad(){
         this.shieldTime = 0;
@@ -56,6 +59,7 @@ export default class Shield extends DB.DataBindComponent {
                     if(this.shieldTime<0 && this._isInvincible){
                         this.closeShield();
                         Sound.play("dorpShield");
+                        this.hero.playDropSprite(this.sprite.spriteFrame, 0.5);
                     }
                 }
         }

@@ -13,7 +13,7 @@ export enum DirType{
     Rotate,     //旋转
 }
 export namespace Config{
-    export let unlockPaintTimes = 2;
+    export let unlockPaintTimes = 1;
     export let heroAdvises = [
         "猫咪🐱","狗🐶","鸭子🦆","树叶🍃","公鸡🐔","圣诞树🎄","蘑菇🍄","鱼🐟","仙人掌🌵",
         "兔子🐰","猪头🐷","玫瑰🌹","火柴人","蛋糕🍰","奶酪🧀️","糖果🍬","彩虹🌈","独角兽🦄️",
@@ -23,9 +23,10 @@ export namespace Config{
         "剑🗡️","恐龙🦖","仙人掌🌵","蜜蜂🐝","导弹🚀","箭🏹️","陨石","星星✨","水母"
     ];
     export let paintTips = [
-        "[颜料桶]要点在封闭的圆圈内哦！",
-        "使用[颜料桶]，快速填充色彩！",
-        "请尽量贴合[蓝圈]作画",
+        "【颜料桶】要点在封闭的圆圈内哦！",
+        "使用【颜料桶】，快速填充色彩！",
+        "请尽量贴合【蓝圈】作画",
+        "画剑？请剑尖指向右边👉，并选C",
         // "画完后可以分享创作过程哦！",
     ];
     export let themes:ThemeData[]=[
@@ -46,8 +47,8 @@ export namespace Config{
     ]
     export let heros:any[] = [
         {id:1, name:"", url:"Atlas/Hero/fish" },
-        {id:2, name:"", url:"Atlas/Hero/airplane" },
-        {id:3, name:"", url:"Atlas/Hero/aloneMan" },
+        {id:2, name:"", url:"Atlas/Hero/aloneMan" },
+        {id:3, name:"", url:"Atlas/Hero/airplane" },
         {id:4, name:"", url:"Atlas/Hero/snowMan" },
         {id:5, name:"", url:"Atlas/Hero/ninja" },
         {id:6, name:"", url:"Atlas/Hero/fatGirl" },
@@ -65,13 +66,14 @@ export namespace Config{
         {id:13, url:"Atlas/Monster/jellyFish", name:"水母", dirType:DirType.HorFlip, box:{size:cc.size(100,100)} },
         {id:14, url:"Atlas/Monster/fishBone", name:"鱼骨头", dirType:DirType.Forwards, box:{size:cc.size(100,50)} },
 
-        {id:21, url:"Atlas/Monster/bullet", name:"子弹", dirType:DirType.Forwards, box:{size:cc.size(100,30)} },
-        {id:22, url:"Atlas/Monster/missile1", name:"导弹", dirType:DirType.Forwards, box:{size:cc.size(115,45)} },
-        {id:23, url:"Atlas/Monster/missile2", name:"导弹", dirType:DirType.Forwards, box:{size:cc.size(115,45)} },
 
-        {id:31, url:"Atlas/Monster/lonely1", name:"孤独", dirType:DirType.Upward, box:{size:cc.size(110,60)} },
-        {id:32, url:"Atlas/Monster/lonely2", name:"寂寞", dirType:DirType.Upward, box:{size:cc.size(110,60)}  },
-        {id:33, url:"Atlas/Monster/lonely3", name:"冷", dirType:DirType.Upward, box:{size:cc.size(110,60)} },
+        {id:21, url:"Atlas/Monster/lonely1", name:"孤独", dirType:DirType.Upward, box:{size:cc.size(110,60)} },
+        {id:22, url:"Atlas/Monster/lonely2", name:"寂寞", dirType:DirType.Upward, box:{size:cc.size(110,60)}  },
+        {id:23, url:"Atlas/Monster/lonely3", name:"冷", dirType:DirType.Upward, box:{size:cc.size(110,60)} },
+        
+        {id:31, url:"Atlas/Monster/bullet", name:"子弹", dirType:DirType.Forwards, box:{size:cc.size(100,30)} },
+        {id:32, url:"Atlas/Monster/missile1", name:"导弹", dirType:DirType.Forwards, box:{size:cc.size(115,45)} },
+        {id:33, url:"Atlas/Monster/missile2", name:"导弹", dirType:DirType.Forwards, box:{size:cc.size(115,45)} },
 
         {id:41, url:"Atlas/Monster/fireBall", name:"火球", dirType:DirType.Forwards, box:{size:cc.size(90,45)} },
 

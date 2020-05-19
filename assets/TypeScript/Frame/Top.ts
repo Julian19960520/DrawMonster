@@ -45,15 +45,21 @@ export default class Top extends DB.DataBindComponent {
             ).start();
         });
     }
-    public static showFloatLabel(string , parent:cc.Node, offset){
-        let pos:any = parent.convertToWorldSpaceAR(offset);
+    public static showFloatLabel(string , parent:cc.Node, style:{
+            offset?, 
+            color?,
+            fontSize?,
+        }){
+        let pos:any = parent.convertToWorldSpaceAR(style.offset || cc.Vec2.ZERO);
         pos = parent.convertToNodeSpaceAR(pos);
         let node = new cc.Node();
         let label = node.addComponent(cc.Label);
         parent.addChild(node);
         node.position = pos;
         label.string = string;
-        label.fontSize = 25;
+        label.fontSize = style.fontSize || 25;
+        label.node.color = style.color || cc.Color.BLACK;
+
         cc.tween(node)
             .to(0.1, {y:node.y+5} )
             .delay(1.5)

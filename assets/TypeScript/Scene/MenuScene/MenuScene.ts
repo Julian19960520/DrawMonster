@@ -70,7 +70,6 @@ export default class MenuScene extends Scene {
             this.themesContent.addChild(cell,0);
         }
     }
-
     public updateThemeList(){
         let themeId = DB.Get(Key.ThemeId);
         let centerIdx = Game.allThemes.findIndex((theme)=>{
@@ -79,7 +78,7 @@ export default class MenuScene extends Scene {
         let func = (centerOffset)=>{
             let childIdx = centerOffset+1;
             let scale = (centerOffset == 0? 1.2 : 0.5);
-            let x = centerOffset * 200;
+            let x = centerOffset * 150;
             let cell = this.themesContent.children[childIdx].getComponent(ThemeCell);
             let idx = (centerIdx+centerOffset+Game.allThemes.length)%Game.allThemes.length;
             let conf = Game.allThemes[idx];
@@ -112,7 +111,7 @@ export default class MenuScene extends Scene {
         let temp = this.themesContent.children[3].getComponent(ThemeCell);
         temp.setData(Game.allThemes[newIdx]);
         temp.node.scale = 0.5;
-        temp.node.x = dir*2 * 200;
+        temp.node.x = dir*2 * 150;
         //新的选择的cell
         newIdx = (idx+dir+Game.allThemes.length)%Game.allThemes.length;
         themeId = Game.allThemes[newIdx].id;
@@ -126,7 +125,7 @@ export default class MenuScene extends Scene {
             let cell = cellNode.getComponent(ThemeCell);
             let scale = (cell.data.id == themeId? 1.2 : 0.5);
             let tw = cc.tween(cellNode)
-                .to(0.1,{x:cellNode.x-200*dir, scale:scale},{easing:cc.easing.cubicOut})
+                .to(0.1,{x:cellNode.x-150*dir, scale:scale},{easing:cc.easing.cubicOut})
                 .call(()=>{
                     //移除的cell
                     if(Math.abs(cellNode.x) > this.themesContent.width/2){

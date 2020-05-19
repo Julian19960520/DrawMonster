@@ -53,7 +53,7 @@ export default class Hero extends DB.DataBindComponent {
         this.anim.play("idle");
         this.initHeart();
         this.shield.closeShield();
-
+        this.shield.hero = this;
         this.Bind(Key.gameState,(state)=>{
             this.state = state;
             if(state == GameState.play){

@@ -57,6 +57,12 @@ export namespace AD{
             adIntervals:30,
             style: style
         });
+        bannerAd.onResize(size => {
+            // good
+            console.log(size.width, size.height);
+            bannerAd.style.top = systemInfo.windowHeight - size.height;
+            bannerAd.style.left = (systemInfo.windowWidth - size.width) / 2;
+        });
         let loadedCall = () => {
             bannerAd.show()
                 .then(() => {

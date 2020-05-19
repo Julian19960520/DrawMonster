@@ -156,9 +156,10 @@ export default class PlayScene extends Scene {
         this.hero.node.position = this.targetPos = cc.Vec2.ZERO;
         this.playing = true;
         this.reborned = false;
+        let themeId = DB.Get(Key.ThemeId);
         crossPlatform.reportAnalytics('play', {
             timeStamp: new Date().getTime(),
-            themeId: DB.Get(Key.ThemeId),
+            themeId: themeId>1000? 0 : themeId,
         });
     }
     pause(){
@@ -207,11 +208,6 @@ export default class PlayScene extends Scene {
                     killerName:killerName,
                 })
             });
-        });
-        crossPlatform.reportAnalytics('play', {
-            timeStamp: new Date().getTime(),
-            themeId: DB.Get(Key.ThemeId),
-            time:time
         });
     }
 }

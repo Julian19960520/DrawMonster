@@ -295,6 +295,12 @@ export namespace Game{
         }
         rankDatas.splice(newData.rank-1, 0, newData);
         DB.SetLoacl(Key.RankDatas, rankDatas);
+        let themeId = DB.Get(Key.ThemeId);
+        crossPlatform.reportAnalytics("gameOver",{
+            timeStamp: new Date().getTime(),
+            themeId: themeId>1000? 0 : themeId,
+            time: time,
+        })
     }
     export function getHighScroe(){
         let rankDatas:RankData[] = DB.Get(Key.RankDatas);

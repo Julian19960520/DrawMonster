@@ -42,13 +42,13 @@ export default class LoginScene extends Scene {
     }
     login(){
         let version = Local.Get(Key.Version) || 0;
-        if(version != "0.1.5"){
+        if(version != "0.1.6"){
             if(tt){
                 tt.clearStorage();
             }
         }
         //
-        DB.SetLoacl(Key.Version, "0.1.5");
+        DB.SetLoacl(Key.Version, "0.1.6");
         this.loadValue("uuid", 1000);
 
         //用户属性

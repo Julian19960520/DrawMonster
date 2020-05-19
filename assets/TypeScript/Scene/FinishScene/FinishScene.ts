@@ -81,7 +81,6 @@ export default class FinishScene extends Scene {
         this.initChestBtn();
         this.rewards = Game.randomFinishRewards();
         let style = Util.convertToWindowSpace(this.bannerPos);
-        console.log(style);
         this.bannerAd = AD.showBanner(AdUnitId.FinishBottom,style, ()=>{}, ()=>{});
     }
     onExitScene(){
@@ -100,6 +99,7 @@ export default class FinishScene extends Scene {
             let chestBtn = chestParent.children[i];
             chestBtn.name = "chest"+i;
             chestBtn.on("click", this.onChestBtnTap, this);
+            TweenUtil.applyBreath(chestBtn);
         }
     }
     onChestBtnTap(e:cc.Event.EventTouch){
@@ -107,6 +107,7 @@ export default class FinishScene extends Scene {
         if(!chestNode["isOpen"] && this.openCnt<3){
             if(this.keyCnt > 0){
                 chestNode["isOpen"] = true;
+                chestNode.stopAllActions();
                 let idx = this.keyCnt-1;
                 let key = this.keyNode.parent.children[idx];
                 let icon = key.getChildByName("icon"); 
@@ -189,6 +190,7 @@ export default class FinishScene extends Scene {
             let chestNode = chestParent.children[i];
             let coinCnt = this.rewards[this.openCnt].cnt;
             if(!chestNode["isOpen"]){
+                chestNode.stopAllActions();
                 chestNode.getComponent(cc.Animation).play("openChest");
                 Top.bezierSprite({
                     url:"Atlas/UI/coin",
