@@ -33,17 +33,17 @@ export namespace Config{
         {id:1, heroId:1, cost:0, monsterIds:[11,12,13,14]},
         {id:2, heroId:2, cost:0, monsterIds:[21,22,23]},
         {id:3, heroId:3, cost:0, monsterIds:[31,32,33]},
-        {id:4, heroId:4, cost:1000, monsterIds:[41]},
-        {id:5, heroId:5, cost:2000, monsterIds:[51,52]},
-        {id:6, heroId:6, cost:3000, monsterIds:[61,62,63]},
-        {id:7, heroId:7, cost:4000, monsterIds:[71,72]},
-        {id:8, heroId:8, cost:5000, monsterIds:[81,82]},
+        {id:4, heroId:4, cost:500, monsterIds:[41]},
+        {id:5, heroId:5, cost:1000, monsterIds:[51,52]},
+        {id:6, heroId:6, cost:1500, monsterIds:[61,62,63]},
+        {id:7, heroId:7, cost:2000, monsterIds:[71,72]},
+        {id:8, heroId:8, cost:2500, monsterIds:[81,82]},
 
-        {id:9, heroId:9, cost:6000, monsterIds:[91]},
-        {id:10, heroId:10, cost:7000, monsterIds:[101]},
-        {id:11, heroId:11, cost:8000, monsterIds:[111,112,113]},
-        {id:12, heroId:12, cost:9000, monsterIds:[121,122]},
-        {id:13, heroId:13, cost:10000, monsterIds:[131,132]},
+        {id:9, heroId:9, cost:3000, monsterIds:[91]},
+        {id:10, heroId:10, cost:3500, monsterIds:[101]},
+        {id:11, heroId:11, cost:4000, monsterIds:[111,112,113]},
+        {id:12, heroId:12, cost:4500, monsterIds:[121,122]},
+        {id:13, heroId:13, cost:5000, monsterIds:[131,132]},
     ]
     export let heros:any[] = [
         {id:1, name:"", url:"Atlas/Hero/fish" },
@@ -144,9 +144,9 @@ export namespace Config{
     export let finishRewards = [
         {type:"coin", cnt: 50, pr:10},
         {type:"coin", cnt: 100, pr:8},
-        {type:"coin", cnt: 300, pr:5},
-        {type:"coin", cnt: 800, pr:2},
-        {type:"coin", cnt: 1500, pr:1},
+        {type:"coin", cnt: 200, pr:5},
+        {type:"coin", cnt: 300, pr:2},
+        {type:"coin", cnt: 500, pr:1},
     ];
     export let gainKeyCosts = [10, 20, 40];
     export function getlvlConf(lvl:number){

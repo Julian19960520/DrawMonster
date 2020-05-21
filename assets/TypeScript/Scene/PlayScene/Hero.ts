@@ -171,7 +171,7 @@ export default class Hero extends DB.DataBindComponent {
                         onEnd:(finish)=>{
                             Sound.play("gainCoin");
                             let coin = DB.Get(Key.Coin);
-                            DB.SetLoacl(Key.Coin, coin+10);
+                            DB.SetLoacl(Key.Coin, coin+5);
                         }
                     });
                 }
@@ -194,7 +194,7 @@ export default class Hero extends DB.DataBindComponent {
                     onEnd:(finish)=>{
                         Sound.play("gainCoin");
                         let coin = DB.Get(Key.Coin);
-                        DB.SetLoacl(Key.Coin, coin+50);
+                        DB.SetLoacl(Key.Coin, coin+5);
                     }
                 });
                 other.node.dispatchEvent(Util.customEvent("returnPool"));

@@ -60,9 +60,6 @@ export default class GameOverPanel extends Panel {
                 });
             }
         });
-        if(GameRecorder.recordering){
-            GameRecorder.stop();
-        }
         if(tt){
             if(GameRecorder.recordering && Util.getTimeStamp() - GameRecorder.startStamp > 4000){
                 //录制视频
@@ -77,7 +74,9 @@ export default class GameOverPanel extends Panel {
         }else{
             this.setRebornBtnType("share");
         }
-
+        if(GameRecorder.recordering){
+            GameRecorder.stop();
+        }
     }
     onDestroy(){
         this.onRebornCallback = null;

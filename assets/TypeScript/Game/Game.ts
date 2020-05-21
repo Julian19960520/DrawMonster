@@ -238,6 +238,7 @@ export namespace Game{
             dirType:dirType,
             circle:{radius:50},
             isUserPainting:true,
+            angleSpeedRange:[[-150,-100],[100,150]],
         };
         monsterConfigMap.set(id, monster);
 

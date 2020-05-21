@@ -128,11 +128,11 @@ export default class FinishScene extends Scene {
                         url:"Atlas/UI/coin",
                         from:Util.convertPosition(chestNode, Top.node),
                         to:Util.convertPosition(this.coinBar.iconPos, Top.node),
-                        cnt:Math.floor(coinCnt/50),
+                        cnt:Math.floor(coinCnt/10),
                         onEnd:(finish)=>{
                             Sound.play("gainCoin");
                             let coin = DB.Get(Key.Coin);
-                            DB.SetLoacl(Key.Coin, coin+50);
+                            DB.SetLoacl(Key.Coin, coin+10);
                         }
                     });
                 }).start();
@@ -196,11 +196,11 @@ export default class FinishScene extends Scene {
                     url:"Atlas/UI/coin",
                     from:Util.convertPosition(chestNode, Top.node),
                     to:Util.convertPosition(this.coinBar.iconPos, Top.node),
-                    cnt:Math.floor(coinCnt/50),
+                    cnt:Math.floor(coinCnt/10),
                     onEnd:(finish)=>{
                         Sound.play("gainCoin");
                         let coin = DB.Get(Key.Coin);
-                        DB.SetLoacl(Key.Coin, coin+50);
+                        DB.SetLoacl(Key.Coin, coin+10);
                     }
                 });
                 this.openCnt++;

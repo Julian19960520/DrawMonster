@@ -274,7 +274,7 @@ if(wx){
         if(shareing){
             if(hideTime != null){
                 let dt = new Date().getTime() - hideTime;
-                if(dt > 1000){
+                if(dt > 2500){
                     if(shareSuccess) shareSuccess();
                 }else{
                     if(shareFail) shareFail();
