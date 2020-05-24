@@ -616,6 +616,7 @@
     "_N$target": {
       "__id__": 7
     },
+    "soundName": "closeBtn",
     "_id": ""
   },
   {
@@ -3011,8 +3012,8 @@
     "target": {
       "__id__": 70
     },
-    "component": "",
-    "_componentId": "16723pvTfdI2rmWMNa+nojV",
+    "component": "Toggle",
+    "_componentId": "",
     "handler": "_stateChange",
     "customEventData": ""
   },
@@ -3520,6 +3521,7 @@
     "_N$target": {
       "__id__": 85
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -3901,6 +3903,7 @@
     "_N$target": {
       "__id__": 95
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {

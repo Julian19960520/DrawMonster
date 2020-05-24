@@ -485,6 +485,7 @@
     "_N$target": {
       "__id__": 3
     },
+    "soundName": "closeBtn",
     "_id": ""
   },
   {
@@ -2117,6 +2118,7 @@
     "_N$target": {
       "__id__": 48
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -2500,6 +2502,7 @@
     "_N$target": {
       "__id__": 58
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -2883,6 +2886,7 @@
     "_N$target": {
       "__id__": 68
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -3266,6 +3270,7 @@
     "_N$target": {
       "__id__": 78
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -3649,6 +3654,7 @@
     "_N$target": {
       "__id__": 88
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -4720,6 +4726,7 @@
     "_N$target": {
       "__id__": 115
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -5495,6 +5502,7 @@
     "_N$target": {
       "__id__": 141
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {

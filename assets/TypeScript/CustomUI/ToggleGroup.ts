@@ -9,6 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { Util } from "../Frame/Util";
+import { Sound } from "../Frame/Sound";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -23,9 +24,11 @@ export default class ToggleGroup extends cc.ToggleContainer {
         evtHandler.handler = "_stateChange"
         evtHandler.component = "ToggleGroup";
         this.checkEvents = [evtHandler];
+        this.node.emit(ToggleGroup.TOGGLE_CHANGE, this.idx, false);
     }
     _stateChange(toggle){
         this.idx = this.toggleItems.indexOf(toggle);
         this.node.emit(ToggleGroup.TOGGLE_CHANGE, this.idx, true);
+        Sound.play("clickBtn");
     }
 }

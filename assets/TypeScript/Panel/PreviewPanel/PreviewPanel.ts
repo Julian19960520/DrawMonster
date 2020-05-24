@@ -52,7 +52,6 @@ export default class PreviewPanel extends Panel {
     }
 
     onOkBtnTap(){
-        Sound.play("clickBtn");
         if(this.okCallback){
             this.okCallback(this.editBox.string, this.dirType);
         }
@@ -70,9 +69,6 @@ export default class PreviewPanel extends Panel {
     }
 
     onToggleChange(idx, click){
-        if(click){
-            Sound.play("clickBtn");
-        }
         this.dirType = idx;
         this.monsterFac.setDirType(this.dirType);
     }

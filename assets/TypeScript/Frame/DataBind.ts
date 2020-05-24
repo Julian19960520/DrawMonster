@@ -27,7 +27,7 @@ export namespace DB{
 
     let map:Map<string, Data> = new Map<string, Data>();
     //向指定key增加一个监听器
-    export function Bind(key:string, listener:(any)=>void){
+    export function Bind(key:string, listener:(any)=>void, immediatelyCall = true){
         let data = map.get(key);
         if(!data){
             data = new Data();
@@ -36,7 +36,9 @@ export namespace DB{
         if(data.listeners.indexOf(listener) <= 0){
             data.listeners.push(listener);
         }
-        listener(data.value);
+        if(immediatelyCall){
+            listener(data.value);
+        }
     }
     //绑定服务端数据
     export function BindRemote(key:string, listener:(any)=>void){
@@ -92,10 +94,10 @@ export namespace DB{
     export class DataBindComponent extends cc.Component{
         private map:Map<string, (any)=>void> = new Map<string, (any)=>void>();
 
-        public Bind(key, listener:(any)=>void){
+        public Bind(key, listener:(any)=>void, immediatelyCall = true){
             let tempListener = listener.bind(this);
             this.map.set(key, tempListener);
-            DB.Bind(key, tempListener);
+            DB.Bind(key, tempListener, immediatelyCall);
         }
         public UnBind(key){
             let listener = this.map.get(key);

@@ -71,6 +71,9 @@ export default class Shield extends DB.DataBindComponent {
         this.sprite.node.active = true;
         this.label.node.active = true;
         this.getComponent(cc.Animation).play("shield");
+        let size = Game.getShiledSize();
+        this.sprite.node.width = this.sprite.node.height = size*2;
+        this.getComponent(cc.CircleCollider).radius = size;
     }
 
     closeShield(){
@@ -90,21 +93,6 @@ export default class Shield extends DB.DataBindComponent {
                 monster.beginDrop();
                 this.node.dispatchEvent(Util.customEvent("shakeScene", true, 0.5));
                 Vibrate.short();
-                //加5金币
-                let playScene = SceneManager.ins.findScene(PlayScene);
-                Top.bezierSprite({
-                    url:"Atlas/UI/coin",
-                    from:Util.convertPosition(this.node, Top.node),
-                    to:Util.convertPosition(playScene.coinBar.iconPos, Top.node),
-                    cnt:1,
-                    time:0.8,
-                    scale:0.6,
-                    onEnd:(finish)=>{
-                        Sound.play("gainCoin");
-                        let coin = DB.Get(Key.Coin);
-                        DB.SetLoacl(Key.Coin, coin+5);
-                    }
-                });
             }
         }
     }

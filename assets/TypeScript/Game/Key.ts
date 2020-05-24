@@ -4,6 +4,8 @@ export enum Key{
 
     //用户属性
     Coin = "user/coin",
+    Energy = "user/energy",
+    Diamond = "user/Diamond",
     ThemeId = "user/themeId",
     ColorIds = "user/colorIds",
     RankDatas = "user/rankDatas",
@@ -13,6 +15,10 @@ export enum Key{
     OpenThemeIds = "user/openThemeIds",
     PlayTimes = "user/playTimes",
     DrawTimes = "user/playTimes",
+    HeartLvl = "user/heartLvl",
+    ShieldLvl = "user/ShieldLvl",
+    CoinBagLvl = "user/CoinBagLvl",
+
 
     //设置
     Sound = "option/sound",
@@ -27,7 +33,7 @@ export enum Key{
     //临时变量
     curScene = "temp/curScene",
     gameState = "temp/gameState",
-
+    allThemes = "temp/allTheme",
     
 
 }

@@ -44,6 +44,22 @@ export namespace TweenUtil{
             })
             .start();
     }
+    export function applyScaleBounce2(node:cc.Node, oriScale, tarScale, onCenter = null, onEnd = null){
+        if(!node){
+            return;
+        }
+        node.scale = oriScale
+        cc.tween(node)
+            .to(0.3, {scale: tarScale}, { easing: 'quadOut'})
+            .call(()=>{
+                if(onCenter)onCenter();
+            })
+            .to(0.3, {scale: oriScale}, { easing: 'quadIn'})
+            .call(()=>{
+                if(onEnd)onEnd();
+            })
+            .start();
+    }
     export function applyAppear(node:cc.Node, time, callback = null){
         cc.tween(node)
             .to(time, {scale: 1}, { easing: 'backIn'})

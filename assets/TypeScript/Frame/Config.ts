@@ -13,7 +13,7 @@ export enum DirType{
     Rotate,     //旋转
 }
 export namespace Config{
-    export let unlockPaintTimes = 1;
+    export let unlockPaintTimes = 0;
     export let heroAdvises = [
         "猫咪🐱","狗🐶","鸭子🦆","树叶🍃","公鸡🐔","圣诞树🎄","蘑菇🍄","鱼🐟","仙人掌🌵",
         "兔子🐰","猪头🐷","玫瑰🌹","火柴人","蛋糕🍰","奶酪🧀️","糖果🍬","彩虹🌈","独角兽🦄️",
@@ -29,6 +29,30 @@ export namespace Config{
         "画剑？请剑尖指向右边👉，并选C",
         // "画完后可以分享创作过程哦！",
     ];
+    export let heartLvlConf = [
+        {max:1, initCnt:0},
+        {max:1, initCnt:1, detail:"开局桃心+1", cost:{coin:300,diamond:0}},
+        {max:2, initCnt:1, detail:"最大桃心+1", cost:{coin:800,diamond:5}},
+        {max:2, initCnt:2, detail:"开局桃心+1", cost:{coin:2000,diamond:15}},
+        {max:3, initCnt:2, detail:"最大桃心+1", cost:{coin:5000,diamond:50}},
+        {max:3, initCnt:3, detail:"开局桃心+1", cost:{coin:12000,diamond:200}},
+    ]
+    export let shieldLvlConf = [
+        {duration:2, size:50},
+        {duration:2, size:60, detail:"尺寸+10", cost:{coin:300,diamond:0}},
+        {duration:2.5, size:60, detail:"时长+0.5秒", cost:{coin:800,diamond:5}},
+        {duration:2.5, size:70, detail:"尺寸+10", cost:{coin:2000,diamond:15}},
+        {duration:3, size:70, detail:"时长+0.5秒", cost:{coin:5000,diamond:50}},
+        {duration:3.5, size:80, detail:"尺寸+10，时间+0.5", cost:{coin:12000,diamond:200}},
+    ]
+    export let coinBagLvlConf = [
+        {coin:25, diamond:0},
+        {coin:50, diamond:0, detail:"金币+25", cost:{coin:300,diamond:0}},
+        {coin:50, diamond:1, detail:"钻石+1", cost:{coin:800,diamond:5}},
+        {coin:100, diamond:1, detail:"金币+50", cost:{coin:2000,diamond:15}},
+        {coin:100, diamond:2, detail:"钻石+1", cost:{coin:5000,diamond:50}},
+        {coin:150, diamond:4, detail:"金币+50，钻石+1", cost:{coin:12000,diamond:200}},
+    ]
     export let themes:ThemeData[]=[
         {id:1, heroId:1, cost:0, monsterIds:[11,12,13,14]},
         {id:2, heroId:2, cost:0, monsterIds:[21,22,23]},

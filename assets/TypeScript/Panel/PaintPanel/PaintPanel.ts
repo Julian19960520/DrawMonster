@@ -113,30 +113,24 @@ export default class PaintPanel extends Panel {
     }
 
     selectColorChild(item, data){
-        // Sound.play("clickBtn");
         this.pencilColor = Config.getColorDataByID(data).color;
     }
     onPencilTap(){
-        Sound.play("clickBtn");
         this.highLightBtn(this.pencilBtn);
         this.state = State.Pencil;
     }
     onEraserTap(){
-        Sound.play("clickBtn");
         this.highLightBtn(this.eraserBtn);
         this.state = State.Eraser;
     }
     onBucketTap(){
-        Sound.play("clickBtn");
         this.highLightBtn(this.bucketBtn);
         this.state = State.Bucket;
     }
     onRevertTap(){
-        Sound.play("clickBtn");
         this.graphics.revert();
     }
     onClearTap(){
-        Sound.play("clickBtn");
         SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
             messageBox.label.string = "是否清空画布？";
             messageBox.onOk = ()=>{
@@ -146,7 +140,6 @@ export default class PaintPanel extends Panel {
     }
 
     onSaveBtnTap(){
-        Sound.play("clickBtn");
         if(this.graphics.opStack.length<1){
             SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
                 messageBox.toOkStyle("多画几笔吧（最少1笔）")

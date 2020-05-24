@@ -66,6 +66,19 @@ export namespace Game{
             });
         }
     }
+    //删除图片
+    export function deleteTexture(path){
+        if(path.includes("/pixels/")){
+            textureCache.delete(path);
+            let fm = crossPlatform.getFileSystemManager();
+            try {
+                fm.unlinkSync(path);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
+
     let compressVersion = 1;
     export function compressPixels(pixels:Uint8Array){
         let colors = [];        //四个一组，分别为rgba，颜色下标即为在此数组出现的顺序
@@ -174,11 +187,6 @@ export namespace Game{
         }else{
             return new Uint8Array();
         }
-
-        // let nr = color>>>24;
-        // let ng = (color&0x00ff0000)>>16;
-        // let nb = (color&0x0000ff00)>>8;
-        // let na = (color&0x000000ff);
     }
     /*****************************
      * 操作 Hero 和 Monster 数据
@@ -186,9 +194,9 @@ export namespace Game{
     let heroConfigMap = new Map<number, HeroConfig>();
     let monsterConfigMap = new Map<number, MonsterConfig>();
     let themeConfigMap = new Map<number, ThemeData>();
-    export let allHeros = [];
-    export let allMonsters = [];
-    export let allThemes = [];
+    export let allHeros:HeroConfig[] = [];
+    export let allMonsters:MonsterConfig[] = [];
+    export let allThemes:ThemeData[] = [];
     //初始化
     function initHeroAndMonsterConfig(){
         allHeros = DB.Get(Key.CustomHeros).concat(Config.heros);
@@ -202,6 +210,7 @@ export namespace Game{
             monsterConfigMap.set(monster.id, monster);
         }
         allThemes = DB.Get(Key.CustomThemes).concat(Config.themes);
+        DB.Set(Key.allThemes, allThemes);
         for(let i=0; i<allThemes.length; i++){
             let theme = allThemes[i];
             themeConfigMap.set(theme.id, theme);
@@ -262,12 +271,78 @@ export namespace Game{
         let customThemes:any[] = DB.Get(Key.CustomThemes);
         customThemes.unshift(theme);
         allThemes.unshift(theme);
+        DB.Set(Key.allThemes, allThemes);
         DB.SetLoacl(Key.CustomThemes, customThemes);
         let openThemeIds = DB.Get(Key.OpenThemeIds);
         openThemeIds.push(id);
         DB.SetLoacl(Key.OpenThemeIds, openThemeIds);
         return theme;
     }
+
+    //删除用户绘制英雄
+    export function deleteMonsterConf(id){
+        monsterConfigMap.delete(id);
+        let customMonsters:MonsterConfig[] = DB.Get(Key.CustomMonsters);
+        let idx = customMonsters.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            customMonsters.splice(idx, 1);
+        }
+        idx = allMonsters.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            allMonsters.splice(idx, 1);
+        }
+        DB.SetLoacl(Key.CustomMonsters, customMonsters);
+    }
+
+    export function deleteHeroConf(id){
+        heroConfigMap.delete(id);
+        let customHeros:HeroConfig[] = DB.Get(Key.CustomHeros);
+        let idx = customHeros.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            customHeros.splice(idx, 1);
+        }
+        idx = allHeros.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            allHeros.splice(idx, 1);
+        }
+        DB.SetLoacl(Key.CustomHeros, customHeros);
+    }
+
+    export function deleteThemeConf(id){
+        themeConfigMap.delete(id);
+        let customThemes:ThemeData[] = DB.Get(Key.CustomThemes);
+        let openThemeIds = DB.Get(Key.OpenThemeIds);
+        let idx = customThemes.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            customThemes.splice(idx, 1);
+        }
+        idx = allThemes.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            allThemes.splice(idx, 1);
+            DB.Set(Key.allThemes, allThemes);
+        }
+        idx = openThemeIds.findIndex((conf)=>{
+            return openThemeIds.id == id
+        });
+        if(idx>=0){
+            openThemeIds.splice(idx, 1);
+        }
+        DB.SetLoacl(Key.CustomThemes, customThemes);
+        DB.SetLoacl(Key.OpenThemeIds, openThemeIds);
+    }
+
     export function isThemeOpen(id){
         let openIds:number[] = DB.Get(Key.OpenThemeIds);
         return openIds.indexOf(id) >= 0;
@@ -337,4 +412,31 @@ export namespace Game{
         return res;
     }
 
+    /*****************************
+     * 升级相关数据
+     ****************************/
+    export function getHeartInitCnt(){
+        let conf = Config.heartLvlConf[DB.Get(Key.HeartLvl)-1];
+        return conf.initCnt;
+    }
+    export function getHeartMax(){
+        let conf = Config.heartLvlConf[DB.Get(Key.HeartLvl)-1];
+        return conf.max;
+    }
+    export function getShiledDuration(){
+        let conf = Config.shieldLvlConf[DB.Get(Key.ShieldLvl)-1];
+        return conf.duration;
+    }
+    export function getShiledSize(){
+        let conf = Config.shieldLvlConf[DB.Get(Key.ShieldLvl)-1];
+        return conf.size;
+    }
+    export function getCoinBagCoin(){
+        let conf = Config.coinBagLvlConf[DB.Get(Key.CoinBagLvl)-1];
+        return conf.coin;
+    }
+    export function getCoinBagDiamond(){
+        let conf = Config.coinBagLvlConf[DB.Get(Key.CoinBagLvl)-1];
+        return conf.diamond;
+    }
 }

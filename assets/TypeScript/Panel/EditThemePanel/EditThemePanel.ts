@@ -48,7 +48,6 @@ export default class EditThemePanel extends Panel {
         })
     }
     onPlayBtnTap(){
-        Sound.play("clickBtn");
         let themeId = DB.Get(Key.ThemeId);
         let theme = Game.findThemeConf(themeId);
         if(theme.monsterIds.length>0){

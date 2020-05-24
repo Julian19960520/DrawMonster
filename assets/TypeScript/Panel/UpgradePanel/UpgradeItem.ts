@@ -8,17 +8,24 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { DB } from "../../Frame/DataBind";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class EnergyBar extends DB.DataBindComponent {
+export default class UpgradeItem extends cc.Component {
 
-    @property(cc.Label)
-    cntLabel: cc.Label = null;
-    onLoad () {
-        this.Bind("user/energy",(energy)=>{
-            this.cntLabel.string = energy;
-        });
+    @property(cc.Sprite)
+    label: cc.Sprite = null;
+
+    @property
+    text: string = 'hello';
+
+    // LIFE-CYCLE CALLBACKS:
+
+    // onLoad () {}
+
+    start () {
+
     }
+
+    // update (dt) {}
 }

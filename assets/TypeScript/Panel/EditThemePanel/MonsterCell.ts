@@ -60,7 +60,6 @@ export default class MonsterCell extends cc.Component {
         }
     }
     onClick(){
-        Sound.play("clickBtn");
         let themeId  = DB.Get(Key.ThemeId);
         let theme = Game.findThemeConf(themeId);
         if(this.data.createNew){

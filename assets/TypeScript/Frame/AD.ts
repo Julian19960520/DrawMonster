@@ -4,6 +4,7 @@ import { Util } from "./Util";
 export enum AdUnitId{
     OpenAllChest = "1f2a4ppm2abh4bgeal",
     Reborn = "15k0a126hpl1k4178l",
+    RewardBet = "",
     FinishBottom = "faa789b9d3d8nf7alm",
 }
 export enum VideoError{
@@ -12,6 +13,9 @@ export enum VideoError{
 }
 export namespace AD{
     export function showVideoAd(id:AdUnitId, succ, fail){
+        if(crossPlatform.isDebug){
+            succ();
+        }
         //创建视频组件（单例）
         let videoAd = crossPlatform.createRewardedVideoAd({adUnitId:id});        
         //点击关闭视频组件时回调

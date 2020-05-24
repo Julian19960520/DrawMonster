@@ -59,7 +59,6 @@ export default class OptionPanel extends Panel {
         this.vibrateToggle.isChecked = DB.Get(Key.Vibrate);
     }
     onResetBtnTap(){
-        Sound.play("clickBtn");
         this.musicSlider.value = 0.5;
         this.soundSlider.value = 0.5;
         this.sensitivitySlider.value = 1.5;
@@ -67,26 +66,21 @@ export default class OptionPanel extends Panel {
         Top.showToast("已重置");
     }
     onSaveBtnTap(){
-        Sound.play("clickBtn");
         SceneManager.ins.popPanel();
     }
     onSoundSliderMove(value){
-        Sound.play("clickBtn");
         Sound.volume = value;
         DB.SetLoacl(Key.Sound, value);
     }
     onMusicSliderMove(value){
-        Sound.play("clickBtn");
         Music.volume = value;
         DB.SetLoacl(Key.Music, value);
     }
     onSensitivitySliderMove(value){
-        Sound.play("clickBtn");
         DB.SetLoacl(Key.Sensitivity, value);
     }
     onVibrateToggleChange(b, click){
         if(click){
-            Sound.play("clickBtn");
             DB.SetLoacl(Key.Vibrate, b);
             Vibrate.enable = b;
         }

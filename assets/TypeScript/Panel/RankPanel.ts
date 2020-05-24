@@ -11,12 +11,11 @@
 import Panel from "../Frame/Panel";
 import ScrollList from "../CustomUI/ScrollList";
 import { RankData } from "../Frame/dts";
-import SceneManager from "../Frame/SceneManager";
-import MessageBox from "../Frame/MessageBox";
 import { DB } from "../Frame/DataBind";
 import { Sound } from "../Frame/Sound";
-import Button from "../CustomUI/Button";
 import { Key } from "../Game/Key";
+import ToggleGroup from "../CustomUI/ToggleGroup";
+import { crossPlatform } from "../Frame/CrossPlatform";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -24,40 +23,83 @@ const {ccclass, menu, property} = cc._decorator;
 @menu("面板/RankPanel")
 export default class RankPanel extends Panel {
 
-    @property(Button)
-    clearBtn: Button = null;
-
-    @property(Button)
-    okBtn: Button = null;
-
     @property(ScrollList)
     scrollList: ScrollList = null;
 
     @property(cc.Node)
     emptyNode: cc.Node = null;
+    @property(cc.Node)
+
+    @property(cc.Node)
+    toggleGroup:cc.Node = null;  
+    @property(cc.Node)
+    myRank: cc.Node = null;
+    @property(cc.Node)
+    friendRank: cc.Node = null;
+
 
     onLoad () {
-        super.onLoad();
-        this.clearBtn.node.on("click", this.onClearBtnTap, this);
-        this.okBtn.node.on("click", this.onOkBtnTap, this);
+        super.onLoad(); 
+        this.toggleGroup.on(ToggleGroup.TOGGLE_CHANGE, this.onToggleChange, this);
+    }
+    onToggleChange(idx, click){
+        if(idx == 0){
+            this.shiftLeft();
+        }else{
+            this.shiftRight();
+        }
+    }
+    shiftLeft(){
+        this.hideFriendRank();
+        this.showMyRank();
+    }
+    shiftRight(){
+        this.hideMyRank();
+        this.showFriendRank();
+    }
+    //显示我的排行
+    myRankInited = false;
+    showMyRank(){
+        this.myRank.active = true;
+        if(this.myRankInited){
+            return;
+        }
+        this.myRankInited = true;
         let rankDatas:RankData[] = DB.Get(Key.RankDatas);
         this.emptyNode.active = (rankDatas.length == 0);
         this.scrollList.setDataArr(rankDatas);
-        this.scrollList.selectItemByData(null);
     }
-    onClearBtnTap(){
-        Sound.play("clickBtn");
-        SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
-            messageBox.label.string = "是否清空排行榜";
-            messageBox.onOk = ()=>{
-                DB.SetLoacl(Key.RankDatas, []);
-                this.scrollList.setDataArr([]);
-                this.scrollList.selectItemByData(null);
-            };
-        })
+    //隐藏我的排行
+    hideMyRank(){
+        this.myRank.active = false;
     }
-    onOkBtnTap(){
-        Sound.play("clickBtn");
-        SceneManager.ins.popPanel();
+    //显示开放域排行
+    friendRankInited = false;
+    showFriendRank(){
+        // this.friendRank.x = 0;
+        if(this.friendRankInited){
+            return;
+        }
+        this.friendRankInited = true;
+        crossPlatform.getOpenDataContext().postMessage({
+            name:"FriendRank",
+            w:this.friendRank.width,
+            h:this.friendRank.height,
+        });
     }
+    //隐藏开放域排行
+    hideFriendRank(){
+        // this.friendRank.x = -10000;
+    }
+    
+    // onClearBtnTap(){
+    //     SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
+    //         messageBox.label.string = "是否清空排行榜";
+    //         messageBox.onOk = ()=>{
+    //             DB.SetLoacl(Key.RankDatas, []);
+    //             this.scrollList.setDataArr([]);
+    //             this.scrollList.selectItemByData(null);
+    //         };
+    //     })
+    // }
 }

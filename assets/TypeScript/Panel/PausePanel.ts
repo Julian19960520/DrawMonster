@@ -10,7 +10,6 @@
 
 import Panel from "../Frame/Panel";
 import SceneManager, { ShiftAnima } from "../Frame/SceneManager";
-import { Sound } from "../Frame/Sound";
 import Button from "../CustomUI/Button";
 
 const {ccclass, menu, property} = cc._decorator;
@@ -32,13 +31,11 @@ export default class PausePanel extends Panel {
         this.resumeBtn.node.on("click", this.onResumeBtnTap, this);
     }
     onBackBtnTap(){
-        Sound.play("clickBtn");
         if(this.backHomeCallback){
             this.backHomeCallback();
         }
     }
     onResumeBtnTap(){
-        Sound.play("clickBtn");
         SceneManager.ins.popPanel();
     }
 }

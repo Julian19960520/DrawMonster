@@ -61,7 +61,6 @@ export default class UsingMonsterCell extends cc.Component {
         }
     }
     onClick(){
-        Sound.play("clickBtn");
         let themeId  = DB.Get(Key.ThemeId);
         let theme = Game.findThemeConf(themeId);
         let idx = theme.monsterIds.indexOf(this.data.id);

@@ -1,4 +1,6 @@
-import { systemInfo } from "./CrossPlatform";
+import { systemInfo, crossPlatform } from "./CrossPlatform";
+import ScreenRect from "./ScreenRect";
+import SceneManager from "./SceneManager";
 
 export namespace Util{
     let loadingCache = new Map<string, Promise<any>>();
@@ -236,5 +238,41 @@ export namespace Util{
             sprite.spriteFrame = sf;
         });
         return sprite;
+    }
+    export function addOpenContentIn(parent:cc.Node, data){
+        let node = new cc.Node();
+        let openC = node.addComponent(cc.WXSubContextView);
+        parent.addChild(node);
+        node.width = parent.width;
+        node.height = parent.height;
+        console.log(node);
+        console.log(openC);
+        crossPlatform.getOpenDataContext().postMessage(data);
+        return null;
+    }
+
+    //截图是反的！！！
+    export function screenShot() {
+        let node = new cc.Node();
+        node.parent = SceneManager.ins.node;//cc.director.getScene();
+        // node.x = ScreenRect.width/2;
+        // node.y = ScreenRect.height/2;
+        let camera = node.addComponent(cc.Camera);
+
+        // 设置你想要的截图内容的 cullingMask
+        camera.cullingMask = 0xffffffff;
+
+        // 新建一个 RenderTexture，并且设置 camera 的 targetTexture 为新建的 RenderTexture，这样 camera 的内容将会渲染到新建的 RenderTexture 中。
+        let texture = new cc.RenderTexture();
+        let gl = cc.game["_renderContext"];
+        // 如果截图内容中不包含 Mask 组件，可以不用传递第三个参数
+        texture.initWithSize(ScreenRect.width, ScreenRect.height, gl.STENCIL_INDEX8);
+        camera.targetTexture = texture;
+
+        // 渲染一次摄像机，即更新一次内容到 RenderTexture 中
+        camera["render"](null);
+        node.removeFromParent();
+        // 这样我们就能从 RenderTexture 中获取到数据了
+        return texture;
     }
 }

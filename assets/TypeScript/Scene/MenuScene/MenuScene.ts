@@ -33,7 +33,15 @@ export default class MenuScene extends Scene {
     drawBtn: Button = null;
 
     @property(Button)
+    paintingsBtn: Button = null;
+    @property(Button)
+    balloonBtn: Button = null;
+    @property(Button)
+    upgradeBtn: Button = null;
+
+    @property(Button)
     optionBtn: Button = null;
+
     @property(Button)
     rankBtn: Button = null;
 
@@ -59,6 +67,11 @@ export default class MenuScene extends Scene {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
         this.buyBtn.node.on("click", this.onBuyBtnTap, this);
         this.rankBtn.node.on("click", this.onRankBtnTap, this);
+
+        this.paintingsBtn.node.on("click", this.onPaintingsBtnTap, this);
+        this.balloonBtn.node.on("click", this.onBalloonBtnTap, this);
+        this.upgradeBtn.node.on("click", this.onUpgradeBtnTap, this);
+
         this.optionBtn.node.on("click", this.onOptionBtnTap, this);
         this.drawBtn.node.on("click", this.onDrawBtnTap, this);
         this.leftTriangle.node.on("click", this.moveLeft, this);
@@ -69,7 +82,25 @@ export default class MenuScene extends Scene {
             let cell = cc.instantiate(this.themesCell);
             this.themesContent.addChild(cell,0);
         }
+        this.node.on("updateThemeList", this.updateThemeList, this);
     }
+
+    onDestroy(){
+        this.playBtn.node.off("click", this.onPlayBtnTap, this);
+        this.buyBtn.node.off("click", this.onBuyBtnTap, this);
+        this.rankBtn.node.off("click", this.onRankBtnTap, this);
+        this.optionBtn.node.off("click", this.onOptionBtnTap, this);
+
+        this.paintingsBtn.node.off("click", this.onPaintingsBtnTap, this);
+        this.balloonBtn.node.off("click", this.onBalloonBtnTap, this);
+        this.upgradeBtn.node.off("click", this.onUpgradeBtnTap, this);
+
+        this.optionBtn.node.off("click", this.onOptionBtnTap, this);
+        this.drawBtn.node.off("click", this.onDrawBtnTap, this);
+        this.leftTriangle.node.off("click", this.moveLeft, this);
+        this.rightTriangle.node.off("click", this.moveRight, this);
+    }
+
     public updateThemeList(){
         let themeId = DB.Get(Key.ThemeId);
         let centerIdx = Game.allThemes.findIndex((theme)=>{
@@ -115,7 +146,7 @@ export default class MenuScene extends Scene {
         //新的选择的cell
         newIdx = (idx+dir+Game.allThemes.length)%Game.allThemes.length;
         themeId = Game.allThemes[newIdx].id;
-        DB.Set(Key.ThemeId, themeId);
+        DB.SetLoacl(Key.ThemeId, themeId);
         let open = Game.isThemeOpen(themeId);
         this.playBtn.node.active = open;
         this.buyBtn.node.active = !open;
@@ -157,6 +188,8 @@ export default class MenuScene extends Scene {
             }
         });
         btnAnim(this.buyBtn.node, 0.4);
+        btnAnim(this.rankBtn.node, 0.4);
+        btnAnim(this.balloonBtn.node, 0.4);
         btnAnim(this.leftTriangle.node, 0.5);
         btnAnim(this.rightTriangle.node, 0.5);
         btnAnim(this.drawBtn.node, 0.5, ()=>{
@@ -164,7 +197,9 @@ export default class MenuScene extends Scene {
                 TweenUtil.applyBreath(this.drawBtn.node);
             }
         });
-        btnAnim(this.rankBtn.node, 0);
+        btnAnim(this.paintingsBtn.node, 0.5);
+        btnAnim(this.upgradeBtn.node, 0.5);
+        btnAnim(this.buyBtn.node, 0.4);
         btnAnim(this.optionBtn.node, 0);
         
     }
@@ -193,12 +228,6 @@ export default class MenuScene extends Scene {
         }
     }
 
-    onDestroy(){
-        this.playBtn.node.off("click", this.onPlayBtnTap, this);
-        this.buyBtn.node.off("click", this.onBuyBtnTap, this);
-        this.rankBtn.node.off("click", this.onRankBtnTap, this);
-        this.optionBtn.node.off("click", this.onOptionBtnTap, this);
-    }
     private initHighScoreLabel(){
         let rankDatas:RankData[] = DB.Get(Key.RankDatas);
         if(rankDatas.length == 0){
@@ -237,7 +266,6 @@ export default class MenuScene extends Scene {
         }
     }
     private onBuyBtnTap(){
-        Sound.play("clickBtn");
         let coin = DB.Get(Key.Coin);
         let themeId = DB.Get(Key.ThemeId);
         let conf = Game.findThemeConf(themeId);
@@ -261,19 +289,16 @@ export default class MenuScene extends Scene {
         }
     }
     private onRankBtnTap(){
-        Sound.play("clickBtn");
         this.OpenPanelByName("RankPanel");
     }
     private onOptionBtnTap(){
-        Sound.play("clickBtn");
         this.OpenPanelByName("OptionPanel");
     }
     private onDrawBtnTap(){
-        Sound.play("clickBtn");
         DB.SetLoacl(Key.guideUnlockPaint, true);
         SceneManager.ins.OpenPanelByName("PaintPanel",(paintPanel:PaintPanel)=>{
             paintPanel.beginTip(Config.heroAdvises);
-            paintPanel.saveCallback = (pixels)=>{
+            paintPanel.saveCallback = (pixels:Uint8Array)=>{
                 //点击画图面板的保存按钮时
                 SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{
                     previewPanel.initHero(pixels);
@@ -295,5 +320,17 @@ export default class MenuScene extends Scene {
                       
             }
         });
+    }
+
+    onPaintingsBtnTap(){
+        this.OpenPanelByName("PaintingsPanel");
+    }
+
+    onBalloonBtnTap(){
+        this.OpenPanelByName("BalloonPanel");
+    }
+
+    onUpgradeBtnTap(){
+        this.OpenPanelByName("UpgradePanel");
     }
 }

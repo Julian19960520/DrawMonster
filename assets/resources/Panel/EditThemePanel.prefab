@@ -589,6 +589,7 @@
     "_N$target": {
       "__id__": 6
     },
+    "soundName": "closeBtn",
     "_id": ""
   },
   {
@@ -1134,6 +1135,7 @@
     "_N$target": {
       "__id__": 17
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -2293,6 +2295,7 @@
     "_N$target": {
       "__id__": 41
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -2342,7 +2345,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 451,
-      "height": 380
+      "height": 420
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2541,7 +2544,7 @@
     "_left": 10,
     "_right": 10,
     "_top": 10,
-    "_bottom": 50,
+    "_bottom": 10,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
     "_isAbsLeft": true,
@@ -3109,6 +3112,7 @@
     "_N$target": {
       "__id__": 75
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {

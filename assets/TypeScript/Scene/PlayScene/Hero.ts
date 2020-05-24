@@ -9,20 +9,16 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 
-import PlayScene, { GameState } from "./PlayScene";
+import { GameState } from "./PlayScene";
 import { DB } from "../../Frame/DataBind";
 import Shield from "./Shield";
 import { Game } from "../../Game/Game";
 import { Util } from "../../Frame/Util";
 import { Sound } from "../../Frame/Sound";
 import Monster from "./Monster";
-import SceneManager from "../../Frame/SceneManager";
-import Top from "../../Frame/Top";
 import PhyObject from "./PhyObject";
-import { crossPlatform } from "../../Frame/CrossPlatform";
 import { Key } from "../../Game/Key";
 import { Vibrate } from "../../Frame/Vibrate";
-import { stat } from "fs";
 
 const {ccclass, property} = cc._decorator;
 
@@ -91,7 +87,7 @@ export default class Hero extends DB.DataBindComponent {
     initHeart(){
         let prefab = this.heartGroup.children[0];
         prefab.active = false;
-        for(let i=0;i<2;i++){
+        while(this.heartGroup.childrenCount<3){
             let child = cc.instantiate(prefab);
             this.heartGroup.addChild(child);
         }
@@ -149,7 +145,7 @@ export default class Hero extends DB.DataBindComponent {
             if(other.node.name == "Heart"){
                 other.node.dispatchEvent(Util.customEvent("returnPool"));
                 let find = false;
-                for(let i=0;i<this.heartGroup.childrenCount; i++){
+                for(let i=0;i<Game.getHeartMax(); i++){
                     let child = this.heartGroup.children[i];
                     if(!child.active){
                         find = true;
@@ -160,43 +156,24 @@ export default class Hero extends DB.DataBindComponent {
                 }
                 if(!find){
                     Sound.play("gainProp");
-                    let playScene = SceneManager.ins.findScene(PlayScene);
-                    Top.bezierSprite({
-                        url:"Atlas/UI/coin",
-                        from:Util.convertPosition(this.node, Top.node),
-                        to:Util.convertPosition(playScene.coinBar.iconPos, Top.node),
-                        cnt:2,
-                        time:0.8,
-                        scale:0.6,
-                        onEnd:(finish)=>{
-                            Sound.play("gainCoin");
-                            let coin = DB.Get(Key.Coin);
-                            DB.SetLoacl(Key.Coin, coin+5);
-                        }
-                    });
+                    this.node.dispatchEvent(Util.customEvent("gainCoin",true,{cnt:5}));
                 }
             }
             if(other.node.name == "Shield"){
-                this.shield.openShield(3);
+                this.shield.openShield(Game.getShiledDuration());
                 other.node.dispatchEvent(Util.customEvent("returnPool"));
                 Sound.play("gainProp");
             }
             if(other.node.name == "CoinBag"){
                 Sound.play("gainProp");
-                let playScene = SceneManager.ins.findScene(PlayScene);
-                Top.bezierSprite({
-                    url:"Atlas/UI/coin",
-                    from:Util.convertPosition(this.node, Top.node),
-                    to:Util.convertPosition(playScene.coinBar.iconPos, Top.node),
-                    cnt:10,
-                    time:0.8,
-                    scale:0.6,
-                    onEnd:(finish)=>{
-                        Sound.play("gainCoin");
-                        let coin = DB.Get(Key.Coin);
-                        DB.SetLoacl(Key.Coin, coin+5);
-                    }
-                });
+                let coin = Game.getCoinBagCoin();
+                if(coin>0){
+                    this.node.dispatchEvent(Util.customEvent("gainCoin",true,{cnt:coin}));
+                }
+                let diamond = Game.getCoinBagDiamond();
+                if(diamond>0){
+                    this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:diamond}));
+                }
                 other.node.dispatchEvent(Util.customEvent("returnPool"));
             }
         }
@@ -220,5 +197,10 @@ export default class Hero extends DB.DataBindComponent {
         this.droping = true;
         this.dropV = cc.v2( Util.randomInt(50, 100)*dir, Util.randomInt(200, 250));
     }
-    
+    public setHp(hp){
+        for(let i=0;i<this.heartGroup.childrenCount; i++){
+            let child = this.heartGroup.children[i];
+            child.active = i<hp;
+        }
+    }
 }

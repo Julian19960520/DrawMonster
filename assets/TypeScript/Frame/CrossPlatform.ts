@@ -112,6 +112,8 @@ export class CrossPlatform{
     setStorageSync(key:string, value:string){}
     getStorage(key:string, succ:(res)=>void){}
     getStorageSync(key:string):any{}
+    clearStorageSync(){};
+    exitMiniProgram(){};
     getFileSystemManager(){
         return {
             saveFile(data:{tempFilePath:string, filePath:string, success, fail}){
@@ -124,6 +126,7 @@ export class CrossPlatform{
             mkdirSync(dirPath:string, recursive:boolean){},
             writeFileSync(filePath:string, data:string|ArrayBuffer, encoding:string="binary"){},
             readFileSync(filePath:string, encoding?:string, position?:string, length?:string):string|ArrayBuffer{return "";},
+            unlinkSync(filePath:string){},
         }
     }
     createGameRecorderShareButton(obj:{
@@ -249,11 +252,14 @@ export class CrossPlatform{
     };
     vibrateShort(){};
     vibrateLong(){};
+    login(data){};
+    setUserGroup(data){};
+    setUserCloudStorage(data){}
 }
 
 export let crossPlatform:CrossPlatform = new CrossPlatform();
-export let wx = window["wx"];
-export let tt = window["tt"];
+export let wx:CrossPlatform = window["wx"];
+export let tt:CrossPlatform = window["tt"];
 
 if(tt){
     crossPlatform = tt;

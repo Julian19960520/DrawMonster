@@ -40,14 +40,12 @@ export default class MessageBox extends Panel {
         this.cancelBtn.node.off("click", this.onCancelBtnClick, this);
     }
     private onOkBtnClick(){
-        Sound.play("clickBtn");
         if(this.onOk){
             this.onOk();
         }
         SceneManager.ins.popPanel();
     }
     private onCancelBtnClick(){
-        Sound.play("clickBtn");
         if(this.onCancel){
             this.onCancel();
         }
