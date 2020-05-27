@@ -163,7 +163,7 @@ export namespace Util{
         return res;
     }
     //深度优先搜索子节点
-    export function searchChild(node:cc.Node, name:string){
+    export function searchChild(node:cc.Node, name:string):cc.Node{
         for(let i=0;i<node.childrenCount;i++){
             let child = node.children[i];
             if(child.name == name){

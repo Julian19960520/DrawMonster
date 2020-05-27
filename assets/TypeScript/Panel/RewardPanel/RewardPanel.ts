@@ -13,6 +13,11 @@ const {ccclass, menu, property} = cc._decorator;
 @menu("面板/RewardPanel")
 export default class RewardPanel extends Panel {
 
+    @property(cc.Label)
+    titleLabel: cc.Label = null;
+    @property(cc.Node)
+    rewardGroup: cc.Node = null;
+
     @property(cc.Node)
     lightNode: cc.Node = null;
     @property(cc.Label)
@@ -31,6 +36,13 @@ export default class RewardPanel extends Panel {
         this.doubleBtn.node.on("click", this.onDoubleBtnTap, this);
         this.continueBtn.node.on("click", this.onSingleBtnTap, this);
         this.initLight();
+    }
+    openAnim(callback = null){
+        TweenUtil.applyAppear({node:this.node, callback:callback});
+        TweenUtil.applyAppear({node:this.titleLabel.node, delay:0, duration:0.5});
+        TweenUtil.applyAppear({node:this.rewardGroup, delay:0.1, duration:0.5});
+        TweenUtil.applyAppear({node:this.doubleBtn.node, delay:0.2, duration:0.5});
+        TweenUtil.applyAppear({node:this.continueBtn.node, delay:2, duration:0.5});
     }
     initLight(){
         let cnt = 7;

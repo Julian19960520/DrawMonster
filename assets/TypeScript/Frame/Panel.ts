@@ -22,10 +22,8 @@ export default class Panel extends DB.DataBindComponent {
         }
     }
     onDestroy(){
+        super.onDestroy();
         this.closeCallback = null;
-        if(this.closeBtn){
-            this.closeBtn.node.off("click", this.onCloseBtnClick, this);
-        }
     }
     public closeAnim(callback = null){
         this.node.scale = 1;

@@ -9,6 +9,8 @@ import SceneManager from "../../Frame/SceneManager";
 import { Key } from "../../Game/Key";
 import { Vibrate } from "../../Frame/Vibrate";
 import { HTTP, ServerMsg } from "../../Frame/HTTP";
+import MonsterCell from "../../Panel/EditThemePanel/MonsterCell";
+import { MonsterConfig } from "../../Frame/dts";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -43,12 +45,19 @@ export default class LoginScene extends Scene {
     }
     login(){
         
-        HTTP.POST(ServerMsg.login, { openId: "Julian" }, (data) => {
-            console.log("onSucc", data);
-        }, (data) => {
-            console.log("onErr", data);
-        });
-        
+        crossPlatform.login({success:(res1)=>{
+            console.log("res1",res1);
+            HTTP.POST(ServerMsg.wxLogin,{code:res1.code},(res2)=>{
+                console.log("res2",res2);
+                HTTP.POST(ServerMsg.login,{openId:res2.openId},(res3)=>{
+                    console.log("res3",res3);
+                },()=>{
+    
+                })
+            },()=>{
+
+            })
+        }});
         let version = Local.Get(Key.Version) || 0;
         //
         DB.SetLoacl(Key.Version, "0.1.6");
@@ -69,6 +78,7 @@ export default class LoginScene extends Scene {
         this.loadValue(Key.HeartLvl, 1);
         this.loadValue(Key.ShieldLvl, 1);
         this.loadValue(Key.CoinBagLvl, 1);
+        this.loadValue(Key.StarThemeIds, []);
         console.log("ThemeId", DB.Get(Key.ThemeId));
         console.log("CustomThemes", DB.Get(Key.CustomThemes));
         console.log("CustomHeros",DB.Get(Key.CustomHeros));
@@ -82,7 +92,16 @@ export default class LoginScene extends Scene {
         this.loadBoolValue(Key.guideUnlockPaint, false);
         this.loadBoolValue(Key.guideDrawFish, false);
 
+        this.updateVersion();
         Game.Init();
         SceneManager.ins.Enter("MenuScene");
+    }
+    updateVersion(){
+        let monsters:MonsterConfig[] = DB.Get(Key.CustomMonsters);
+        for(let i=0; i<monsters.length; i++){
+            if(monsters[i]["isUserPainting"]){
+                monsters[i].isCustom = true;
+            }
+        }
     }
 }

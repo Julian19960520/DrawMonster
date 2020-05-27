@@ -64,7 +64,8 @@ export default class SceneManager extends cc.Component {
                 if(sceneNode){
                     let scene = sceneNode.getComponent(Scene);
                     if(scene && scene.autoDestroy){
-                        this.content.removeChild(sceneNode);
+                        sceneNode.destroy();
+                        // this.content.removeChild(sceneNode);
                     }
                 }
             }
@@ -92,7 +93,8 @@ export default class SceneManager extends cc.Component {
                 if(sceneNode){
                     let scene = sceneNode.getComponent(Scene);
                     if(scene && scene.autoDestroy){
-                        this.content.removeChild(sceneNode);
+                        sceneNode.destroy();
+                        // this.content.removeChild(sceneNode);
                     }
                 }
             }
@@ -111,7 +113,8 @@ export default class SceneManager extends cc.Component {
                 shiftAnima(oldScene, newScene, ()=>{
                     if(oldScene && oldScene.autoDestroy){
                         oldScene.onExitScene();
-                        this.content.removeChild(oldScene.node);
+                        oldScene.node.destroy();
+                        // this.content.removeChild(oldScene.node);
                     }
                     newScene.onEnterScene();
                     this.printState();

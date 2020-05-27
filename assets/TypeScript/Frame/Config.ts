@@ -13,6 +13,7 @@ export enum DirType{
     Rotate,     //旋转
 }
 export namespace Config{
+    export let rebornCostCoin = 150;
     export let unlockPaintTimes = 0;
     export let heroAdvises = [
         "猫咪🐱","狗🐶","鸭子🦆","树叶🍃","公鸡🐔","圣诞树🎄","蘑菇🍄","鱼🐟","仙人掌🌵",
@@ -49,9 +50,9 @@ export namespace Config{
         {coin:25, diamond:0},
         {coin:50, diamond:0, detail:"金币+25", cost:{coin:300,diamond:0}},
         {coin:50, diamond:1, detail:"钻石+1", cost:{coin:800,diamond:5}},
-        {coin:100, diamond:1, detail:"金币+50", cost:{coin:2000,diamond:15}},
-        {coin:100, diamond:2, detail:"钻石+1", cost:{coin:5000,diamond:50}},
-        {coin:150, diamond:4, detail:"金币+50，钻石+1", cost:{coin:12000,diamond:200}},
+        {coin:75, diamond:1, detail:"金币+25", cost:{coin:2000,diamond:15}},
+        {coin:75, diamond:2, detail:"钻石+1", cost:{coin:5000,diamond:50}},
+        {coin:100, diamond:3, detail:"金币+25，钻石+1", cost:{coin:12000,diamond:200}},
     ]
     export let themes:ThemeData[]=[
         {id:1, heroId:1, cost:0, monsterIds:[11,12,13,14]},

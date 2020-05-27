@@ -61,8 +61,9 @@ export default class PanelStack extends cc.Component {
                 if(panel.closeCallback){
                     panel.closeCallback();
                 }
-                this.node.removeChild(panel.node);
                 panel.panelStack = null;
+                panel.node.destroy(); 
+                // this.node.removeChild(panel.node); 
                 this.printStack();
             })
         }

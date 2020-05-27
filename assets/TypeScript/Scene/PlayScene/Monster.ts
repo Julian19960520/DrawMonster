@@ -103,7 +103,7 @@ export default class Monster extends cc.Component {
     }
     setData(conf:MonsterConfig, velocity:cc.Vec2, scale:number){
         this.conf = conf;
-        if(conf.isUserPainting){
+        if(conf.isCustom){
             this.sprite.node.scale = 0.27;
         }else{
             this.sprite.node.scale = 1;

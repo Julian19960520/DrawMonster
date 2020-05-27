@@ -36,8 +36,6 @@ export default class MessageBox extends Panel {
         super.onDestroy();
         this.onOk = null;
         this.onCancel = null;
-        this.okBtn.node.off("click", this.onOkBtnClick, this);
-        this.cancelBtn.node.off("click", this.onCancelBtnClick, this);
     }
     private onOkBtnClick(){
         if(this.onOk){

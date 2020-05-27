@@ -163,7 +163,7 @@ export default class FinishScene extends Scene {
     onOpenAllBtnTap(){
         if(this.type == "share"){
             crossPlatform.share({
-                imageUrl:Util.rawUrl('resources/Atlas/ShareImg/1.png'),
+                imageUrl:Util.rawUrl('resources/Atlas/Single/1.png'),
                 templateId:"6deh5ubi85226of3co",
                 success:()=>{
                     this.openAllChest();
@@ -216,14 +216,8 @@ export default class FinishScene extends Scene {
         SceneManager.ins.goHome();
     }
 
-    onReplayBtnTap(){
-        Sound.play("gameStartBtn");
-        SceneManager.ins.BackTo("PlayScene").then((playScene:PlayScene)=>{
-            playScene.restart();
-        });
-    }
-
     onDestroy(){
+        super.onDestroy();
         if(this.titleTw){
             this.titleTw.stop();
         }
@@ -259,6 +253,20 @@ export default class FinishScene extends Scene {
         let oldHighScroe = Game.getHighScroe();
         this.highScoreLabel.string = `最高分：${oldHighScroe}秒！`;
         Game.addRankData(data.time);
+        console.log(data.time);
+        console.log(oldHighScroe);
+        if(data.time>oldHighScroe){
+            console.log(data.time);
+            crossPlatform.setUserCloudStorage({
+                KVDataList:[{key:"highScore",value:`${data.time}`}],
+                success:()=>{
+                    
+                },
+                complete:(res)=>{
+                    console.log("设置开放域最高分",res);
+                }
+            });
+        }
         DB.SetLoacl(Key.PlayTimes, DB.Get(Key.PlayTimes)+1);
         let time = data.time;
         Top.blockInput(true);

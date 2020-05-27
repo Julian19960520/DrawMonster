@@ -1,4 +1,4 @@
-import { crossPlatform } from "../Frame/CrossPlatform";
+import { crossPlatform, wx } from "../Frame/CrossPlatform";
 import { Util } from "../Frame/Util";
 import { ServerMsg, HTTP } from "../Frame/HTTP";
 import { DB } from "../Frame/DataBind";
@@ -22,39 +22,25 @@ export default class GM extends cc.Component {
         }, this);
         this.buttonPrefab.active = false;
         this.panel.active = false;
-        this.addBtn("设置用户分组", () => {
-            crossPlatform.setUserGroup({
-                groupId: "test_group",
-                complete: (res) => { console.log(res) }
-            });
-        });
-        this.addBtn("设置分数", () => {
-            const data = {
-                ttgame: {
-                    score: 16,
-                    update_time: 1513080573
-                },
-                cost_ms: 36500
-            };
-
-            crossPlatform.setUserCloudStorage({
-                KVDataList: [
-                    // key 需要在开发者后台配置，且配置为排行榜标识后，data 结构必须符合要求，否则会 set 失败
-                    { key: "score", value: JSON.stringify(data) }
-                ],
-                complete: (res) => { console.log(res) }
-            });
-        });
-        this.addBtn("post", () => {
-            crossPlatform.getOpenDataContext().postMessage("adsfa");
-        });
 
         this.addBtn("登录", () => {
-            HTTP.POST(ServerMsg.login, { openId: "Julian" }, (data) => {
-                
-            }, (data) => {
-                
-            });
+            crossPlatform.login({
+                success:(res)=>{
+                    console.log(res);
+                    let js_code = res.code;
+                    let appid = "wx3f57e2acf5250d57";
+                    let secret = "915c2b4d6092ffd67fa85692bfe42a56";
+                    let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${js_code}&grant_type=authorization_code`;
+                    HTTP.GET(url, (data) => {
+                        console.log(data);
+                    });
+                    // HTTP.POST(ServerMsg.login, { openId: "Julian" }, (data) => {
+                        
+                    // }, (data) => {
+                        
+                    // });
+                }
+            })
         });
         this.addBtn("save", () => {
             HTTP.POST(ServerMsg.save, {uid:"1",json:"asdfasdfa"},(res)=>{
@@ -86,6 +72,49 @@ export default class GM extends cc.Component {
             crossPlatform.clearStorageSync();
             crossPlatform.exitMiniProgram();
         });
+        this.addBtn("test1", () => {
+            crossPlatform.setUserCloudStorage({
+                KVDataList:[{key:"highScore",value:"1"}],
+                success:()=>{
+                    
+                },
+                complete:(res)=>{
+                    console.log("设置开放域最高分",res);
+                }
+            });
+        });
+        this.addBtn("test1", () => {
+            setTimeout(() => {
+                crossPlatform.setUserCloudStorage({
+                    KVDataList:[{key:"highScore",value:"1"}],
+                    success:()=>{
+                        
+                    },
+                    complete:(res)=>{
+                        console.log("设置开放域最高分",res);
+                    }
+                });
+            }, 100);
+        });
+        this.addBtn("test1", () => {
+            console.log(Util.rawUrl('resources/Atlas/Single/transparent.png'));
+            wx.createGameRecorderShareButton({
+                text:"",
+                icon:Util.rawUrl('resources/Atlas/Single/transparent.png'),
+                style:{left:0,top:0,height:100},
+                share:{
+                    query:"",
+                    title:{
+                        template:"default.score",
+                        data:{score:1},
+                    },
+                    bgm:"",
+                    timeRange:[[0,60*1000]],
+                }
+            });
+        });
+        
+        
     }
     addBtn(name, func) {
         let node = cc.instantiate(this.buttonPrefab);

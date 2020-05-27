@@ -19,6 +19,7 @@ import Button from "../../CustomUI/Button";
 import { AdUnitId, AD } from "../../Frame/AD";
 import { Key } from "../../Game/Key";
 import { DB } from "../../Frame/DataBind";
+import { Config } from "../../Frame/Config";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -30,10 +31,13 @@ export default class GameOverPanel extends Panel {
     giveupBtn: Button = null;
 
     @property(Button)
-    rebornBtn: Button = null;
+    coinRebornBtn: Button = null;
 
     @property(Button)
-    shareVideoBtn:Button = null;
+    freeRebornBtn: Button = null;
+
+    @property(cc.Node)
+    shareVideoBtnParent:cc.Node = null;
 
     @property(cc.Node)
     titleNode: cc.Node = null;
@@ -54,18 +58,26 @@ export default class GameOverPanel extends Panel {
 
     onLoad(){
         super.onLoad();
-        this.rebornBtn.node.on("click", this.onRebornBtnTap, this);
-        this.shareVideoBtn.node.on("click", this.onShareVideoBtnTap, this);
+        this.coinRebornBtn.node.on("click", this.onCoinRebornBtnTap, this);
+        this.freeRebornBtn.node.on("click", this.onFreeRebornBtnTap, this);
+        // this.shareVideoBtn.node.on("click", this.onShareVideoBtnTap, this);
         this.giveupBtn.node.on("click", this.onGiveupBtnTap, this);
         this.initHeroSprite();
         this.initRebornBtn();
         this.giveupBtn.node.active = false;
         setTimeout(() => {
             this.giveupBtn.node.active = true;
-        }, 1500);
+        }, crossPlatform.isDebug? 200:1000);
+        this.coinRebornBtn.getComponentInChildren(cc.Label).string = `x${Config.rebornCostCoin}复活`;
         if(GameRecorder.recordering){
             GameRecorder.stop();
         }
+        GameRecorder.createGameRecorderShareButton({
+            parentNode:this.shareVideoBtnParent,
+            textures:DB.Get(Key.screenShotTextures),
+            onSucc:()=>{},
+            onFail:()=>{},
+        });
     }
     initHeroSprite(){
         let themeId = DB.Get(Key.ThemeId);
@@ -77,52 +89,57 @@ export default class GameOverPanel extends Panel {
             });
         }
     }
-    initShareVideoBtn(textures:any[]){
-        let i = 0;
-        this.shareVideoBtn.node.runAction(cc.repeatForever(
-            cc.sequence(
-                cc.callFunc(()=>{
-                    i++;
-                    this.screenImg.spriteFrame = new cc.SpriteFrame(textures[i%textures.length]);
-                }),
-                cc.delayTime(0.5)
-            )
-        ));
-        this.shareVideoBtn.node.runAction(cc.repeatForever(
-            cc.sequence(
-                cc.scaleTo(0.5, 1.05, 1.05),
-                cc.scaleTo(0.5, 1, 1),
-            )
-        ));
-    }
     initRebornBtn(){
         if(tt){
-            this.setRebornBtnType("ad");
+            this.setFreeRebornBtnType("ad");
         }
         else if(wx){
-            this.setRebornBtnType("share");
+            this.setFreeRebornBtnType("share");
         }else{
-            this.setRebornBtnType("share");
+            this.setFreeRebornBtnType("share");
         }
     }
     onDestroy(){
+        super.onDestroy();
         this.onRebornCallback = null;
         this.onGiveUpCallback = null;
+        GameRecorder.hideGameRecorderShareButton();
     }
 
-    setRebornBtnType(type){
+    setFreeRebornBtnType(type){
         this.type = type;
         Util.loadRes("Atlas/UI/"+type,cc.SpriteFrame).then((spriteFrame:cc.SpriteFrame)=>{
-            let sprite = Util.searchChild(this.rebornBtn.node, "icon").getComponent(cc.Sprite);
+            let sprite = Util.searchChild(this.freeRebornBtn.node, "icon").getComponent(cc.Sprite);
             sprite.spriteFrame = spriteFrame;
         });
     }
-
-    onRebornBtnTap(){
+    onCoinRebornBtnTap(){
+        let coin = DB.Get(Key.Coin);
+        if(coin<Config.rebornCostCoin){
+            Top.showToast("金币不足");
+        }else{
+            Top.showFloatLabel(`金币-${Config.rebornCostCoin}`, this.coinRebornBtn.node, {
+                offset:cc.v2(0, 80),
+                color:cc.color(235,235,70),
+                stroke:1,
+                strokeColor:cc.Color.BLACK,
+                fontSize:30,
+                duration:2,
+            });
+            setTimeout(() => {
+                DB.Set(Key.Coin ,coin-Config.rebornCostCoin);
+                this.onRebornCallback();
+                SceneManager.ins.popPanel();
+            }, 1000);
+            
+        }
+    }
+    onFreeRebornBtnTap(){
         if(this.type == "share"){
             //分享
+            console.log(Util.rawUrl('resources/Atlas/Single/1.png'));
             crossPlatform.share({
-                imageUrl:Util.rawUrl('resources/Atlas/ShareImg/1.png'),
+                imageUrl:Util.rawUrl('resources/Atlas/Single/1.png'),
                 templateId:"6deh5ubi85226of3co",
                 success:()=>{
                     SceneManager.ins.popPanel();
@@ -144,37 +161,27 @@ export default class GameOverPanel extends Panel {
             },(err)=>{
                 Top.showToast("播放失败");
             })
-        }else if(this.type == "video"){
-            //录屏
-            GameRecorder.share(()=>{
-                SceneManager.ins.popPanel();
-                if(this.onRebornCallback){
-                    this.onRebornCallback();
-                }
-            },(e)=>{
-                Top.showToast("分享录屏失败");
-            });
         }
     }
-    onShareVideoBtnTap(){
-        let rewardTip = this.shareVideoBtn.node.getChildByName("rewardTip");
-        if(Util.getTimeStamp() - GameRecorder.startStamp > 4000){
-            //录制视频
-            GameRecorder.share(()=>{
-                //如果显示rewardTip则获得2钻石，成功过一次后就隐藏rewardTip
-                if(rewardTip.active){
-                    this.shareVideoBtn.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:2}));
-                }
-                this.shareVideoBtn.node.stopAllActions();
-                rewardTip.active = false;
-            },(e)=>{
-                Top.showToast("分享录屏失败");
-            });
-        }else{
-            //录屏时间太短，转分享或视频
-            Top.showToast("录屏时间太短");
-        }
-    }
+    // onShareVideoBtnTap(){
+    //     let rewardTip = this.shareVideoBtn.node.getChildByName("rewardTip");
+    //     if(Util.getTimeStamp() - GameRecorder.startStamp > 4000){
+    //         //录制视频
+    //         GameRecorder.share(()=>{
+    //             //如果显示rewardTip则获得2钻石，成功过一次后就隐藏rewardTip
+    //             if(rewardTip.active){
+    //                 this.shareVideoBtn.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:2}));
+    //             }
+    //             this.shareVideoBtn.node.stopAllActions();
+    //             rewardTip.active = false;
+    //         },(e)=>{
+    //             Top.showToast("分享录屏失败");
+    //         });
+    //     }else{
+    //         //录屏时间太短，转分享或视频
+    //         Top.showToast("录屏时间太短");
+    //     }
+    // }
     onGiveupBtnTap(){
         if(this.onGiveUpCallback){
             this.onGiveUpCallback();

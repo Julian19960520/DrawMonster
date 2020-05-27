@@ -12,40 +12,75 @@ import Panel from "../../Frame/Panel";
 import ScrollList from "../../CustomUI/ScrollList";
 import { Game } from "../../Game/Game";
 import { DB } from "../../Frame/DataBind";
-import { Sound } from "../../Frame/Sound";
 import Top from "../../Frame/Top";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
+import UsingMonsterCell from "./UsingMonsterCell";
+import HeroCell from "./HeroCell";
 
 const {ccclass, menu, property} = cc._decorator;
 
 @ccclass
 @menu("面板/EditThemePanel")
 export default class EditThemePanel extends Panel {
-    @property(ScrollList)
-    usingMonsterList:ScrollList = null;
+    @property(cc.Node)
+    usingMonsterGroup:cc.Node = null;
+    @property(cc.Label)
+    emptyLabel:cc.Label = null;
+
     @property(ScrollList)
     allMonsterList:ScrollList = null;
 
     @property(Button)
     playBtn:Button = null;
+
+    @property(Button)
+    editBtn:Button = null;
+
+    @property(HeroCell)
+    heroCell:HeroCell = null;
+
     playCallback = null;
     onLoad(){
         super.onLoad();
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
+        this.editBtn.node.on("click", this.onEditBtnTap, this);
         this.Bind(Key.CustomMonsters,()=>{
             let arr:any[] = [{createNew:true}].concat(Game.allMonsters);
             this.allMonsterList.setDataArr(arr);
         });
+        this.updateThemeHero();
         this.Bind(Key.ThemeId, (themeId)=>{
-            let theme = Game.findThemeConf(themeId);
-            let monsterIds = theme.monsterIds.concat();
-            let arr = [];
-            for(let i=0; i<monsterIds.length; i++){
-                arr.push({id:monsterIds[i]});
-            }
-            this.usingMonsterList.setDataArr(arr);
+            this.updateUsingMonsterGooup();
         })
+        DB.Set(Key.editing, false);
+    }
+
+    updateThemeHero(){
+        let themeId = DB.Get(Key.ThemeId);
+        let theme = Game.findThemeConf(themeId);
+        let hero = Game.findHeroConf(theme.heroId);
+        this.heroCell.setData(hero);
+    }
+
+    updateUsingMonsterGooup(){
+        let themeId = DB.Get(Key.ThemeId);
+        let theme = Game.findThemeConf(themeId);
+        while(this.usingMonsterGroup.childrenCount < theme.monsterIds.length){
+            let node = cc.instantiate(this.usingMonsterGroup.children[0]);
+            this.usingMonsterGroup.addChild(node);
+        }
+        for(let i=0;i<this.usingMonsterGroup.childrenCount;i++){
+            let child = this.usingMonsterGroup.children[i];
+            if(i<theme.monsterIds.length){
+                child.active = true;
+                let usingMonsterCell = child.getComponent(UsingMonsterCell);
+                usingMonsterCell.setData(theme.monsterIds[i]);
+            }else{
+                child.active = false;
+            }
+        }
+        this.emptyLabel.node.active = (theme.monsterIds.length == 0);
     }
     onPlayBtnTap(){
         let themeId = DB.Get(Key.ThemeId);
@@ -58,5 +93,10 @@ export default class EditThemePanel extends Panel {
             Top.showToast("最少选择1个");
         }
     }
-
+    onEditBtnTap(){
+        let editing = DB.Get(Key.editing);
+        editing = !editing;
+        DB.Set(Key.editing, editing);
+        this.editBtn.getComponentInChildren(cc.Label).string = editing?"管理中..":"管理";
+    }
 }

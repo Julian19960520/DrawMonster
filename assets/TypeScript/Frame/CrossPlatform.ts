@@ -57,6 +57,35 @@ export class SystemInfo{
         height:	number	;//安全区域的高度，单位逻辑像素
     }
 }
+export class KVData{
+    key:string;
+    value:string;
+}
+export class UserGameData{
+    avatarUrl:string;
+    nickname:string;
+    openid:string;
+    KVDataList:KVData[];
+}
+export class UploadTask{
+    abort(){};
+    onProgressUpdate(callback:(res:{progress:number, totalBytesSent:number, totalBytesExpectedToSend:number})=>void){}
+    offProgressUpdate(callback){};
+    onHeadersReceived(callback){};
+    offHeadersReceived(callback){};
+}
+export class DownloadTask{
+    onProgressUpdate(callback:(res:{progress:number, totalBytesWritten:number, totalBytesExpectedToWrite:number})=>void){}
+    offProgressUpdate(callback){};
+    onHeadersReceived(callback){};
+    offHeadersReceived(callback){};
+}
+export class GameRecorderShareButton{
+    show(){}
+    hide(){}
+    onTap(listener){}
+    offTap(listener){}
+}
 export enum AppName{
     Toutiao = "Toutiao",            //	今日头条
     Douyin = "Douyin",              //	抖音短视屏
@@ -130,20 +159,24 @@ export class CrossPlatform{
         }
     }
     createGameRecorderShareButton(obj:{
+        text?:string,
+        icon?:string,
         style:{
-            left:number,
-            top:number,
-            height:number,
+            left,
+            top,
+            height,
         },
-        share:{
+        share?:{
             query:string,
+            title:{
+                template:"default.score"|"default.level"|"default.opponent"|"default.cost",
+                data:object,
+            }
             bgm:string,
             timeRange:Array<Array<number>>,
-        },
-        icon?:string,
-        image?:string,
-        text?:string,
+        }
     }){
+        return new GameRecorderShareButton();
     }
     getGameRecorder(){
         return {
@@ -252,9 +285,38 @@ export class CrossPlatform{
     };
     vibrateShort(){};
     vibrateLong(){};
-    login(data){};
+    login(data:{success}){};
     setUserGroup(data){};
-    setUserCloudStorage(data){}
+    setUserCloudStorage(data:{KVDataList:KVData[], success, fail?, complete?}){
+        if(data.success) data.success();
+    };
+    getFriendCloudStorage(data:{keyList:string[], success?:(res:UserGameData[])=>void, fail?, complete?}){
+        data.success([]);
+    }
+    downloadFile(data:{
+        url:string,
+        header?:object,
+        timeout?:number,
+        filePath?:string,
+        success?:(res:{tempFilePath:string, filePath:string, statusCode:number})=>void,
+        fail?:()=>void,
+        complete?:()=>void,
+    }){
+        return new DownloadTask();
+    }
+    uploadFile(data:{
+        url:string,
+        filePath:string,
+        name:string,
+        header?:object,
+        formData?:object,
+        timeout?:number,
+        success?:(res:{tempFilePath:string, filePath:string, statusCode:number})=>void,
+        fail?:()=>void,
+        complete?:()=>void,
+    }){
+        return new DownloadTask();
+    }
 }
 
 export let crossPlatform:CrossPlatform = new CrossPlatform();

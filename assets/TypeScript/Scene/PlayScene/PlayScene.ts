@@ -77,10 +77,6 @@ export default class PlayScene extends Scene {
             this.sensitivity = sensitivity;
         });
     }
-
-    onDestroy(){
-        this.touchNode.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-    }
     
     onPauseBtnTap(){
         if(!this.playing){
@@ -115,18 +111,21 @@ export default class PlayScene extends Scene {
             return;
         }
         Sound.play("gameOver");
-        this.playing = false;
-        let obj = {
-            timeScale:0.2
-        }
-        let opend = false;
+        //死亡截图
         let textures = [];
         for(let i=0;i<4;i++){
             setTimeout(() => {
                 let texture = Util.screenShot();
                 textures.push(texture);
-            }, 500*i);
+            }, 400*i);
         }
+        DB.Set(Key.screenShotTextures, textures);
+        //时间突然变慢，然后慢慢恢复
+        this.playing = false;
+        let obj = {
+            timeScale:0.2
+        }
+        let opend = false;
         cc.tween(obj).to(2, {timeScale:1}, {progress:(start, end, current, ratio)=>{
             current = start + (end-start) * cc.easing.quadInOut(ratio);
             Game.timeScale = current;
@@ -137,8 +136,6 @@ export default class PlayScene extends Scene {
                 if(!this.reborned){
                     //还没重生过，则给一次重生机会
                     this.OpenPanelByName("GameOverPanel",(panel:GameOverPanel)=>{
-                        //设置分享录屏的截图动画
-                        panel.initShareVideoBtn(textures);
                         //重试
                         panel.onRebornCallback = ()=>{
                             this.reborn();

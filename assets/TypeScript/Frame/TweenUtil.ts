@@ -60,11 +60,18 @@ export namespace TweenUtil{
             })
             .start();
     }
-    export function applyAppear(node:cc.Node, time, callback = null){
-        cc.tween(node)
-            .to(time, {scale: 1}, { easing: 'backIn'})
+    export function applyAppear(data:{node:cc.Node, delay?:number, duration?:number, fromScale?:number, toScale?:number, callback?}){
+        if(data.fromScale===undefined) data.fromScale = 0;
+        if(data.toScale===undefined) data.toScale = 1;
+        if(data.delay===undefined) data.delay = 0;
+        if(data.duration===undefined) data.duration = 0.3;
+
+        data.node.scale = data.fromScale;
+        cc.tween(data.node)
+            .delay(data.delay)
+            .to(data.duration, {scale: data.toScale}, { easing: cc.easing.backOut})
             .call(()=>{
-                if(callback)callback();
+                if(data.callback) data.callback();
             })
             .start();
     }
@@ -76,7 +83,7 @@ export namespace TweenUtil{
             })
             .start();
     }
-    export function applyShake(node:cc.Node, callback = null){
+    export function applyShake(node:cc.Node){
         let speed = 200;
         let range = 4;
         let tw = cc.tween(node);
@@ -91,5 +98,24 @@ export namespace TweenUtil{
         let mag = lastPos.sub(oriPos).mag();
         tw.to(mag/speed, {position: oriPos});
         tw.start();
+    }
+    export function applyFloat(node:cc.Node){
+        let time = 0.5;
+        let scale = 0.3;
+        node.runAction(cc.repeatForever(
+            cc.spawn(
+                cc.sequence(
+                    cc.moveBy(time/4, 0, 4*scale),
+                    cc.moveBy(time/2, 0, -8*scale),
+                    cc.moveBy(time/4, 0, 4*scale),
+                ),
+                //angle
+                cc.sequence(
+                    cc.rotateBy(time/4, 5*scale),
+                    cc.rotateBy(time/2, -10*scale),
+                    cc.rotateBy(time/4, 5*scale),
+                ),
+            )
+        ))
     }
 }

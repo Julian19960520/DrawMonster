@@ -25,33 +25,27 @@ export default class UsingMonsterCell extends cc.Component {
     @property(cc.Sprite)
     checkMark:cc.Sprite = null;
 
-    @property(cc.Label)
-    emptyLabel:cc.Label = null;
-
-    data = null
+    id = null
     onLoad () {
         this.node.on(ScrollList.SET_DATA, this.setData, this);
         this.node.on("click", this.onClick, this);
     }
-    setData(data){
-        this.data = data;
-        let monsterId = data.id;
-        this.monsterSprite.node.active = monsterId != 0;
-        this.checkMark.node.active = monsterId != 0;
-        this.emptyLabel.node.active = monsterId == 0;
-        
-        if(data.id == 0){
+    setData(id){
+        this.id = id;
+        this.monsterSprite.node.active = id != 0;
+        this.checkMark.node.active = id != 0;
+        if(id == 0){
             cc.loader.loadRes("Atlas/UI/plusBtn",(err, texture)=>{
                 // this.monsterSprite.spriteFrame.setTexture(texture);
             });
         }else{
-            let monster = Game.findMonsterConf(monsterId);
+            let monster = Game.findMonsterConf(id);
             Game.loadTexture(monster.url, (texture)=>{
                 let frame = new cc.SpriteFrame();
                 frame.setTexture(texture);
                 this.monsterSprite.spriteFrame = frame;
             });
-            if(monster.isUserPainting){
+            if(monster.isCustom){
                 this.monsterSprite.node.width = 100;
                 this.monsterSprite.node.height = 100;
             }else{
@@ -63,7 +57,7 @@ export default class UsingMonsterCell extends cc.Component {
     onClick(){
         let themeId  = DB.Get(Key.ThemeId);
         let theme = Game.findThemeConf(themeId);
-        let idx = theme.monsterIds.indexOf(this.data.id);
+        let idx = theme.monsterIds.indexOf(this.id);
         theme.monsterIds.splice(idx, 1);
         DB.SetLoacl(Key.ThemeId,themeId);
         DB.Invoke(Key.CustomMonsters);

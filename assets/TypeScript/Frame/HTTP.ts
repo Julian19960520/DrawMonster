@@ -1,6 +1,8 @@
 const { ccclass, property } = cc._decorator;
 
 export enum ServerMsg {
+    wxLogin = "catchyou/catchyou-wxlogin",
+    ttLogin = "catchyou/catchyou-ttlogin",
     login = "catchyou/catchyou-login",
     save = "catchyou/catchyou-save",
     saveImg = "catchyou/save-img",              //uid:string img:string

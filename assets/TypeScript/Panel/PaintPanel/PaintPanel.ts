@@ -89,22 +89,6 @@ export default class PaintPanel extends Panel {
         this.state = State.Pencil;
     }
 
-    onDestroy(){
-        super.onDestroy();
-        this.graphics.node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
-        this.graphics.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-        this.graphics.node.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
-        this.graphics.node.off(cc.Node.EventType.TOUCH_CANCEL, this.onTouchEnd, this);
-        this.pencilBtn.node.off("click", this.onPencilTap, this);
-        this.eraserBtn.node.off("click", this.onEraserTap, this);
-        this.revertBtn.node.off("click", this.onRevertTap, this);
-        this.clearBtn.node.off("click", this.onClearTap, this);
-        this.bucketBtn.node.off("click", this.onBucketTap, this);
-        this.saveBtn.node.off("click", this.onSaveBtnTap, this);
-        this.sizeSlider.node.off(Slider.MOVE, this.onSizeChange, this);
-        this.colorList.node.off(ScrollList.SELECT_CHILD, this.selectColorChild, this)
-    }
-
     initColorBtns(){
         let colorIds = DB.Get(Key.ColorIds);
         this.colorList.node.on(ScrollList.SELECT_CHILD, this.selectColorChild, this)

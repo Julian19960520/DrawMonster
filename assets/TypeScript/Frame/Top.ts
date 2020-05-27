@@ -48,7 +48,10 @@ export default class Top extends DB.DataBindComponent {
     public static showFloatLabel(string , parent:cc.Node, style:{
             offset?, 
             color?,
+            stroke?,
+            strokeColor?,
             fontSize?,
+            duration?,
         }){
         let pos:any = parent.convertToWorldSpaceAR(style.offset || cc.Vec2.ZERO);
         pos = parent.convertToNodeSpaceAR(pos);
@@ -59,10 +62,14 @@ export default class Top extends DB.DataBindComponent {
         label.string = string;
         label.fontSize = style.fontSize || 25;
         label.node.color = style.color || cc.Color.BLACK;
-
+        if(style.stroke){
+            let outLine = node.addComponent(cc.LabelOutline);
+            outLine.color = style.strokeColor || cc.Color.BLACK;
+            outLine.width = style.stroke;
+        }
         cc.tween(node)
             .to(0.1, {y:node.y+5} )
-            .delay(1.5)
+            .delay(style.duration || 1.5)
             .to(0.1, {y:node.y+20, opacity:0} )
             .call(()=>{
                 node.removeFromParent();

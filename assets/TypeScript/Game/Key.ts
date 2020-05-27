@@ -18,7 +18,7 @@ export enum Key{
     HeartLvl = "user/heartLvl",
     ShieldLvl = "user/ShieldLvl",
     CoinBagLvl = "user/CoinBagLvl",
-
+    StarThemeIds = "user/starThemeIds",
 
     //设置
     Sound = "option/sound",
@@ -34,6 +34,8 @@ export enum Key{
     curScene = "temp/curScene",
     gameState = "temp/gameState",
     allThemes = "temp/allTheme",
-    
-
+    editing = "temp/editing",
+    dynamicThemes = "temp/dynamicThemes",
+    starThemes = "temp/starThemes",
+    screenShotTextures = "temp/screenShotTextures",
 }

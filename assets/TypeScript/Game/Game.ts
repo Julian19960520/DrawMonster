@@ -1,8 +1,12 @@
 import { RankData, ThemeData, MonsterConfig, HeroConfig } from "../Frame/dts";
 import { DB } from "../Frame/DataBind";
-import { Config, DirType } from "../Frame/Config";
+import { Config, DirType, PrefabPath } from "../Frame/Config";
 import { crossPlatform } from "../Frame/CrossPlatform";
 import { Key } from "./Key";
+import { Sound } from "../Frame/Sound";
+import SceneManager from "../Frame/SceneManager";
+import LoadingScene from "../Scene/LoadingScene/LoadingScene";
+import PlayScene from "../Scene/PlayScene/PlayScene";
 
 export namespace Game{
     export let timeScale = 1;
@@ -191,9 +195,9 @@ export namespace Game{
     /*****************************
      * 操作 Hero 和 Monster 数据
      ****************************/
-    let heroConfigMap = new Map<number, HeroConfig>();
-    let monsterConfigMap = new Map<number, MonsterConfig>();
-    let themeConfigMap = new Map<number, ThemeData>();
+    let heroConfigMap = new Map<number|string, HeroConfig>();
+    let monsterConfigMap = new Map<number|string, MonsterConfig>();
+    let themeConfigMap = new Map<number|string, ThemeData>();
     export let allHeros:HeroConfig[] = [];
     export let allMonsters:MonsterConfig[] = [];
     export let allThemes:ThemeData[] = [];
@@ -246,7 +250,7 @@ export namespace Game{
             url:url,
             dirType:dirType,
             circle:{radius:50},
-            isUserPainting:true,
+            isCustom:true,
             angleSpeedRange:[[-150,-100],[100,150]],
         };
         monsterConfigMap.set(id, monster);
@@ -273,9 +277,6 @@ export namespace Game{
         allThemes.unshift(theme);
         DB.Set(Key.allThemes, allThemes);
         DB.SetLoacl(Key.CustomThemes, customThemes);
-        let openThemeIds = DB.Get(Key.OpenThemeIds);
-        openThemeIds.push(id);
-        DB.SetLoacl(Key.OpenThemeIds, openThemeIds);
         return theme;
     }
 
@@ -319,7 +320,6 @@ export namespace Game{
     export function deleteThemeConf(id){
         themeConfigMap.delete(id);
         let customThemes:ThemeData[] = DB.Get(Key.CustomThemes);
-        let openThemeIds = DB.Get(Key.OpenThemeIds);
         let idx = customThemes.findIndex((conf)=>{
             return conf.id == id
         });
@@ -333,14 +333,7 @@ export namespace Game{
             allThemes.splice(idx, 1);
             DB.Set(Key.allThemes, allThemes);
         }
-        idx = openThemeIds.findIndex((conf)=>{
-            return openThemeIds.id == id
-        });
-        if(idx>=0){
-            openThemeIds.splice(idx, 1);
-        }
         DB.SetLoacl(Key.CustomThemes, customThemes);
-        DB.SetLoacl(Key.OpenThemeIds, openThemeIds);
     }
 
     export function isThemeOpen(id){

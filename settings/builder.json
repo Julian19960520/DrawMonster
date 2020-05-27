@@ -20,7 +20,7 @@
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
-  "md5Cache": false,
+  "md5Cache": true,
   "mergeStartScene": true,
   "optimizeHotUpdate": false,
   "orientation": {
@@ -39,7 +39,7 @@
   "title": "CocosFrame",
   "webOrientation": "auto",
   "wechatgame": {
-    "REMOTE_SERVER_ROOT": "",
+    "REMOTE_SERVER_ROOT": "http://154.8.223.76:8832/",
     "appid": "wx3f57e2acf5250d57",
     "orientation": "portrait",
     "separate_engine": false,

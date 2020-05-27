@@ -18,6 +18,7 @@ import ThemeCell from "./ThemeCell";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import Top from "../../Frame/Top";
 import PreviewPanel from "../../Panel/PreviewPanel/PreviewPanel";
+import { OperationFlow } from "../../Game/OperationFlow";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -28,12 +29,14 @@ export default class MenuScene extends Scene {
     @property(Button)
     playBtn: Button = null;
     @property(Button)
+    prepareBtn: Button = null;
+    @property(Button)
     buyBtn: Button = null;
     @property(Button)
     drawBtn: Button = null;
 
     @property(Button)
-    paintingsBtn: Button = null;
+    downloadBtn: Button = null;
     @property(Button)
     balloonBtn: Button = null;
     @property(Button)
@@ -65,10 +68,11 @@ export default class MenuScene extends Scene {
 
     onLoad () {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
+        this.prepareBtn.node.on("click", this.onPrepareBtnTap, this);
         this.buyBtn.node.on("click", this.onBuyBtnTap, this);
         this.rankBtn.node.on("click", this.onRankBtnTap, this);
 
-        this.paintingsBtn.node.on("click", this.onPaintingsBtnTap, this);
+        this.downloadBtn.node.on("click", this.onDownloadBtnTap, this);
         this.balloonBtn.node.on("click", this.onBalloonBtnTap, this);
         this.upgradeBtn.node.on("click", this.onUpgradeBtnTap, this);
 
@@ -85,24 +89,9 @@ export default class MenuScene extends Scene {
         this.node.on("updateThemeList", this.updateThemeList, this);
     }
 
-    onDestroy(){
-        this.playBtn.node.off("click", this.onPlayBtnTap, this);
-        this.buyBtn.node.off("click", this.onBuyBtnTap, this);
-        this.rankBtn.node.off("click", this.onRankBtnTap, this);
-        this.optionBtn.node.off("click", this.onOptionBtnTap, this);
-
-        this.paintingsBtn.node.off("click", this.onPaintingsBtnTap, this);
-        this.balloonBtn.node.off("click", this.onBalloonBtnTap, this);
-        this.upgradeBtn.node.off("click", this.onUpgradeBtnTap, this);
-
-        this.optionBtn.node.off("click", this.onOptionBtnTap, this);
-        this.drawBtn.node.off("click", this.onDrawBtnTap, this);
-        this.leftTriangle.node.off("click", this.moveLeft, this);
-        this.rightTriangle.node.off("click", this.moveRight, this);
-    }
-
     public updateThemeList(){
         let themeId = DB.Get(Key.ThemeId);
+        let theme = Game.findThemeConf(themeId);
         let centerIdx = Game.allThemes.findIndex((theme)=>{
             return theme.id == themeId;
         });
@@ -122,8 +111,9 @@ export default class MenuScene extends Scene {
         func(1);
         func(2);
         let open = Game.isThemeOpen(themeId);
-        this.playBtn.node.active = open;
-        this.buyBtn.node.active = !open;
+        this.playBtn.node.active = open && !theme.isCustom;
+        this.buyBtn.node.active = !open && !theme.isCustom;
+        this.prepareBtn.node.active = theme.isCustom;
     }
     public moveRight(){
         this.move(1);
@@ -148,8 +138,10 @@ export default class MenuScene extends Scene {
         themeId = Game.allThemes[newIdx].id;
         DB.SetLoacl(Key.ThemeId, themeId);
         let open = Game.isThemeOpen(themeId);
-        this.playBtn.node.active = open;
-        this.buyBtn.node.active = !open;
+        let theme = Game.findThemeConf(themeId);
+        this.playBtn.node.active = open && !theme.isCustom;
+        this.buyBtn.node.active = !open && !theme.isCustom;
+        this.prepareBtn.node.active = theme.isCustom;
 
         for(let i=0; i<this.themesContent.childrenCount; i++){
             let cellNode = this.themesContent.children[i];
@@ -188,6 +180,7 @@ export default class MenuScene extends Scene {
             }
         });
         btnAnim(this.buyBtn.node, 0.4);
+        btnAnim(this.prepareBtn.node, 0.4);
         btnAnim(this.rankBtn.node, 0.4);
         btnAnim(this.balloonBtn.node, 0.4);
         btnAnim(this.leftTriangle.node, 0.5);
@@ -197,15 +190,11 @@ export default class MenuScene extends Scene {
                 TweenUtil.applyBreath(this.drawBtn.node);
             }
         });
-        btnAnim(this.paintingsBtn.node, 0.5);
+        btnAnim(this.downloadBtn.node, 0.5);
         btnAnim(this.upgradeBtn.node, 0.5);
         btnAnim(this.buyBtn.node, 0.4);
         btnAnim(this.optionBtn.node, 0);
         
-    }
-    showDrawGuid(){
-        
-
     }
     public playTitleAnim(){
         let func = (node:cc.Node, delay)=>{
@@ -239,31 +228,29 @@ export default class MenuScene extends Scene {
         }
     }
     private onPlayBtnTap(){
-        let func = ()=>{
-            Sound.play("gameStartBtn");
-            SceneManager.ins.Enter("LoadingScene")
-                .then((loadingScene:LoadingScene)=>{
-                    loadingScene.Load([
-                        PrefabPath.shield,
-                        PrefabPath.heart,
-                        PrefabPath.coinBag,
-                        PrefabPath.clock,
-                        PrefabPath.monster,
-                    ]).then(()=>{
-                        SceneManager.ins.Enter("PlayScene").then((playScene:PlayScene)=>{
-                            playScene.restart();
-                        });
+        this.enterPlayScene();
+    }
+    private onPrepareBtnTap(){
+        this.OpenPanelByName("EditThemePanel",(panel:EditThemePanel)=>{
+            panel.playCallback = this.enterPlayScene;
+        });
+    }
+    private enterPlayScene(){
+        Sound.play("gameStartBtn");
+        SceneManager.ins.Enter("LoadingScene")
+            .then((loadingScene:LoadingScene)=>{
+                loadingScene.Load([
+                    PrefabPath.shield,
+                    PrefabPath.heart,
+                    PrefabPath.coinBag,
+                    // PrefabPath.clock,
+                    PrefabPath.monster,
+                ]).then(()=>{
+                    SceneManager.ins.Enter("PlayScene").then((playScene:PlayScene)=>{
+                        playScene.restart();
                     });
                 });
-        }
-        let theme = Game.findThemeConf(DB.Get(Key.ThemeId));
-        if(theme.isCustom){
-            this.OpenPanelByName("EditThemePanel",(panel:EditThemePanel)=>{
-                panel.playCallback = func;
             });
-        }else{
-            func();
-        }
     }
     private onBuyBtnTap(){
         let coin = DB.Get(Key.Coin);
@@ -294,36 +281,17 @@ export default class MenuScene extends Scene {
     private onOptionBtnTap(){
         this.OpenPanelByName("OptionPanel");
     }
-    private onDrawBtnTap(){
+    public onDrawBtnTap(){
         DB.SetLoacl(Key.guideUnlockPaint, true);
-        SceneManager.ins.OpenPanelByName("PaintPanel",(paintPanel:PaintPanel)=>{
-            paintPanel.beginTip(Config.heroAdvises);
-            paintPanel.saveCallback = (pixels:Uint8Array)=>{
-                //点击画图面板的保存按钮时
-                SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{
-                    previewPanel.initHero(pixels);
-                    //点击取名面板的确定按钮时
-                    previewPanel.okCallback = (name)=>{
-                        DB.SetLoacl(Key.guideDrawFish, true);
-                        let path = Game.savePixels(pixels);
-                        let hero = Game.newHeroConf(name||"我的画作", path);
-                        let theme = Game.newThemeConf(hero.id);
-                        DB.SetLoacl(Key.ThemeId, theme.id);
-                        this.updateThemeList();
-                        //连续关闭两个面板
-                        SceneManager.ins.popPanel();
-                        SceneManager.ins.popPanel();
-                        this.drawBtn.node.stopAllActions();
-                        this.drawBtn.node.scale = 1;
-                    };
-                }); 
-                      
-            }
+        OperationFlow.drawHeroFlow((hero,theme)=>{
+            this.updateThemeList();
+            this.drawBtn.node.stopAllActions();
+            this.drawBtn.node.scale = 1;
         });
     }
 
-    onPaintingsBtnTap(){
-        this.OpenPanelByName("PaintingsPanel");
+    onDownloadBtnTap(){
+        this.OpenPanelByName("CreativeSpacePanel");
     }
 
     onBalloonBtnTap(){

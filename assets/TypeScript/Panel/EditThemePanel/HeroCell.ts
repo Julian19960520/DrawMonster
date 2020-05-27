@@ -18,7 +18,7 @@ import Top from "../../Frame/Top";
 import { Local } from "../../Frame/Local";
 import { Key } from "../../Game/Key";
 import PreviewPanel from "../PreviewPanel/PreviewPanel";
-import { ThemeData, MonsterConfig } from "../../Frame/dts";
+import { ThemeData, HeroConfig } from "../../Frame/dts";
 import { Config } from "../../Frame/Config";
 import Button from "../../CustomUI/Button";
 import MessageBox from "../../Frame/MessageBox";
@@ -28,82 +28,45 @@ import { TweenUtil } from "../../Frame/TweenUtil";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class MonsterCell extends DB.DataBindComponent {
+export default class HeroCell extends DB.DataBindComponent {
     @property(cc.Node)
-    normalNode:cc.Node = null;
-    @property(cc.Node)
-    mark:cc.Node = null;
-    @property(cc.Node)
-    emptyNode:cc.Node = null;
+    animNode:cc.Node = null;
     @property(cc.Sprite)
-    monsterSprite:cc.Sprite = null;
+    sprite:cc.Sprite = null;
     @property(Button)
     deleteBtn:Button = null;
 
-    data:MonsterConfig = null
+    data:HeroConfig = null
     onLoad () {
         this.node.on(ScrollList.SET_DATA, this.setData, this);
-        this.node.on("click", this.onClick, this);
         this.deleteBtn.node.on("click", this.onDeleteTap, this);
         this.showDeleteBtn(false);
         this.Bind(Key.editing, (editing)=>{
-            let showDelete = editing && this.data && this.data.isCustom;
+            let showDelete = editing && this.data && this.data.id>=1000;
             this.showDeleteBtn(showDelete);
         });
     }
+
     showDeleteBtn(b){
         this.deleteBtn.node.active = b;
         if(b){
-            TweenUtil.applyFloat(this.normalNode);
+            TweenUtil.applyFloat(this.animNode);
         }else{
-            this.normalNode.stopAllActions();
-            this.normalNode.x = 0;
-            this.normalNode.y = 0;
-            this.normalNode.angle = 0;
+            this.animNode.stopAllActions();
+            this.animNode.x = 0;
+            this.animNode.y = 0;
+            this.animNode.angle = 0;
         }
     }
-    setData(data:MonsterConfig){
+    
+    setData(data:HeroConfig){
         this.data = data;
-        this.normalNode.active = !data["createNew"];
-        this.emptyNode.active = data["createNew"];
-        this.showDeleteBtn(DB.Get(Key.editing) && data.isCustom);
-        if(!data["createNew"]){
-            this.monsterSprite.spriteFrame = null;
-            Game.loadTexture(data.url,(texture)=>{
-                let frame = new cc.SpriteFrame();
-                frame.setTexture(texture);
-                this.monsterSprite.spriteFrame = frame;
-            });
-
-            let themeId  = DB.Get(Key.ThemeId);
-            let theme = Game.findThemeConf(themeId);
-            let idx = theme.monsterIds.indexOf(this.data.id);
-            this.setUsingState(idx>=0);
-        }
-    }
-    onClick(){
-        let themeId  = DB.Get(Key.ThemeId);
-        let theme = Game.findThemeConf(themeId);
-        if(this.data["createNew"]){
-            this.openPaintPanel(theme);
-        }else{
-            let idx = theme.monsterIds.indexOf(this.data.id);
-            if(idx>=0){
-                theme.monsterIds.splice(idx, 1);
-                this.setUsingState(false);
-                DB.Invoke(Key.ThemeId);
-                Local.setDirty(Key.CustomThemes);
-            }else{
-                if(theme.monsterIds.length<5){
-                    theme.monsterIds.push(this.data.id);
-                    DB.Invoke(Key.ThemeId);
-                    Local.setDirty(Key.CustomThemes);
-                    this.setUsingState(true);
-                }else{
-                    Top.showToast("最多选择5个");
-                }
-            }
-        }
+        this.sprite.spriteFrame = null;
+        Game.loadTexture(data.url,(texture)=>{
+            let frame = new cc.SpriteFrame();
+            frame.setTexture(texture);
+            this.sprite.spriteFrame = frame;
+        });
     }
 
     openPaintPanel(theme:ThemeData){
@@ -134,27 +97,24 @@ export default class MonsterCell extends DB.DataBindComponent {
             }
         });
     }
-    setUsingState(b){
-        this.normalNode.color = b?cc.color(237,245,142):cc.Color.WHITE;
-        this.mark.active = b;
-    }
     onDeleteTap(){
         SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
-            messageBox.label.string = "是否删除该怪物？";
+            messageBox.label.string = "是否删除该角色？";
             messageBox.onOk = ()=>{
-                let monster = this.data;
-                for(let i=0;i<Game.allThemes.length;i++){
-                    let theme = Game.allThemes[i];
-                    let idx = theme.monsterIds.indexOf(monster.id);
-                    if(idx >= 0){
-                        theme.monsterIds.splice(idx, 1);
+                let themeId = DB.Get(Key.ThemeId);
+                let theme = Game.findThemeConf(themeId);
+                let hero = Game.findHeroConf(theme.heroId);
+                if(theme){
+                    Game.deleteThemeConf(theme.id);
+                    if(DB.Get(Key.ThemeId) == theme.id){
+                        DB.SetLoacl(Key.ThemeId, 1);
                     }
+                    this.node.dispatchEvent(Util.customEvent("updateThemeList",true))
                 }
-                DB.Invoke(Key.ThemeId);
-                Game.deleteTexture(monster.url);
-                Game.deleteMonsterConf(monster.id);
-                Top.showToast("怪物已删除");
-                
+                Game.deleteTexture(hero.url);
+                Game.deleteHeroConf(hero.id);
+                SceneManager.ins.popPanel();
+                Top.showToast("角色已删除");
             }
         });
     }

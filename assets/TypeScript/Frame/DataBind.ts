@@ -107,6 +107,7 @@ export namespace DB{
             }
         }
         onDestroy(){
+            console.log("onDestroy");
             this.map.forEach((v, k)=>{
                 DB.UnBind(k, v);
             });
