@@ -102,14 +102,22 @@ export namespace Util{
         return Number.parseFloat(num.toFixed(point));
     }
     export function getTimeStr(time:number){
-        let m = Math.floor(time/60);
-        let s = Math.floor(time%60);
-        let mm = Math.floor((time - Math.floor(time)) * 60);
-        let res = ("0"+s).substr(-2) + ":" + ("0"+mm).substr(-2);
-        if(m != 0){
-            res = ("0"+m).substr(-2) + ":"+ res;
+        time = Math.floor(time/1000);
+        let s = time%60;    //秒
+        time = Math.floor(time/60);
+        let m = time%60;    //分
+        time = Math.floor(time/60);
+        let h = time;
+        let res = "";
+        if(h!=0){
+            res += ("0"+h).substr(-2) + ":";
         }
+        res += ("0"+m).substr(-2) + ":";
+        res += ("0"+s).substr(-2);
         return res;
+    }
+    export function toChineseNum(num){
+        return "零一双三四五六七八九十"[num];
     }
     export function lerp(cur, tar, ratio){
         return (tar-cur)*ratio+cur;
@@ -169,7 +177,10 @@ export namespace Util{
             if(child.name == name){
                 return child;
             }else{
-                return searchChild(child, name);
+                let res = searchChild(child, name);
+                if(res){
+                    return res;
+                }
             }
         }
     }

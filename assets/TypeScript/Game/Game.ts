@@ -7,6 +7,8 @@ import { Sound } from "../Frame/Sound";
 import SceneManager from "../Frame/SceneManager";
 import LoadingScene from "../Scene/LoadingScene/LoadingScene";
 import PlayScene from "../Scene/PlayScene/PlayScene";
+import { Util } from "../Frame/Util";
+import { HTTP, ServerMsg } from "../Frame/HTTP";
 
 export namespace Game{
     export let timeScale = 1;
@@ -348,7 +350,36 @@ export namespace Game{
     /*****************************
      * 排行榜
      ****************************/
+    let lastWorldRankStamp = 0;
+    export function requestWorldRank(refresh, callback){
+        setTimeout(() => {
+            callback([
+                {rank:465,time:22},
+                {rank:466,time:21},
+                {rank:467,time:20},
+                {rank:468,time:19},
+                {rank:468,time:18},
+                {rank:470,time:17},
+                {rank:471,time:16},
+            ])
+        }, 100);
+        return ;
+        let worldRank = DB.Get(Key.WorldRank);
+        if(!worldRank || Util.getTimeStamp()-lastWorldRankStamp>60*1000 || refresh){
+            HTTP.GET(ServerMsg.worldRank, {}, (res)=>{
+                DB.Set(Key.WorldRank, res);
+                callback(res);
+            });
+        }else{
+            callback(worldRank);
+        }
+    }
+    /*****************************
+     * 个人记录
+     ****************************/
     export function addRankData(time){
+        let oldHighScore = Game.getHighScroe();
+        //插入新数据
         let newData = {
             rank:1,
             time:time
@@ -363,7 +394,24 @@ export namespace Game{
             }
         }
         rankDatas.splice(newData.rank-1, 0, newData);
+        //最多保存10个
+        if(rankDatas.length>10){
+            rankDatas.splice(10, rankDatas.length-10);
+        }
         DB.SetLoacl(Key.RankDatas, rankDatas);
+        //更新开放域最高分数据
+        if(time>oldHighScore){
+            crossPlatform.setUserCloudStorage({
+                KVDataList:[{key:"highScore",value:`${time}`}],
+                success:()=>{
+                    
+                },
+                complete:(res)=>{
+                    console.log("设置开放域最高分",res);
+                }
+            });
+        }
+        //打点
         let themeId = DB.Get(Key.ThemeId);
         crossPlatform.reportAnalytics("gameOver",{
             timeStamp: new Date().getTime(),

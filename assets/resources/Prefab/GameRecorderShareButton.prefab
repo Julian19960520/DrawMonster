@@ -44,8 +44,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 64,
-      "height": 113
+      "width": 100,
+      "height": 180
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -114,8 +114,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 64,
-      "height": 113
+      "width": 100,
+      "height": 180
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -174,8 +174,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 53.6,
-      "height": 101.7
+      "width": 92,
+      "height": 172
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -383,8 +383,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 64,
-      "height": 113
+      "width": 100,
+      "height": 180
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -561,8 +561,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 151.12,
-      "height": 20
+      "width": 180,
+      "height": 50
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -572,7 +572,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 0.894,
-      "y": -69.102,
+      "y": -109.778,
       "z": 0
     },
     "_scale": {
@@ -631,7 +631,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": -25.560000000000002,
+      "x": -23.425,
       "y": 0,
       "z": 0
     },
@@ -732,7 +732,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 38.44,
+      "x": 38.503,
       "y": 0,
       "z": 0
     },
@@ -821,15 +821,15 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 235,
-      "b": 255,
+      "r": 206,
+      "g": 250,
+      "b": 253,
       "a": 255
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 23.12,
-      "height": 27.2
+      "width": 25.12,
+      "height": 29.2
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -838,7 +838,7 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 64,
+      "x": 62.991,
       "y": 0,
       "z": 0
     },
@@ -905,7 +905,7 @@
       "b": 0,
       "a": 255
     },
-    "_width": 1,
+    "_width": 2,
     "_id": ""
   },
   {
@@ -920,36 +920,35 @@
     "sync": false
   },
   {
-    "__type__": "cc.Layout",
+    "__type__": "cc.Sprite",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 15
     },
     "_enabled": true,
-    "_layoutSize": {
-      "__type__": "cc.Size",
-      "width": 151.12,
-      "height": 20
+    "_materials": [
+      {
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+      }
+    ],
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
+    "_spriteFrame": {
+      "__uuid__": "ef7db641-44c9-4f1e-9d07-c5e4fd4b95fe"
     },
-    "_resize": 1,
-    "_N$layoutType": 1,
-    "_N$padding": 0,
-    "_N$cellSize": {
-      "__type__": "cc.Size",
-      "width": 40,
-      "height": 40
+    "_type": 1,
+    "_sizeMode": 0,
+    "_fillType": 0,
+    "_fillCenter": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
     },
-    "_N$startAxis": 0,
-    "_N$paddingLeft": 0,
-    "_N$paddingRight": 0,
-    "_N$paddingTop": 0,
-    "_N$paddingBottom": 0,
-    "_N$spacingX": -10,
-    "_N$spacingY": 0,
-    "_N$verticalDirection": 1,
-    "_N$horizontalDirection": 0,
-    "_N$affectedByScale": false,
+    "_fillStart": 0,
+    "_fillRange": 0,
+    "_isTrimmedMode": true,
+    "_atlas": null,
     "_id": ""
   },
   {

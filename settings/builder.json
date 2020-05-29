@@ -39,11 +39,11 @@
   "title": "CocosFrame",
   "webOrientation": "auto",
   "wechatgame": {
-    "REMOTE_SERVER_ROOT": "http://154.8.223.76:8832/",
-    "appid": "wx3f57e2acf5250d57",
+    "REMOTE_SERVER_ROOT": "https://htrain-resource-wscdn.hortorgames.com/",
+    "appid": "tt011c77a19e36483a",
     "orientation": "portrait",
     "separate_engine": false,
-    "subContext": "CatchYouOpen"
+    "subContext": ""
   },
   "xxteaKey": "03b47b7b-5310-41",
   "zipCompressJs": true

@@ -93,7 +93,7 @@ export enum AppName{
     NewsLite = "news_article_lite", //	头条极速版
 }
 export class CrossPlatform{
-    isDebug:boolean = true;
+    isDebug:boolean = false;
     env = {
         USER_DATA_PATH:"Root:",
     }
@@ -161,6 +161,7 @@ export class CrossPlatform{
     createGameRecorderShareButton(obj:{
         text?:string,
         icon?:string,
+        image?:string,
         style:{
             left,
             top,
@@ -178,9 +179,10 @@ export class CrossPlatform{
     }){
         return new GameRecorderShareButton();
     }
+    //微信专用API
     getGameRecorder(){
         return {
-            start(obj:{duration:number}){
+            start(obj:{duration?:number,fps?:number, bitrate?:number, gop?:number, hookBgm?:boolean}){
                 console.log("开始录屏");
             },
             pause(){},
@@ -189,7 +191,7 @@ export class CrossPlatform{
             resume(){},
             stop(){
                 console.log("结束录屏");
-                return "视频地址";
+                return new Promise(()=>{});
             },
             onStart(callback){},
             onResume(callback){},
@@ -285,7 +287,9 @@ export class CrossPlatform{
     };
     vibrateShort(){};
     vibrateLong(){};
-    login(data:{success}){};
+    login(data:{success}){
+        data.success({code:1});
+    };
     setUserGroup(data){};
     setUserCloudStorage(data:{KVDataList:KVData[], success, fail?, complete?}){
         if(data.success) data.success();
@@ -328,7 +332,6 @@ if(tt){
     wx = null;
 }if(wx){
     crossPlatform = wx;
-    crossPlatform.getGameRecorderManager = wx.getGameRecorder;
 }
 if(wx){
     let hideTime = 0;

@@ -124,6 +124,8 @@ export default class UpgradePanel extends Panel {
 
     initHeartItem(item:cc.Node){
         let idx = item.getSiblingIndex();
+        // let lvLabel = item.getChildByName("lvLabel").getComponent(cc.Label);
+        // lvLabel.string = "Lv."+(idx+1);
         let heartLvlConf = Config.heartLvlConf;
         item.on("click", this.onClickItem, this);
         item.getChildByName("lock").active = false;
@@ -152,6 +154,7 @@ export default class UpgradePanel extends Panel {
 
     initShieldItem(item:cc.Node){
         let idx = item.getSiblingIndex();
+        // item.getChildByName("lvLabel").getComponent(cc.Label).string = "Lv."+(idx+1);
         let shieldLvlConf = Config.shieldLvlConf;
         item.on("click", this.onClickItem, this);
         item.getChildByName("lock").active = false;
@@ -165,6 +168,7 @@ export default class UpgradePanel extends Panel {
 
     initCoinbagItem(item:cc.Node){
         let idx = item.getSiblingIndex();
+        // item.getChildByName("lvLabel").getComponent(cc.Label).string = "Lv."+(idx+1);
         let shieldLvlConf = Config.shieldLvlConf;
         item.on("click", this.onClickItem, this);
         item.getChildByName("lock").active = false;
@@ -231,11 +235,17 @@ export default class UpgradePanel extends Panel {
             if(this.curCost.diamond > diamond){
                 SceneManager.ins.OpenPanelByName("MessageBox", (panel:MessageBox)=>{
                     panel.label.string = "钻石不足";
+                    panel.closeCallback = ()=>{
+                        SceneManager.ins.OpenPanelByName("AddCoinPanel");
+                    }
                 });
             }
             else if(this.curCost.coin > coin){
                 SceneManager.ins.OpenPanelByName("MessageBox", (panel:MessageBox)=>{
                     panel.label.string = "金币不足";
+                    panel.closeCallback = ()=>{
+                        SceneManager.ins.OpenPanelByName("AddCoinPanel");
+                    }
                 });
             }
             else{

@@ -19,7 +19,11 @@ export enum Key{
     ShieldLvl = "user/ShieldLvl",
     CoinBagLvl = "user/CoinBagLvl",
     StarThemeIds = "user/starThemeIds",
-
+    lastFreeBallStamp = "user/lastFreeBallStamp",
+    gashaBallCnt = "user/gashaBallCnt",
+    gashaRewards = "user/gashaRewards",
+    gashaRewardsRefreshStamp = "user/gashaRewardsRefreshStamp",
+    gashaRefreshIdx = "user/gashaRefreshIdx",
     //设置
     Sound = "option/sound",
     Music = "option/music",
@@ -38,4 +42,5 @@ export enum Key{
     dynamicThemes = "temp/dynamicThemes",
     starThemes = "temp/starThemes",
     screenShotTextures = "temp/screenShotTextures",
+    WorldRank = "temp/worldRank",
 }

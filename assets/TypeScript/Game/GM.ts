@@ -17,31 +17,13 @@ export default class GM extends cc.Component {
     @property(cc.Node)
     content: cc.Node = null;
     onLoad() {
+        this.node.active = crossPlatform.isDebug;
         this.openBtn.node.on("click", () => {
             this.panel.active = !this.panel.active;
         }, this);
         this.buttonPrefab.active = false;
         this.panel.active = false;
 
-        this.addBtn("登录", () => {
-            crossPlatform.login({
-                success:(res)=>{
-                    console.log(res);
-                    let js_code = res.code;
-                    let appid = "wx3f57e2acf5250d57";
-                    let secret = "915c2b4d6092ffd67fa85692bfe42a56";
-                    let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${js_code}&grant_type=authorization_code`;
-                    HTTP.GET(url, (data) => {
-                        console.log(data);
-                    });
-                    // HTTP.POST(ServerMsg.login, { openId: "Julian" }, (data) => {
-                        
-                    // }, (data) => {
-                        
-                    // });
-                }
-            })
-        });
         this.addBtn("save", () => {
             HTTP.POST(ServerMsg.save, {uid:"1",json:"asdfasdfa"},(res)=>{
 
@@ -96,12 +78,12 @@ export default class GM extends cc.Component {
                 });
             }, 100);
         });
-        this.addBtn("test1", () => {
+        this.addBtn("按钮", () => {
             console.log(Util.rawUrl('resources/Atlas/Single/transparent.png'));
             wx.createGameRecorderShareButton({
-                text:"",
-                icon:Util.rawUrl('resources/Atlas/Single/transparent.png'),
-                style:{left:0,top:0,height:100},
+                // text:"",
+                // icon:Util.rawUrl('resources/Atlas/Single/transparent.png'),
+                style:{left:0,top:0,height:70},
                 share:{
                     query:"",
                     title:{
@@ -109,9 +91,17 @@ export default class GM extends cc.Component {
                         data:{score:1},
                     },
                     bgm:"",
-                    timeRange:[[0,60*1000]],
+                    timeRange:[[0,3000]],
                 }
             });
+        });
+
+        this.addBtn("start", () => {
+            wx.getGameRecorder().start({duration:15,hookBgm:false});
+        });
+
+        this.addBtn("stop", () => {
+            wx.getGameRecorder().stop();
         });
         
         

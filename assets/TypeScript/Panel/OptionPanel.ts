@@ -56,6 +56,7 @@ export default class OptionPanel extends Panel {
         this.soundSlider.value = DB.Get(Key.Sound);
         this.musicSlider.value = DB.Get(Key.Music);
         this.sensitivitySlider.value = DB.Get(Key.Sensitivity);
+        console.log(DB.Get(Key.Vibrate));
         this.vibrateToggle.isChecked = DB.Get(Key.Vibrate);
     }
     onResetBtnTap(){

@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Clock",
+    "_name": "Diamond",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -43,8 +43,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 60,
-      "height": 75
+      "width": 50,
+      "height": 50
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -91,7 +91,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "df321642-a544-4c43-95d4-fb07ca4535a2"
+      "__uuid__": "b9b9046b-d0bc-438c-89dc-16eb8f1f9e8a"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -129,9 +129,9 @@
     "_offset": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": -8
+      "y": 0
     },
-    "_radius": 28,
+    "_radius": 25,
     "_id": ""
   },
   {
@@ -140,7 +140,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "0a339f95-db8b-426d-a5fb-473e693d08a7"
+      "__uuid__": "69d352be-1c40-4d76-ab57-1d14279ddd75"
     },
     "fileId": "cffz4ZP8tBsoQ61GPpJIaN",
     "sync": false

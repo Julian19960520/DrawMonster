@@ -15,7 +15,13 @@ import Monster from "../../Scene/PlayScene/Monster";
 import { Sound } from "../../Frame/Sound";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import PreviewMonsterFactory from "./PreviewMonsterFactory";
-import { DirType } from "../../Frame/Config";
+import { DirType, Config } from "../../Frame/Config";
+import { GameRecorder } from "../../Frame/GameRecorder";
+import { Util } from "../../Frame/Util";
+import Top from "../../Frame/Top";
+import { DB } from "../../Frame/DataBind";
+import { Key } from "../../Game/Key";
+import PaintPanel from "../PaintPanel/PaintPanel";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -41,6 +47,10 @@ export default class PreviewPanel extends Panel {
 
     @property(cc.Sprite)
     heroSprite:cc.Sprite = null;
+
+    @property(cc.Node)
+    shareVideoPos:cc.Node = null;
+    
     monsters:Monster[] = [];
     
     dirType:DirType = DirType.Upward;
@@ -49,6 +59,18 @@ export default class PreviewPanel extends Panel {
         this.okBtn.node.on("click", this.onOkBtnTap, this);
         this.cancelBtn.node.on("click", this.onCloseBtnClick, this);
         this.dirToggle.node.on(ToggleGroup.TOGGLE_CHANGE, this.onToggleChange, this);
+        if(PaintPanel.hasRecordVideo && GameRecorder.videoDuration > Config.minRecordTime){
+            GameRecorder.createGameRecorderShareButton({
+                parentNode:this.shareVideoPos,
+                textures:DB.Get(Key.screenShotTextures),
+                onSucc:()=>{
+                    Top.showToast("分享成功");
+                },
+                onFail:()=>{
+                    Top.showToast("分享失败");
+                },
+            })
+        }
     }
 
     onOkBtnTap(){

@@ -9,8 +9,8 @@ import SceneManager from "../../Frame/SceneManager";
 import { Key } from "../../Game/Key";
 import { Vibrate } from "../../Frame/Vibrate";
 import { HTTP, ServerMsg } from "../../Frame/HTTP";
-import MonsterCell from "../../Panel/EditThemePanel/MonsterCell";
 import { MonsterConfig } from "../../Frame/dts";
+import LoadingHeart from "../../Game/LoadingHeart";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -18,49 +18,53 @@ const {ccclass, menu, property} = cc._decorator;
 @menu('场景/LoginScene') 
 export default class LoginScene extends Scene {
 
-    @property(cc.Label)
-    label: cc.Label = null;
-
+    @property(LoadingHeart)
+    loadingHeart: LoadingHeart = null;
+    progress1 = 0;
+    progress2 = 0;
     onLoad () {
         crossPlatform.onHide(()=>{
             Local.Save();
         })
-        setTimeout(() => {
+        if(crossPlatform.isDebug){
             this.login();
-        }, 50);
+        }else{
+            cc.tween(this).to(1, {progress1:1}, {progress:(start, end, current, ratio)=>{
+                current = start + (end-start) * cc.easing.quadInOut(ratio);
+                this.loadingHeart.setProgress(current);
+                return ratio;
+            }}).delay(0.5).call(()=>{
+                this.loadingHeart.boom();
+            })
+            .delay(0.2).call(()=>{
+                this.login();
+            })
+            .delay(0.3).call(()=>{
+                SceneManager.ins.Enter("MenuScene");
+            }).start();
+        }
     }
     
-    loadValue(key, def){
-        let value = Local.Get(key) || def;
-        DB.Set(key, value);
-        return value;
-    }
-    loadBoolValue(key, def){
-        let value = Local.Get(key);
-        if(value === undefined){
-            value = def;
-        }
-        DB.Set(key, value);
-        return value;
-    }
     login(){
-        
         crossPlatform.login({success:(res1)=>{
             console.log("res1",res1);
-            HTTP.POST(ServerMsg.wxLogin,{code:res1.code},(res2)=>{
-                console.log("res2",res2);
-                HTTP.POST(ServerMsg.login,{openId:res2.openId},(res3)=>{
-                    console.log("res3",res3);
-                },()=>{
+            // HTTP.POST(ServerMsg.wxLogin,{code:res1.code},(res2)=>{
+            //     console.log("res2",res2);
+            //     HTTP.POST(ServerMsg.login,{openId:res2.openId},(res3)=>{
+            //         console.log("res3",res3);
+            //     },()=>{
     
-                })
-            },()=>{
+            //     })
+            // },()=>{
 
-            })
+            // })
         }});
         let version = Local.Get(Key.Version) || 0;
+        if(version != "0.2.0"){
+            crossPlatform.clearStorageSync();
+        }
         //
-        DB.SetLoacl(Key.Version, "0.1.6");
+        DB.SetLoacl(Key.Version, "0.2.0");
         this.loadValue("uuid", 1000);
 
         //用户属性
@@ -79,9 +83,11 @@ export default class LoginScene extends Scene {
         this.loadValue(Key.ShieldLvl, 1);
         this.loadValue(Key.CoinBagLvl, 1);
         this.loadValue(Key.StarThemeIds, []);
-        console.log("ThemeId", DB.Get(Key.ThemeId));
-        console.log("CustomThemes", DB.Get(Key.CustomThemes));
-        console.log("CustomHeros",DB.Get(Key.CustomHeros));
+        this.loadValue(Key.lastFreeBallStamp, 0);
+        this.loadValue(Key.gashaBallCnt, 0);
+        this.loadValue(Key.gashaRewards, null);
+        this.loadValue(Key.gashaRefreshIdx, 0);
+
         //设置
         Sound.volume = this.loadValue(Key.Sound, 0.5);
         Music.volume = this.loadValue(Key.Music, 0.5);
@@ -94,7 +100,19 @@ export default class LoginScene extends Scene {
 
         this.updateVersion();
         Game.Init();
-        SceneManager.ins.Enter("MenuScene");
+    }
+    loadValue(key, def){
+        let value = Local.Get(key) || def;
+        DB.Set(key, value);
+        return value;
+    }
+    loadBoolValue(key, def){
+        let value = Local.Get(key);
+        if(value === undefined || value === ""){
+            value = def;
+        }
+        DB.Set(key, value);
+        return value;
     }
     updateVersion(){
         let monsters:MonsterConfig[] = DB.Get(Key.CustomMonsters);

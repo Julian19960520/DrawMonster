@@ -17,6 +17,7 @@ import { Key } from "../../Game/Key";
 import { crossPlatform } from "../../Frame/CrossPlatform";
 import { DB } from "../../Frame/DataBind";
 import Top from "../../Frame/Top";
+import ScreenRect from "../../Frame/ScreenRect";
 
 export enum GameState{
     play = "play",
@@ -52,6 +53,12 @@ export default class PlayScene extends Scene {
     @property(Music)
     music: Music = null;
 
+    @property(cc.Label)
+    coinLabel: cc.Label = null;
+    @property(cc.Label)
+    diamondLabel: cc.Label = null;
+
+
     private time = 0;
     private playing = false;
     private reborned = false;   //是否已经复活过
@@ -61,6 +68,15 @@ export default class PlayScene extends Scene {
     
     coin = 0;
     diamond = 0;
+    setCoin(coin){
+        this.coin = coin;
+        this.coinLabel.string = coin;
+    }
+    setDiamond(diamond){
+        this.diamond = diamond;
+        this.diamondLabel.string = diamond;
+    }
+
     
     onLoad () {
         this.oriPos = this.node.position;
@@ -88,6 +104,9 @@ export default class PlayScene extends Scene {
                 this.resume();
             }
             pausePanel.backHomeCallback = ()=>{
+                if(GameRecorder.recordering){
+                    GameRecorder.stop();
+                }
                 this.savelyExit(()=>{
                     SceneManager.ins.goHome();
                 });
@@ -132,6 +151,9 @@ export default class PlayScene extends Scene {
             if(current>=1){
                 if(opend)return;
                     opend = true;
+                if(GameRecorder.recordering){
+                    GameRecorder.stop();
+                }
                 let killerName = evt.detail.monsterName;
                 if(!this.reborned){
                     //还没重生过，则给一次重生机会
@@ -164,7 +186,7 @@ export default class PlayScene extends Scene {
             scale:0.6,
             onEnd:(finish)=>{
                 Sound.play("gainCoin");
-                this.coin += 5;
+                this.setCoin(this.coin+5);
             }
         });
     }
@@ -177,15 +199,22 @@ export default class PlayScene extends Scene {
             cnt:diamondCnt,
             time:1.2,
             scale:1,
+            onBegin:()=>{
+                Sound.play("gainDiamond1");
+            },
             onEnd:(finish)=>{
-                Sound.play("gainCoin");
-                this.diamond += 1;
+                Sound.play("gainDiamond2");
+                let diamond = DB.Get(Key.Diamond);
+                DB.SetLoacl(Key.Diamond, diamond+1);
+                this.setDiamond(this.diamond+1);
             }
         });
     }
     private onTouchMove(event:cc.Event.EventTouch){
         if(this.playing){
             this.targetPos.addSelf(event.getDelta().mul(this.sensitivity));
+            this.targetPos.x = Util.clamp(this.targetPos.x, -ScreenRect.width/2, ScreenRect.width/2);
+            this.targetPos.y = Util.clamp(this.targetPos.y, -ScreenRect.height/2, ScreenRect.height/2);
         }
     }
     
@@ -196,15 +225,15 @@ export default class PlayScene extends Scene {
             this.timeLabel.string = `${Util.fixedNum(this.time, 2)}秒`;
             if(this.hero){
                 let pos = Util.lerpVec2(this.hero.node.position, this.targetPos, 20*dt);
-                this.hero.node.position = pos;
+                this.hero.node.position = this.targetPos;
             }
         }
         
     }
     
     restart(){
-        this.coin = 0;
-        this.diamond = 0;    
+        this.setCoin(0);
+        this.setDiamond(0);
         this.music.play();
         this.time = 0;
         this.monsterFactory.clear();
@@ -217,7 +246,10 @@ export default class PlayScene extends Scene {
         this.playing = true;
         this.reborned = false;
         let themeId = DB.Get(Key.ThemeId);
-        GameRecorder.start();
+        this.scheduleOnce(()=>{
+            console.log("开始录屏");
+            GameRecorder.start(300);
+        }, 1)
         crossPlatform.reportAnalytics('play', {
             timeStamp: new Date().getTime(),
             themeId: themeId>1000? 0 : themeId,
@@ -268,6 +300,8 @@ export default class PlayScene extends Scene {
     
     enterFinishScene(killerName){
         let time = Util.fixedNum(this.time, 2);
+        Game.addRankData(time);
+        DB.SetLoacl(Key.PlayTimes, DB.Get(Key.PlayTimes)+1);
         SceneManager.ins.findScene(PlayScene).savelyExit(()=>{
             SceneManager.ins.Enter("FinishScene").then((finish:FinishScene)=>{
                 finish.setData({

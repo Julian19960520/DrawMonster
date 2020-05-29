@@ -66,6 +66,12 @@ export default class MenuScene extends Scene {
     @property(Button)
     rightTriangle:Button = null;
 
+    @property(cc.Node)
+    coinPos: cc.Node = null;
+
+    @property(cc.Node)
+    diamondPos: cc.Node = null;
+
     onLoad () {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
         this.prepareBtn.node.on("click", this.onPrepareBtnTap, this);
@@ -87,6 +93,8 @@ export default class MenuScene extends Scene {
             this.themesContent.addChild(cell,0);
         }
         this.node.on("updateThemeList", this.updateThemeList, this);
+        this.node.on("gainCoin", this.onGainCoin, this);
+        this.node.on("gainDiamond", this.onGainDiamond, this);
     }
 
     public updateThemeList(){
@@ -236,21 +244,7 @@ export default class MenuScene extends Scene {
         });
     }
     private enterPlayScene(){
-        Sound.play("gameStartBtn");
-        SceneManager.ins.Enter("LoadingScene")
-            .then((loadingScene:LoadingScene)=>{
-                loadingScene.Load([
-                    PrefabPath.shield,
-                    PrefabPath.heart,
-                    PrefabPath.coinBag,
-                    // PrefabPath.clock,
-                    PrefabPath.monster,
-                ]).then(()=>{
-                    SceneManager.ins.Enter("PlayScene").then((playScene:PlayScene)=>{
-                        playScene.restart();
-                    });
-                });
-            });
+        OperationFlow.enterPlayScene(()=>{});
     }
     private onBuyBtnTap(){
         let coin = DB.Get(Key.Coin);
@@ -291,14 +285,52 @@ export default class MenuScene extends Scene {
     }
 
     onDownloadBtnTap(){
-        this.OpenPanelByName("CreativeSpacePanel");
+        Top.showToast("【创意空间】紧急开发中");
+        // this.OpenPanelByName("CreativeSpacePanel");
     }
 
     onBalloonBtnTap(){
-        this.OpenPanelByName("BalloonPanel");
+        this.OpenPanelByName("GashaPanel");
     }
 
     onUpgradeBtnTap(){
         this.OpenPanelByName("UpgradePanel");
+    }
+
+    onGainCoin(evt:cc.Event.EventCustom){
+        let coinCnt = evt.detail.cnt;
+        Top.bezierSprite({
+            url:"Atlas/UI/coin",
+            from:Util.convertPosition(evt.target, Top.node),
+            to:Util.convertPosition(this.coinPos, Top.node),
+            cnt:coinCnt/5,
+            time:1.2,
+            scale:0.6,
+            onEnd:(finish)=>{
+                Sound.play("gainCoin");
+                let coin = DB.Get(Key.Coin);
+                DB.SetLoacl(Key.Coin, coin+5);
+            }
+        });
+    }
+
+    onGainDiamond(evt:cc.Event.EventCustom){
+        let diamondCnt = evt.detail.cnt;
+        Top.bezierSprite({
+            url:"Atlas/UI/diamond",
+            from:Util.convertPosition(evt.target, Top.node),
+            to:Util.convertPosition(this.diamondPos, Top.node),
+            cnt:diamondCnt,
+            time:1.5,
+            scale:1,
+            onBegin:()=>{
+                Sound.play("gainDiamond1");
+            },
+            onEnd:(finish)=>{
+                Sound.play("gainDiamond2");
+                let diamond = DB.Get(Key.Diamond);
+                DB.SetLoacl(Key.Diamond, diamond+1);
+            }
+        });
     }
 }

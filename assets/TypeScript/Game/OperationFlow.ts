@@ -18,7 +18,7 @@ export namespace OperationFlow{
                     PrefabPath.shield,
                     PrefabPath.heart,
                     PrefabPath.coinBag,
-                    // PrefabPath.clock,
+                    PrefabPath.diamond,
                     PrefabPath.monster,
                 ]).then(()=>{
                     SceneManager.ins.Enter("PlayScene").then((playScene:PlayScene)=>{

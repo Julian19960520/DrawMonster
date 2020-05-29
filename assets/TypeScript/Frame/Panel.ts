@@ -2,6 +2,7 @@ import PanelStack from "./PanelStack";
 import { DB } from "./DataBind";
 import SceneManager from "./SceneManager";
 import Button from "../CustomUI/Button";
+import PanelQueue from "./PanelQueue";
 
 const {ccclass, property} = cc._decorator;
 
@@ -14,6 +15,7 @@ export default class Panel extends DB.DataBindComponent {
     public closeBtn:Button = null;
     
     public panelStack:PanelStack = null;
+    public panelQueue:PanelQueue = null;
     public closeCallback = null;
 
     onLoad(){
@@ -34,9 +36,14 @@ export default class Panel extends DB.DataBindComponent {
         cc.tween(this.node).show().to(0.1,{scale:1}).call(callback).start();
     }
     protected onCloseBtnClick(){
-        if(this.closeCallback){
-            this.closeCallback();
+        if(this.panelStack){
+            if(this.closeCallback){
+                this.closeCallback();
+            }
+            SceneManager.ins.popPanel();
         }
-        SceneManager.ins.popPanel();
+        if(this.panelQueue){
+            this.panelQueue.checkNext();
+        }
     }
 }

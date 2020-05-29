@@ -4,8 +4,11 @@ import { Util } from "./Util";
 export enum AdUnitId{
     OpenAllChest = "1f2a4ppm2abh4bgeal",
     Reborn = "15k0a126hpl1k4178l",
-    RewardBet = "",
+    RewardBet = "2sf1naepapa1haaf9j",
     FinishBottom = "faa789b9d3d8nf7alm",
+    GetCoin = "ba2t2qdmnlf92i1mae",
+    GetDiamond = "3kr08cvt49p1rcualq",
+    RefreshGasha = "1lh22pmpo6b1kl35d5",
 }
 export enum VideoError{
     UserCancel,
@@ -13,6 +16,10 @@ export enum VideoError{
 }
 export namespace AD{
     export function showVideoAd(id:AdUnitId, succ, fail){
+        crossPlatform.reportAnalytics("rewardedVideoAd",{
+            id:id,
+            step:"click",
+        });
         if(crossPlatform.isDebug){
             succ();
         }
@@ -23,7 +30,12 @@ export namespace AD{
             let closeCall = (res)=>{
                 if(res.isEnded){
                     succ();
+                    crossPlatform.reportAnalytics("ad",{
+                        id:id,
+                        step:"complete",
+                    });
                 }else{
+                    console.log(res);
                     fail(VideoError.UserCancel);
                 }
                 videoAd.offClose(closeCall);
@@ -42,13 +54,15 @@ export namespace AD{
                                 //二次尝试成功
                                 videoAd.onClose(closeCall);
                             })
-                            .catch(()=>{
+                            .catch((err)=>{
                                 //二次尝试失败
+                                console.log(err);
                                 fail(VideoError.NoAd);
                             });
                         })
                         .catch((err)=>{
                             //手动拉取成功，则按照没有广告可看失败处理
+                            console.log(err);
                             fail(VideoError.NoAd);
                         });
                 });
