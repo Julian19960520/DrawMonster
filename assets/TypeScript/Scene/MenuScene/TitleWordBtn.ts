@@ -18,6 +18,11 @@ const {ccclass, property} = cc._decorator;
 export default class TitleWordBtn extends cc.Component {
     @property
     private hp = 2;
+    @property
+    private coin = 0;
+    @property
+    private diamond = 0;
+
     onLoad(){
         this.node.on("click", this.onClick, this)
     }
@@ -36,6 +41,12 @@ export default class TitleWordBtn extends cc.Component {
             let phyObject = this.node.addComponent(PhyObject);
             phyObject.velocity = cc.v2( Util.randomInt(-100, 100), Util.randomInt(300, 500));
             phyObject.g = 1200;
+            if(this.coin>0){
+                this.node.dispatchEvent(Util.customEvent("gainCoin",true,{cnt:this.coin}));
+            }
+            if(this.diamond>0){
+                this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:this.diamond}));
+            }
             setTimeout(() => {
                 this.node.removeFromParent();
             }, 3000);

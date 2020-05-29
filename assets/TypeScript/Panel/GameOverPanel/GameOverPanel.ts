@@ -1,19 +1,8 @@
-// Learn TypeScript:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-
 import Panel from "../../Frame/Panel";
 import SceneManager from "../../Frame/SceneManager";
 import { Util } from "../../Frame/Util";
 import { Game } from "../../Game/Game";
 import Top from "../../Frame/Top";
-import { GameRecorder } from "../../Frame/GameRecorder";
 import { tt, wx, crossPlatform, VideoAd } from "../../Frame/CrossPlatform";
 import Button from "../../CustomUI/Button";
 import { AdUnitId, AD } from "../../Frame/AD";
@@ -69,15 +58,6 @@ export default class GameOverPanel extends Panel {
             this.giveupBtn.node.active = true;
         }, crossPlatform.isDebug? 200:1000);
         this.coinRebornBtn.getComponentInChildren(cc.Label).string = `x${Config.rebornCostCoin}复活`;
-        if(GameRecorder.recordering){
-            GameRecorder.stop();
-        }
-        GameRecorder.createGameRecorderShareButton({
-            parentNode:this.shareVideoBtnParent,
-            textures:DB.Get(Key.screenShotTextures),
-            onSucc:()=>{},
-            onFail:()=>{},
-        });
     }
     initHeroSprite(){
         let themeId = DB.Get(Key.ThemeId);
@@ -89,6 +69,11 @@ export default class GameOverPanel extends Panel {
             });
         }
     }
+    onDestroy(){
+        super.onDestroy();
+        this.onRebornCallback = null;
+        this.onGiveUpCallback = null;
+    }
     initRebornBtn(){
         if(tt){
             this.setFreeRebornBtnType("ad");
@@ -99,13 +84,6 @@ export default class GameOverPanel extends Panel {
             this.setFreeRebornBtnType("share");
         }
     }
-    onDestroy(){
-        super.onDestroy();
-        this.onRebornCallback = null;
-        this.onGiveUpCallback = null;
-        GameRecorder.hideGameRecorderShareButton();
-    }
-
     setFreeRebornBtnType(type){
         this.type = type;
         Util.loadRes("Atlas/UI/"+type,cc.SpriteFrame).then((spriteFrame:cc.SpriteFrame)=>{
@@ -118,12 +96,12 @@ export default class GameOverPanel extends Panel {
         if(coin<Config.rebornCostCoin){
             Top.showToast("金币不足");
         }else{
-            Top.showFloatLabel(`金币-${Config.rebornCostCoin}`, this.coinRebornBtn.node, {
+            Top.showFloatLabel(`复活\n金币-${Config.rebornCostCoin}`, this.coinRebornBtn.node, {
                 offset:cc.v2(0, 80),
                 color:cc.color(235,235,70),
-                stroke:1,
+                stroke:2,
                 strokeColor:cc.Color.BLACK,
-                fontSize:30,
+                fontSize:40,
                 duration:2,
             });
             setTimeout(() => {
@@ -163,25 +141,6 @@ export default class GameOverPanel extends Panel {
             })
         }
     }
-    // onShareVideoBtnTap(){
-    //     let rewardTip = this.shareVideoBtn.node.getChildByName("rewardTip");
-    //     if(Util.getTimeStamp() - GameRecorder.startStamp > 4000){
-    //         //录制视频
-    //         GameRecorder.share(()=>{
-    //             //如果显示rewardTip则获得2钻石，成功过一次后就隐藏rewardTip
-    //             if(rewardTip.active){
-    //                 this.shareVideoBtn.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:2}));
-    //             }
-    //             this.shareVideoBtn.node.stopAllActions();
-    //             rewardTip.active = false;
-    //         },(e)=>{
-    //             Top.showToast("分享录屏失败");
-    //         });
-    //     }else{
-    //         //录屏时间太短，转分享或视频
-    //         Top.showToast("录屏时间太短");
-    //     }
-    // }
     onGiveupBtnTap(){
         if(this.onGiveUpCallback){
             this.onGiveUpCallback();

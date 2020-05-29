@@ -45,13 +45,6 @@ export default class UsingMonsterCell extends cc.Component {
                 frame.setTexture(texture);
                 this.monsterSprite.spriteFrame = frame;
             });
-            if(monster.isCustom){
-                this.monsterSprite.node.width = 100;
-                this.monsterSprite.node.height = 100;
-            }else{
-                this.monsterSprite.node.width = 150;
-                this.monsterSprite.node.height = 150;
-            }
         }
     }
     onClick(){

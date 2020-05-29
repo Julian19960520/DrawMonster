@@ -1,10 +1,12 @@
 import { ColorData, ThemeData, MonsterConfig } from "./dts";
+import { GashaponRewardType } from "../Panel/ShopPanel/GashaponRewardItem";
 export enum PrefabPath{
     heart = "Prefab/Prop/Heart",
     shield = "Prefab/Prop/Shield",
     clock = "Prefab/Prop/Clock",
     coinBag = "Prefab/Prop/CoinBag",
-    monster = "Prefab/Monster/Monster",
+    diamond = "Prefab/Prop/Diamond",
+    monster = "Prefab/Monster/Monster",   
 }
 export enum DirType{
     Upward,     //向上
@@ -13,7 +15,15 @@ export enum DirType{
     Rotate,     //旋转
 }
 export namespace Config{
+    export let gashaponRewards = [
+        {type:GashaponRewardType.coin, cnt:100},
+        {type:GashaponRewardType.diamond, cnt:5},
+        {type:GashaponRewardType.theme, id:3},
+        {type:GashaponRewardType.ball, cnt:3},
+        {type:GashaponRewardType.none, },
+    ]
     export let rebornCostCoin = 150;
+    export let gashaponCostCoin = 100;
     export let unlockPaintTimes = 0;
     export let heroAdvises = [
         "猫咪🐱","狗🐶","鸭子🦆","树叶🍃","公鸡🐔","圣诞树🎄","蘑菇🍄","鱼🐟","仙人掌🌵",
@@ -26,9 +36,10 @@ export namespace Config{
     export let paintTips = [
         "【颜料桶】要点在封闭的圆圈内哦！",
         "使用【颜料桶】，快速填充色彩！",
-        "请尽量贴合【蓝圈】作画",
-        "画剑？请剑尖指向右边👉，并选C",
-        // "画完后可以分享创作过程哦！",
+        "【蓝圈】即为碰撞区",
+        "画箭？请箭头指向右边，并选C",
+        "蘸水棉签 + 保鲜膜 = 自制触控笔！",
+        "分享绘画过程，可以获得【钻石】哦！",
     ];
     export let heartLvlConf = [
         {max:1, initCnt:0},
@@ -48,10 +59,10 @@ export namespace Config{
     ]
     export let coinBagLvlConf = [
         {coin:25, diamond:0},
-        {coin:50, diamond:0, detail:"金币+25", cost:{coin:300,diamond:0}},
-        {coin:50, diamond:1, detail:"钻石+1", cost:{coin:800,diamond:5}},
-        {coin:75, diamond:1, detail:"金币+25", cost:{coin:2000,diamond:15}},
-        {coin:75, diamond:2, detail:"钻石+1", cost:{coin:5000,diamond:50}},
+        {coin:50, diamond:0, detail:"袋内金币+25", cost:{coin:300,diamond:0}},
+        {coin:50, diamond:1, detail:"袋内钻石+1", cost:{coin:800,diamond:5}},
+        {coin:75, diamond:1, detail:"袋内金币+25", cost:{coin:2000,diamond:15}},
+        {coin:75, diamond:2, detail:"袋内钻石+1", cost:{coin:5000,diamond:50}},
         {coin:100, diamond:3, detail:"金币+25，钻石+1", cost:{coin:12000,diamond:200}},
     ]
     export let themes:ThemeData[]=[
@@ -62,13 +73,13 @@ export namespace Config{
         {id:5, heroId:5, cost:1000, monsterIds:[51,52]},
         {id:6, heroId:6, cost:1500, monsterIds:[61,62,63]},
         {id:7, heroId:7, cost:2000, monsterIds:[71,72]},
-        {id:8, heroId:8, cost:2500, monsterIds:[81,82]},
+        {id:8, heroId:8, cost:2000, monsterIds:[81,82]},
 
-        {id:9, heroId:9, cost:3000, monsterIds:[91]},
-        {id:10, heroId:10, cost:3500, monsterIds:[101]},
-        {id:11, heroId:11, cost:4000, monsterIds:[111,112,113]},
-        {id:12, heroId:12, cost:4500, monsterIds:[121,122]},
-        {id:13, heroId:13, cost:5000, monsterIds:[131,132]},
+        {id:9, heroId:9, cost:2000, monsterIds:[91]},
+        {id:10, heroId:10, cost:2000, monsterIds:[101]},
+        {id:11, heroId:11, cost:2000, monsterIds:[111,112,113]},
+        {id:12, heroId:12, cost:2000, monsterIds:[121,122]},
+        {id:13, heroId:13, cost:2000, monsterIds:[131,132]},
     ]
     export let heros:any[] = [
         {id:1, name:"", url:"Atlas/Hero/fish" },

@@ -8,6 +8,7 @@ export enum ServerMsg {
     saveImg = "catchyou/save-img",              //uid:string img:string
     myImg = "catchyou/my-img",
     readOneImg = "catchyou/read-one-img", 
+    worldRank = "",
 }
 export namespace HTTP {
     
@@ -57,7 +58,7 @@ export namespace HTTP {
         cc.log("HTTP.Post:" + server + url + "?" + dataStr);
     }
 
-    export function GET(url, callBack = null) {
+    export function GET(url, data, callBack = null) {
         let xhr = cc.loader.getXMLHttpRequest();
         xhr.onreadystatechange = () => {
             if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 400) {
@@ -65,7 +66,14 @@ export namespace HTTP {
                 if (callBack) callBack(response);
             }
         };
-        xhr.open("GET", url, true);
+        let dataStr = "";
+        for (let key in data) {
+            dataStr += `${key}=${data[key]}&`;
+        }
+        if (dataStr.endsWith("&")) {
+            dataStr = dataStr.slice(0, dataStr.length - 1);
+        }
+        xhr.open("GET", server + url + "?" + dataStr, true);
         xhr.send();
     }
 }

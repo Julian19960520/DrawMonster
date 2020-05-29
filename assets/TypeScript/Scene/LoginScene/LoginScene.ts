@@ -9,8 +9,8 @@ import SceneManager from "../../Frame/SceneManager";
 import { Key } from "../../Game/Key";
 import { Vibrate } from "../../Frame/Vibrate";
 import { HTTP, ServerMsg } from "../../Frame/HTTP";
-import MonsterCell from "../../Panel/EditThemePanel/MonsterCell";
 import { MonsterConfig } from "../../Frame/dts";
+import LoadingHeart from "../../Game/LoadingHeart";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -18,33 +18,31 @@ const {ccclass, menu, property} = cc._decorator;
 @menu('场景/LoginScene') 
 export default class LoginScene extends Scene {
 
-    @property(cc.Label)
-    label: cc.Label = null;
-
+    @property(LoadingHeart)
+    loadingHeart: LoadingHeart = null;
+    progress1 = 0;
+    progress2 = 0;
     onLoad () {
         crossPlatform.onHide(()=>{
             Local.Save();
         })
-        setTimeout(() => {
+        if(crossPlatform.isDebug){
             this.login();
-        }, 50);
+        }else{
+            cc.tween(this).to(1, {progress1:1}, {progress:(start, end, current, ratio)=>{
+                current = start + (end-start) * cc.easing.quadInOut(ratio);
+                this.loadingHeart.setProgress(current);
+                return ratio;
+            }}).delay(0.5).call(()=>{
+                this.loadingHeart.boom();
+            }).delay(0.7).call(()=>{
+                this.login();
+            }).start();
+        }
     }
     
-    loadValue(key, def){
-        let value = Local.Get(key) || def;
-        DB.Set(key, value);
-        return value;
-    }
-    loadBoolValue(key, def){
-        let value = Local.Get(key);
-        if(value === undefined){
-            value = def;
-        }
-        DB.Set(key, value);
-        return value;
-    }
     login(){
-        
+
         crossPlatform.login({success:(res1)=>{
             console.log("res1",res1);
             HTTP.POST(ServerMsg.wxLogin,{code:res1.code},(res2)=>{
@@ -95,6 +93,19 @@ export default class LoginScene extends Scene {
         this.updateVersion();
         Game.Init();
         SceneManager.ins.Enter("MenuScene");
+    }
+    loadValue(key, def){
+        let value = Local.Get(key) || def;
+        DB.Set(key, value);
+        return value;
+    }
+    loadBoolValue(key, def){
+        let value = Local.Get(key);
+        if(value === undefined){
+            value = def;
+        }
+        DB.Set(key, value);
+        return value;
     }
     updateVersion(){
         let monsters:MonsterConfig[] = DB.Get(Key.CustomMonsters);

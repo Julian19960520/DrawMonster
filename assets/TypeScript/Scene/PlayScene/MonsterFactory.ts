@@ -89,7 +89,7 @@ export default class MonsterFactory extends cc.Component {
         this.playing = true;
         let themeId  = DB.Get(Key.ThemeId);
         let theme = Game.findThemeConf(themeId);
-        let usingMonstersIds:number[] = theme.monsterIds;
+        let usingMonstersIds:any[] = theme.monsterIds;
         this.usingMonsters = [];
         usingMonstersIds.forEach((id)=>{
             let monster = Game.findMonsterConf(id);

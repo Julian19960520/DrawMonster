@@ -38,4 +38,5 @@ export enum Key{
     dynamicThemes = "temp/dynamicThemes",
     starThemes = "temp/starThemes",
     screenShotTextures = "temp/screenShotTextures",
+    WorldRank = "temp/worldRank",
 }

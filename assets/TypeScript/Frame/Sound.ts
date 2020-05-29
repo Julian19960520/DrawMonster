@@ -7,8 +7,12 @@ export namespace Sound  {
             cc.audioEngine.play(clip, loop, volume);
         }else{
             cc.loader.loadRes("Sound/"+name, cc.AudioClip, (err, clip)=>{
-                soundMap.set(name, clip);
-                cc.audioEngine.play(clip, false, 1);
+                if(!err){
+                    soundMap.set(name, clip);
+                    cc.audioEngine.play(clip, false, 1);
+                }else{
+                    console.error("未找到Sound:" + name);
+                }
             });
         }
     }

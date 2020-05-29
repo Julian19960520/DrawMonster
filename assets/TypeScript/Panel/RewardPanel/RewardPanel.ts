@@ -6,6 +6,7 @@ import SceneManager from "../../Frame/SceneManager";
 import Top from "../../Frame/Top";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import { Util } from "../../Frame/Util";
+import { wx, crossPlatform, tt } from "../../Frame/CrossPlatform";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -32,10 +33,12 @@ export default class RewardPanel extends Panel {
     continueBtn: Button = null;
     
     data:{coin:number,diamond:number,bet:number} = null;
+    private type:"share"|"video"|"ad" = "share";
     onLoad () {
         this.doubleBtn.node.on("click", this.onDoubleBtnTap, this);
         this.continueBtn.node.on("click", this.onSingleBtnTap, this);
         this.initLight();
+        this.initDoubleBtn();
     }
     openAnim(callback = null){
         TweenUtil.applyAppear({node:this.node, callback:callback});
@@ -56,6 +59,26 @@ export default class RewardPanel extends Panel {
             child.runAction(cc.repeatForever(cc.rotateBy(10, 360)));
         }
     }
+    
+    initDoubleBtn(){
+        if(tt){
+            this.setDoubleBtnType("ad");
+        }
+        else if(wx){
+            this.setDoubleBtnType("share");
+        }else{
+            this.setDoubleBtnType("share");
+        }
+    }
+
+    setDoubleBtnType(type){
+        this.type = type;
+        Util.loadRes("Atlas/UI/"+type,cc.SpriteFrame).then((spriteFrame:cc.SpriteFrame)=>{
+            let sprite = Util.searchChild(this.doubleBtn.node, "icon").getComponent(cc.Sprite);
+            sprite.spriteFrame = spriteFrame;
+        });
+    }
+
     setData(data:{coin:number,diamond:number,bet:number}){
         this.data = data;
         this.coinLabel.node.parent.active = data.coin>0;
@@ -63,53 +86,7 @@ export default class RewardPanel extends Panel {
         this.coinLabel.string = `x${data.coin}`;
         this.diamondLabel.string = `x${data.diamond}`;
     }
-    onDoubleBtnTap(){
-        let data = this.data;
-        Top.blockInput(true);
-        AD.showVideoAd(AdUnitId.RewardBet, ()=>{
-            data.coin *= data.bet;
-            data.diamond *= data.bet;
-            let coinAmin = (callback)=>{
-                if(this.coinLabel.node.parent.active){
-                    TweenUtil.applyScaleBounce2(this.coinLabel.node.parent,1, 1.5,()=>{
-                        this.coinLabel.string = `x${data.coin}`;
-                    },()=>{
-                        callback();
-                    })
-                }else{
-                    callback();
-                }
-            }
-            let diamondAmin = (callback)=>{
-                if(this.diamondLabel.node.parent.active){
-                    TweenUtil.applyScaleBounce2(this.diamondLabel.node.parent,1, 1.5,()=>{
-                        this.diamondLabel.string = `x${data.diamond}`;
-                    },()=>{
-                        callback();
-                    })
-                }else{
-                    callback();
-                }
-            }
-            coinAmin(()=>{
-                diamondAmin(()=>{
-                    if(data.coin>0){
-                        this.node.dispatchEvent(Util.customEvent("gainCoin",true,{cnt:data.coin}));
-                    }
-                    if(data.diamond>0){
-                        this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:data.diamond}));
-                    }
-                    setTimeout(() => {
-                        SceneManager.ins.popPanel();
-                        Top.blockInput(false);
-                    }, 500);
-                });
-            })
-        },(err)=>{
-            Top.blockInput(false);
-            Top.showToast("播放失败");
-        })
-    }
+
     onSingleBtnTap(){
         let data = this.data;
         Top.blockInput(true);
@@ -120,8 +97,75 @@ export default class RewardPanel extends Panel {
             this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:data.diamond}));
         }
         setTimeout(() => {
-            SceneManager.ins.popPanel();
             Top.blockInput(false);
+            SceneManager.ins.popPanel();
         }, 500);
+    }
+
+    onDoubleBtnTap(){
+        if(this.type == "share"){
+            //分享
+            console.log(Util.rawUrl('resources/Atlas/Single/1.png'));
+            crossPlatform.share({
+                imageUrl:Util.rawUrl('resources/Atlas/Single/1.png'),
+                templateId:"6deh5ubi85226of3co",
+                success:()=>{
+                    this.gainBetReward();
+                },
+                fail:()=>{
+                    Top.showToast("分享失败");
+                }
+            });
+        }else if(this.type == "ad"){
+            //广告
+            AD.showVideoAd(AdUnitId.RewardBet, ()=>{
+                this.gainBetReward();
+            },(err)=>{
+                Top.showToast("播放失败");
+            })
+        }
+    }
+
+    gainBetReward(){
+        Top.blockInput(true);
+        let data = this.data;
+        data.coin *= data.bet;
+        data.diamond *= data.bet;
+        let coinAmin = (callback)=>{
+            if(this.coinLabel.node.parent.active){
+                TweenUtil.applyScaleBounce2(this.coinLabel.node.parent,1, 1.5,()=>{
+                    this.coinLabel.string = `x${data.coin}`;
+                },()=>{
+                    callback();
+                })
+            }else{
+                callback();
+            }
+        }
+        let diamondAmin = (callback)=>{
+            if(this.diamondLabel.node.parent.active){
+                TweenUtil.applyScaleBounce2(this.diamondLabel.node.parent,1, 1.5,()=>{
+                    this.diamondLabel.string = `x${data.diamond}`;
+                },()=>{
+                    callback();
+                })
+            }else{
+                callback();
+            }
+        }
+        coinAmin(()=>{
+            diamondAmin(()=>{
+                if(data.coin>0){
+                    this.node.dispatchEvent(Util.customEvent("gainCoin",true,{cnt:data.coin}));
+                }
+                if(data.diamond>0){
+                    this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:data.diamond}));
+                }
+                setTimeout(()=>{
+                    Top.blockInput(false);
+                    SceneManager.ins.popPanel();
+                }, 500);
+            });
+        })
     }
 }

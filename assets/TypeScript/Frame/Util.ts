@@ -169,7 +169,10 @@ export namespace Util{
             if(child.name == name){
                 return child;
             }else{
-                return searchChild(child, name);
+                let res = searchChild(child, name);
+                if(res){
+                    return res;
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ export enum AdUnitId{
     Reborn = "15k0a126hpl1k4178l",
     RewardBet = "",
     FinishBottom = "faa789b9d3d8nf7alm",
+    getCoin = "",
 }
 export enum VideoError{
     UserCancel,

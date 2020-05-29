@@ -54,7 +54,7 @@ export namespace DB{
         let data = map.get(key);
         if(data){
             let index = data.listeners.indexOf(listener);
-            if(index <= 0){
+            if(index >= 0){
                 data.listeners.splice(index, 1);
             }
         }
@@ -107,7 +107,6 @@ export namespace DB{
             }
         }
         onDestroy(){
-            console.log("onDestroy");
             this.map.forEach((v, k)=>{
                 DB.UnBind(k, v);
             });

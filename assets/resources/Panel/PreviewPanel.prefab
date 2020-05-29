@@ -182,9 +182,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 204,
-      "g": 209,
-      "b": 139,
+      "r": 185,
+      "g": 216,
+      "b": 173,
       "a": 255
     },
     "_contentSize": {
@@ -3712,6 +3712,7 @@
     "_N$target": {
       "__id__": 93
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {
@@ -4093,6 +4094,7 @@
     "_N$target": {
       "__id__": 103
     },
+    "soundName": "clickBtn",
     "_id": ""
   },
   {

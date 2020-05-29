@@ -62,11 +62,11 @@ export default class Hero extends DB.DataBindComponent {
             let hero = Game.findHeroConf(theme.heroId);
             Game.loadTexture(hero.url, (texture)=>{
                 this.setTexture(texture);
-                if(hero.id >= 1000){
-                    this.sprite.node.scale = 0.6;
-                }else{
-                    this.sprite.node.scale = 1;
-                }
+                // if(hero.id >= 1000){
+                //     this.sprite.node.scale = 0.6;
+                // }else{
+                //     this.sprite.node.scale = 1;
+                // }
             });
         });
     }
@@ -174,6 +174,11 @@ export default class Hero extends DB.DataBindComponent {
                 if(diamond>0){
                     this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:diamond}));
                 }
+                other.node.dispatchEvent(Util.customEvent("returnPool"));
+            }
+            if(other.node.name == "Diamond"){
+                Sound.play("gainProp");
+                this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:1}));
                 other.node.dispatchEvent(Util.customEvent("returnPool"));
             }
         }
