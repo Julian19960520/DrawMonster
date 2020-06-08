@@ -204,7 +204,7 @@ export default class PaintPanel extends Panel {
             let res = ("0"+m).substr(-2) + ":" + ("0"+s).substr(-2);
             this.recodeLabel.string = res;
         }else{
-            this.recodeLabel.string = "录屏";
+            this.recodeLabel.string = "录屏有奖";
         }
     }
     highLightBtn(targetBtn:Button){
@@ -262,6 +262,7 @@ export default class PaintPanel extends Panel {
             case State.Pencil: {
                 this.graphics.color = this.pencilColor;
                 this.graphics.beginLine(pos); 
+                this.graphics.lineTo(pos);
                 break;
             }
             
@@ -276,7 +277,8 @@ export default class PaintPanel extends Panel {
                 tool.position = pos;
                 this.graphics.color = cc.Color.TRANSPARENT;
                 pos.addSelf(cc.v2(-tool.width, tool.height));
-                this.graphics.beginLine(pos);     
+                this.graphics.beginLine(pos);  
+                this.graphics.lineTo(pos);   
                 break;
             } 
         }

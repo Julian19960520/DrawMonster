@@ -4563,8 +4563,8 @@
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
-      "g": 255,
-      "b": 255,
+      "g": 250,
+      "b": 136,
       "a": 255
     },
     "_contentSize": {
@@ -5582,9 +5582,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 136,
-      "g": 163,
-      "b": 219,
+      "r": 255,
+      "g": 255,
+      "b": 87,
       "a": 255
     },
     "_contentSize": {
@@ -5642,9 +5642,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 0,
+      "g": 0,
+      "b": 0,
       "a": 255
     },
     "_contentSize": {
@@ -5697,7 +5697,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "af8c6392-9046-482a-b7f0-4d7fefe2945e"
+      "__uuid__": "95c36c38-2743-4fd1-bb8e-6d2b6db09fbf"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -5752,7 +5752,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 60,
+      "width": 120,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -5798,8 +5798,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "录屏",
-    "_N$string": "录屏",
+    "_string": "录屏有奖",
+    "_N$string": "录屏有奖",
     "_fontSize": 30,
     "_lineHeight": 30,
     "_enableWrapText": false,

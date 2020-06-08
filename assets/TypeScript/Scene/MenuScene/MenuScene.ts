@@ -29,8 +29,6 @@ export default class MenuScene extends Scene {
     @property(Button)
     playBtn: Button = null;
     @property(Button)
-    prepareBtn: Button = null;
-    @property(Button)
     buyBtn: Button = null;
     @property(Button)
     drawBtn: Button = null;
@@ -74,7 +72,6 @@ export default class MenuScene extends Scene {
 
     onLoad () {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
-        this.prepareBtn.node.on("click", this.onPrepareBtnTap, this);
         this.buyBtn.node.on("click", this.onBuyBtnTap, this);
         this.rankBtn.node.on("click", this.onRankBtnTap, this);
 
@@ -119,9 +116,8 @@ export default class MenuScene extends Scene {
         func(1);
         func(2);
         let open = Game.isThemeOpen(themeId);
-        this.playBtn.node.active = open && !theme.isCustom;
+        this.playBtn.node.active = open || theme.isCustom;
         this.buyBtn.node.active = !open && !theme.isCustom;
-        this.prepareBtn.node.active = theme.isCustom;
     }
     public moveRight(){
         this.move(1);
@@ -147,9 +143,8 @@ export default class MenuScene extends Scene {
         DB.SetLoacl(Key.ThemeId, themeId);
         let open = Game.isThemeOpen(themeId);
         let theme = Game.findThemeConf(themeId);
-        this.playBtn.node.active = open && !theme.isCustom;
+        this.playBtn.node.active = open || theme.isCustom;
         this.buyBtn.node.active = !open && !theme.isCustom;
-        this.prepareBtn.node.active = theme.isCustom;
 
         for(let i=0; i<this.themesContent.childrenCount; i++){
             let cellNode = this.themesContent.children[i];
@@ -188,7 +183,6 @@ export default class MenuScene extends Scene {
             }
         });
         btnAnim(this.buyBtn.node, 0.4);
-        btnAnim(this.prepareBtn.node, 0.4);
         btnAnim(this.rankBtn.node, 0.4);
         btnAnim(this.balloonBtn.node, 0.4);
         btnAnim(this.leftTriangle.node, 0.5);
@@ -236,12 +230,15 @@ export default class MenuScene extends Scene {
         }
     }
     private onPlayBtnTap(){
-        this.enterPlayScene();
-    }
-    private onPrepareBtnTap(){
-        this.OpenPanelByName("EditThemePanel",(panel:EditThemePanel)=>{
-            panel.playCallback = this.enterPlayScene;
-        });
+        let themeId = DB.Get(Key.ThemeId); 
+        let conf = Game.findThemeConf(themeId);
+        if(conf.isCustom){
+            this.OpenPanelByName("EditThemePanel",(panel:EditThemePanel)=>{
+                panel.playCallback = this.enterPlayScene;
+            });
+        }else{
+            this.enterPlayScene();
+        }
     }
     private enterPlayScene(){
         OperationFlow.enterPlayScene(()=>{});

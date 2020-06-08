@@ -127,6 +127,18 @@ export namespace GameRecorder {
             });
         }
     }
+    export function share(succ, fail){
+        crossPlatform.shareAppMessage({
+            title: "抓到你就完蛋了", 
+            channel:"video",
+            extra:{
+                videoPath:videoPath,
+                videoTopics:["抓到你就完蛋了"]
+            },
+            success:succ,
+            fail:fail,
+        });
+    }
     //隐藏分享视频按钮
     export function clearGameRecorderShareButton(){
         if(wxShareBtn){
@@ -135,5 +147,9 @@ export namespace GameRecorder {
         if(myShareBtnNode){
             myShareBtnNode.destroy();
         }
+    }
+    export function clearVideo(){
+        videoDuration = 0;
+        videoPath = "";
     }
 }

@@ -9,6 +9,7 @@ import { AdUnitId, AD } from "../../Frame/AD";
 import { Key } from "../../Game/Key";
 import { DB } from "../../Frame/DataBind";
 import { Config } from "../../Frame/Config";
+import { GameRecorder } from "../../Frame/GameRecorder";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -58,6 +59,19 @@ export default class GameOverPanel extends Panel {
             this.giveupBtn.node.active = true;
         }, crossPlatform.isDebug? 200:1000);
         this.coinRebornBtn.getComponentInChildren(cc.Label).string = `x${Config.rebornCostCoin}复活`;
+        if(GameRecorder.videoDuration>Config.minRecordTime){
+            GameRecorder.createGameRecorderShareButton({
+                parentNode:this.shareVideoBtnParent,
+                textures:DB.Get(Key.screenShotTextures),
+                onSucc:()=>{
+                    Top.showToast("分享成功");
+                    GameRecorder.clearVideo();
+                },
+                onFail:()=>{
+                    Top.showToast("分享失败");
+                },
+            });
+        }
     }
     initHeroSprite(){
         let themeId = DB.Get(Key.ThemeId);
@@ -76,7 +90,11 @@ export default class GameOverPanel extends Panel {
     }
     initRebornBtn(){
         if(tt){
-            this.setFreeRebornBtnType("ad");
+            if(Math.random()>0.5 && GameRecorder.videoDuration>Config.minRecordTime){
+                this.setFreeRebornBtnType("ad");
+            }else{
+                this.setFreeRebornBtnType("video");
+            }
         }
         else if(wx){
             this.setFreeRebornBtnType("share");
@@ -138,6 +156,17 @@ export default class GameOverPanel extends Panel {
                 }
             },(err)=>{
                 Top.showToast("播放失败");
+            })
+        }else if(this.type == "video"){
+            GameRecorder.share(()=>{
+                Top.showToast("分享成功");
+                GameRecorder.clearVideo();
+                SceneManager.ins.popPanel();
+                if(this.onRebornCallback){
+                    this.onRebornCallback();
+                }
+            },()=>{
+                Top.showToast("分享失败");
             })
         }
     }

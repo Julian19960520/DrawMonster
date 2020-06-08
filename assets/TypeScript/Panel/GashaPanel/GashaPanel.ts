@@ -13,6 +13,9 @@ import PanelQueue from "../../Frame/PanelQueue";
 import RewardPanel from "../RewardPanel/RewardPanel";
 import { AD, AdUnitId } from "../../Frame/AD";
 import { Sound } from "../../Frame/Sound";
+import { GameRecorder } from "../../Frame/GameRecorder";
+import SceneManager from "../../Frame/SceneManager";
+import MessageBox from "../../Frame/MessageBox";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -52,6 +55,13 @@ export default class GashaPanel extends Panel {
     @property(PanelQueue)
     panelQueue: PanelQueue = null;
 
+    @property(Button)
+    recordBtn:Button = null;
+    @property(cc.Node)
+    shareVideoPos:cc.Node = null;
+    @property(cc.Label)
+    recodeLabel:cc.Label = null;
+
     cnt:200;
     oriPos:cc.Vec2 = null;
     oriHeight = 30;
@@ -67,6 +77,7 @@ export default class GashaPanel extends Panel {
         this.playBtn.node.on(cc.Node.EventType.TOUCH_START, this.ready, this);
         this.playBtn.node.on(cc.Node.EventType.TOUCH_END, this.go, this);
         this.playBtn.node.on(cc.Node.EventType.TOUCH_CANCEL, this.go, this);
+        this.recordBtn.node.on("click", this.onRecordBtnTap, this);
         this.insertCoinBtn.node.on("click",this.onInsertCoinTap, this);
         this.refreshBtn.node.on("click",this.onRefreshBtnTap, this);
         this.oriPos = this.board.position;
@@ -255,11 +266,16 @@ export default class GashaPanel extends Panel {
             }
             let coin = DB.Get(Key.Coin);
             if(coin<Config.gashaCostCoin){
-                Top.showToast("金币不足");
+                SceneManager.ins.OpenPanelByName("MessageBox", (panel:MessageBox)=>{
+                    panel.label.string = "金币不足";
+                    panel.closeCallback = ()=>{
+                        SceneManager.ins.OpenPanelByName("AddCoinPanel");
+                    }
+                });
             }else{
                 DB.SetLoacl(Key.Coin, coin-Config.gashaCostCoin);
                 Top.showFloatLabel(`金币-${Config.gashaCostCoin}`, this.insertCoinBtn.node, {
-                    offset:cc.v2(0, 80),
+                    offset:cc.v2(0, 180),
                     color:cc.color(235,235,70),
                     stroke:2,
                     strokeColor:cc.Color.BLACK,
@@ -408,5 +424,62 @@ export default class GashaPanel extends Panel {
         this.updateRefreshBtn();
         this.gotRewards = [];
         this.balls.removeAllChildren();
+    }
+
+    onRecordBtnTap(){
+        if(!GameRecorder.recordering){
+            GameRecorder.start(300);
+        }else{
+            if(Util.getTimeStamp() - GameRecorder.startStamp < Config.minRecordTime){
+                Top.showToast(`录屏时间太短（最少${Config.minRecordTime/1000}秒）`);
+                GameRecorder.stop();
+            }else{
+                GameRecorder.stop();
+                GameRecorder.createGameRecorderShareButton({
+                    parentNode:this.shareVideoPos,
+                    textures:[Util.screenShot()],
+                    onSucc:()=>{
+                        Top.showToast("分享成功");
+                    },
+                    onFail:()=>{
+                        Top.showToast("分享失败");
+                    },
+                });
+                Top.blockInput(true);
+                this.recordBtn.node.runAction(cc.sequence(
+                    cc.moveBy(0.3, 250, 0),
+                    cc.callFunc(()=>{
+                        Top.blockInput(false);
+                    }),
+                    cc.delayTime(10),
+                    cc.moveBy(0.3, -250, 0),
+                ))
+                this.shareVideoPos.runAction(cc.sequence(
+                    cc.moveBy(0.3, -250, 0),
+                    cc.delayTime(10),
+                    cc.moveBy(0.3, 250, 0),
+                    cc.callFunc(()=>{
+                        GameRecorder.clearGameRecorderShareButton();
+                    })
+                ))
+            }
+        }
+    }
+    update(){
+        if(GameRecorder.recordering){
+            let time = (new Date().getTime() - GameRecorder.startStamp)/1000;
+            let m = Math.floor(time/60);
+            let s = Math.floor(time%60);
+            let res = ("0"+m).substr(-2) + ":" + ("0"+s).substr(-2);
+            this.recodeLabel.string = res;
+        }else{
+            this.recodeLabel.string = "录屏有奖";
+        }
+    }
+    onCloseBtnClick(){
+        if(GameRecorder.recordering){
+            GameRecorder.stop();
+        }
+        super.onCloseBtnClick();
     }
 }
