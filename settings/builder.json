@@ -39,7 +39,7 @@
   "title": "CocosFrame",
   "webOrientation": "auto",
   "wechatgame": {
-    "REMOTE_SERVER_ROOT": "https://htrain-resource-wscdn.hortorgames.com/",
+    "REMOTE_SERVER_ROOT": "https://htrain-resource-wscdn.hortorgames.com",
     "appid": "tt011c77a19e36483a",
     "orientation": "portrait",
     "separate_engine": false,

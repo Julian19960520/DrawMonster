@@ -82,7 +82,7 @@ export default class GashaPanel extends Panel {
 
     //初始化
     initRewards(){
-        let rewards = DB.Get(Key.gashaRewards);
+        let rewards:any[] = DB.Get(Key.gashaRewards);
         let oldIdx = DB.Get(Key.gashaRefreshIdx);
         let now = Util.getTimeStamp();
         let hour = now/1000/60/60;
@@ -120,6 +120,9 @@ export default class GashaPanel extends Panel {
             }else{
                 rewards.push({type:GashaRewardType.none});
             }
+            rewards.sort((a,b)=>{
+                return Math.random()-0.5;
+            })
             DB.SetLoacl(Key.gashaRefreshIdx, newIdx);
             DB.SetLoacl(Key.gashaRewards, rewards);   
         }

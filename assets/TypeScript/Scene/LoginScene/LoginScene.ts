@@ -46,19 +46,19 @@ export default class LoginScene extends Scene {
     }
     
     login(){
-        crossPlatform.login({success:(res1)=>{
-            console.log("res1",res1);
-            // HTTP.POST(ServerMsg.wxLogin,{code:res1.code},(res2)=>{
-            //     console.log("res2",res2);
-            //     HTTP.POST(ServerMsg.login,{openId:res2.openId},(res3)=>{
-            //         console.log("res3",res3);
-            //     },()=>{
+        // crossPlatform.login({success:(res1)=>{
+        //     console.log("res1",res1);
+        //     // HTTP.POST(ServerMsg.wxLogin,{code:res1.code},(res2)=>{
+        //     //     console.log("res2",res2);
+        //     //     HTTP.POST(ServerMsg.login,{openId:res2.openId},(res3)=>{
+        //     //         console.log("res3",res3);
+        //     //     },()=>{
     
-            //     })
-            // },()=>{
+        //     //     })
+        //     // },()=>{
 
-            // })
-        }});
+        //     // })
+        // }});
         let version = Local.Get(Key.Version) || 0;
         if(version != "0.2.0"){
             crossPlatform.clearStorageSync();
