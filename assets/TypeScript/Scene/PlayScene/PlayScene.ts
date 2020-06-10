@@ -301,6 +301,15 @@ export default class PlayScene extends Scene {
     enterFinishScene(killerName){
         let time = Util.fixedNum(this.time, 2);
         Game.addRankData(time);
+        //打点
+        let themeId = DB.Get(Key.ThemeId);
+        crossPlatform.reportAnalytics("gameOver",{
+            timeStamp: new Date().getTime(),
+            themeId: themeId>1000? 0 : themeId,
+            time: time,
+            coin:this.coin,
+            diamond:this.diamond,
+        })
         DB.SetLoacl(Key.PlayTimes, DB.Get(Key.PlayTimes)+1);
         SceneManager.ins.findScene(PlayScene).savelyExit(()=>{
             SceneManager.ins.Enter("FinishScene").then((finish:FinishScene)=>{

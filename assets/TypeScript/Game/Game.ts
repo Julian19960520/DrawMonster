@@ -411,13 +411,6 @@ export namespace Game{
                 }
             });
         }
-        //打点
-        let themeId = DB.Get(Key.ThemeId);
-        crossPlatform.reportAnalytics("gameOver",{
-            timeStamp: new Date().getTime(),
-            themeId: themeId>1000? 0 : themeId,
-            time: time,
-        })
     }
     export function getHighScroe(){
         let rankDatas:RankData[] = DB.Get(Key.RankDatas);
@@ -479,5 +472,17 @@ export namespace Game{
     export function getCoinBagDiamond(){
         let conf = Config.coinBagLvlConf[DB.Get(Key.CoinBagLvl)-1];
         return conf.diamond;
+    }
+    export function calcuFinishBet(coin, diamond){
+        //翻倍数据：倍数为4，5，6时最多，倍数为3和7次之，倍数为2最少
+        if(coin>=50 || diamond>=2){
+            if(coin > 100 || diamond >=4){
+                return Util.randomInt(3, 4);
+            }else{
+                return Util.randomInt(4, 6);
+            }
+        }else{
+            return Util.randomInt(2, 8);
+        }
     }
 }

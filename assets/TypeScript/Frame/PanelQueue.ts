@@ -17,14 +17,21 @@ export default class PanelQueue extends cc.Component {
     private blockInput:cc.BlockInputEvents = null;        //阻止点击蒙版
     public queue:any[] = [];                 //检查函数队列
     private curPanel:Panel = null;              //正在显示的面板
-
+    public onQueueFinish = null;
     constructor(){
         super();
     }
 
     public pushPanel(panelName, callback=null, isQueueHead = false){
         let makePanelFunc = (succ, fail)=>{
+            if(!panelName){
+                fail();
+            }
             cc.loader.loadRes(`Panel/${panelName}`, (err, prefab) => {
+                if(err){
+                    fail();
+                    return;
+                }
                 var newNode:cc.Node = cc.instantiate(prefab);
                 newNode.name = panelName;
                 newNode.position = cc.Vec2.ZERO;
@@ -74,6 +81,10 @@ export default class PanelQueue extends cc.Component {
                 });
             }else{
                 this.node.active = false;
+                if(this.onQueueFinish){
+                    this.onQueueFinish();
+                    this.onQueueFinish = null;
+                }
             }
         }
         checkOne();

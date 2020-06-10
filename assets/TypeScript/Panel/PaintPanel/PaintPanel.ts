@@ -64,10 +64,7 @@ export default class PaintPanel extends Panel {
 
     @property(cc.Label)
     tipLabel:cc.Label = null;
-    @property(Button)
-    recordBtn:Button = null;
-    @property(cc.Label)
-    recodeLabel:cc.Label = null;
+
     @property(cc.Node)
     shareVideoPos:cc.Node = null;
 
@@ -87,7 +84,6 @@ export default class PaintPanel extends Panel {
         this.clearBtn.node.on("click", this.onClearTap, this);
         this.bucketBtn.node.on("click", this.onBucketTap, this);
         this.saveBtn.node.on("click", this.onSaveBtnTap, this);
-        this.recordBtn.node.on("click", this.onRecordBtnTap, this);
         this.sizeSlider.node.on(Slider.MOVE, this.onSizeChange, this);
 
         this.initColorBtns();
@@ -157,56 +153,6 @@ export default class PaintPanel extends Panel {
         }
     }
     
-    onRecordBtnTap(){
-        if(!GameRecorder.recordering){
-            GameRecorder.start(300);
-        }else{
-            if(Util.getTimeStamp() - GameRecorder.startStamp < Config.minRecordTime){
-                Top.showToast(`录屏时间太短（最少${Config.minRecordTime/1000}秒）`);
-                GameRecorder.stop();
-            }else{
-                GameRecorder.stop();
-                GameRecorder.createGameRecorderShareButton({
-                    parentNode:this.shareVideoPos,
-                    textures:[Util.screenShot()],
-                    onSucc:()=>{
-                        Top.showToast("分享成功");
-                    },
-                    onFail:()=>{
-                        Top.showToast("分享失败");
-                    },
-                });
-                Top.blockInput(true);
-                this.recordBtn.node.runAction(cc.sequence(
-                    cc.moveBy(0.3, -250, 0),
-                    cc.callFunc(()=>{
-                        Top.blockInput(false);
-                    }),
-                    cc.delayTime(10),
-                    cc.moveBy(0.3, 250, 0),
-                ))
-                this.shareVideoPos.runAction(cc.sequence(
-                    cc.moveBy(0.3, 250, 0),
-                    cc.delayTime(10),
-                    cc.moveBy(0.3, -250, 0),
-                    cc.callFunc(()=>{
-                        GameRecorder.clearGameRecorderShareButton();
-                    })
-                ))
-            }
-        }
-    }
-    update(){
-        if(GameRecorder.recordering){
-            let time = (new Date().getTime() - GameRecorder.startStamp)/1000;
-            let m = Math.floor(time/60);
-            let s = Math.floor(time%60);
-            let res = ("0"+m).substr(-2) + ":" + ("0"+s).substr(-2);
-            this.recodeLabel.string = res;
-        }else{
-            this.recodeLabel.string = "录屏有奖";
-        }
-    }
     highLightBtn(targetBtn:Button){
         let btns = [this.pencilBtn, this.eraserBtn, this.bucketBtn];
         for(let i=0; i<btns.length; i++){
@@ -250,6 +196,9 @@ export default class PaintPanel extends Panel {
     }
 
     private onTouchStart(event:cc.Event.EventTouch){
+        if(!GameRecorder.recordering){
+            GameRecorder.start(300);
+        }
         let pos = event.getLocation();
         this.graphics.node.convertToNodeSpaceAR(pos, pos);
         switch(this.state){

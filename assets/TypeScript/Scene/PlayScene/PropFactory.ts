@@ -8,7 +8,7 @@ export default class PropFactory extends cc.Component {
     private playing = false;
     private timer = 0;
     private interval = 4;
-
+    private lastIdx = -1;
     public begin(){
         this.timer = 0;
         this.playing = true;
@@ -33,7 +33,13 @@ export default class PropFactory extends cc.Component {
         this.timer += dt;
         if(this.timer > this.interval){
             this.timer = 0;
-            this.generateProp(Util.randomInt(1, 4));
+            let arr = [1,2,3,4];
+            let idx = arr.indexOf(this.lastIdx);
+            if(idx>=0){
+                arr.splice(idx,1);
+            }
+            this.lastIdx = arr[Util.randomIdx(arr.length)];
+            this.generateProp(this.lastIdx);
         }
     }
 

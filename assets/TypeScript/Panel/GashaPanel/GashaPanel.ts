@@ -16,6 +16,7 @@ import { Sound } from "../../Frame/Sound";
 import { GameRecorder } from "../../Frame/GameRecorder";
 import SceneManager from "../../Frame/SceneManager";
 import MessageBox from "../../Frame/MessageBox";
+import { crossPlatform } from "../../Frame/CrossPlatform";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -257,8 +258,12 @@ export default class GashaPanel extends Panel {
     //投币
     onInsertCoinTap(){
         if(this.balls.childrenCount<5){
+            
             let last = DB.Get(Key.lastFreeBallStamp);
             if(Util.getTimeStamp() - last > Config.freeGashaTime){
+                crossPlatform.reportAnalytics("gasha",{
+                    type:"free"
+                })
                 DB.SetLoacl(Key.lastFreeBallStamp, Util.getTimeStamp());
                 this.addBall();
                 this.beginFreeCountDown();
@@ -266,6 +271,9 @@ export default class GashaPanel extends Panel {
             }
             let coin = DB.Get(Key.Coin);
             if(coin<Config.gashaCostCoin){
+                crossPlatform.reportAnalytics("gasha",{
+                    type:"lackCoin"
+                })
                 SceneManager.ins.OpenPanelByName("MessageBox", (panel:MessageBox)=>{
                     panel.label.string = "金币不足";
                     panel.closeCallback = ()=>{
@@ -273,6 +281,9 @@ export default class GashaPanel extends Panel {
                     }
                 });
             }else{
+                crossPlatform.reportAnalytics("gasha",{
+                    type:"costCoin"
+                })
                 DB.SetLoacl(Key.Coin, coin-Config.gashaCostCoin);
                 Top.showFloatLabel(`金币-${Config.gashaCostCoin}`, this.insertCoinBtn.node, {
                     offset:cc.v2(0, 180),
@@ -435,11 +446,19 @@ export default class GashaPanel extends Panel {
                 GameRecorder.stop();
             }else{
                 GameRecorder.stop();
+                crossPlatform.reportAnalytics("GameRecorder",{
+                    location:"GashaPanel",
+                    step:"show"
+                })
                 GameRecorder.createGameRecorderShareButton({
                     parentNode:this.shareVideoPos,
                     textures:[Util.screenShot()],
                     onSucc:()=>{
                         Top.showToast("分享成功");
+                        crossPlatform.reportAnalytics("GameRecorder",{
+                            location:"GashaPanel",
+                            step:"succ"
+                        })
                     },
                     onFail:()=>{
                         Top.showToast("分享失败");

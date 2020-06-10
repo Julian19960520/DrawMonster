@@ -22,6 +22,7 @@ import Top from "../../Frame/Top";
 import { DB } from "../../Frame/DataBind";
 import { Key } from "../../Game/Key";
 import PaintPanel from "../PaintPanel/PaintPanel";
+import { crossPlatform } from "../../Frame/CrossPlatform";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -60,11 +61,19 @@ export default class PreviewPanel extends Panel {
         this.cancelBtn.node.on("click", this.onCloseBtnClick, this);
         this.dirToggle.node.on(ToggleGroup.TOGGLE_CHANGE, this.onToggleChange, this);
         if(PaintPanel.hasRecordVideo && GameRecorder.videoDuration > Config.minRecordTime){
+            crossPlatform.reportAnalytics("GameRecorder",{
+                location:"PreviewPanel",
+                step:"show",
+            })
             GameRecorder.createGameRecorderShareButton({
                 parentNode:this.shareVideoPos,
                 textures:DB.Get(Key.screenShotTextures),
                 onSucc:()=>{
                     Top.showToast("分享成功");
+                    crossPlatform.reportAnalytics("GameRecorder",{
+                        location:"PreviewPanel",
+                        step:"succ",
+                    })
                 },
                 onFail:()=>{
                     Top.showToast("分享失败");

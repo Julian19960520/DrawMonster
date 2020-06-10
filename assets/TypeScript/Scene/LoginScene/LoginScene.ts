@@ -60,11 +60,11 @@ export default class LoginScene extends Scene {
         //     // })
         // }});
         let version = Local.Get(Key.Version) || 0;
-        if(version != "0.2.0"){
-            crossPlatform.clearStorageSync();
-        }
+        // if(version != "0.2.0"){
+        //     crossPlatform.clearStorageSync();
+        // }
         //
-        DB.SetLoacl(Key.Version, "0.2.0");
+        DB.SetLoacl(Key.Version, "0.2.3");
         this.loadValue("uuid", 1000);
 
         //用户属性

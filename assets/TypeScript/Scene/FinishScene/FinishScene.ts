@@ -16,7 +16,7 @@ import SceneManager from "../../Frame/SceneManager";
 import { Game } from "../../Game/Game";
 import { DB } from "../../Frame/DataBind";
 import { Config } from "../../Frame/Config";
-import { tt, wx, BannerAd } from "../../Frame/CrossPlatform";
+import { tt, wx, BannerAd, crossPlatform } from "../../Frame/CrossPlatform";
 import { AD, AdUnitId } from "../../Frame/AD";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
@@ -78,11 +78,19 @@ export default class FinishScene extends Scene {
         this.bannerAd = AD.showBanner(AdUnitId.FinishBottom,style, ()=>{}, ()=>{});
 
         if(GameRecorder.videoDuration>Config.minRecordTime){
+            crossPlatform.reportAnalytics("GameRecorder",{
+                location:"FinishScene",
+                step:"show",
+            })
             GameRecorder.createGameRecorderShareButton({
                 parentNode:this.shareVideoBtnParent,
                 textures:DB.Get(Key.screenShotTextures),
                 onSucc:()=>{
                     Top.showToast("分享成功");
+                    crossPlatform.reportAnalytics("GameRecorder",{
+                        location:"FinishScene",
+                        step:"succ",
+                    })
                 },
                 onFail:()=>{
                     Top.showToast("分享失败");
@@ -136,7 +144,7 @@ export default class FinishScene extends Scene {
     setData(data){
         if(data.coin>0 || data.diamond>0){
             SceneManager.ins.OpenPanelByName("FinishRewardPanel",(rewardPanel:FinishRewardPanel)=>{
-                rewardPanel.setData({coin:data.coin, diamond:data.diamond, bet:Util.randomInt(2,7)});
+                rewardPanel.setData({coin:data.coin, diamond:data.diamond, bet:Game.calcuFinishBet(data.coin, data.diamond)});
             })
         }
         let highScroe = Game.getHighScroe();

@@ -60,10 +60,18 @@ export default class GameOverPanel extends Panel {
         }, crossPlatform.isDebug? 200:1000);
         this.coinRebornBtn.getComponentInChildren(cc.Label).string = `x${Config.rebornCostCoin}复活`;
         if(GameRecorder.videoDuration>Config.minRecordTime){
+            crossPlatform.reportAnalytics("GameRecorder",{
+                location:"GameOverPanel",
+                step:"show",
+            })
             GameRecorder.createGameRecorderShareButton({
                 parentNode:this.shareVideoBtnParent,
                 textures:DB.Get(Key.screenShotTextures),
                 onSucc:()=>{
+                    crossPlatform.reportAnalytics("GameRecorder",{
+                        location:"GameOverPanel",
+                        step:"succ",
+                    })
                     Top.showToast("分享成功");
                     GameRecorder.clearVideo();
                 },

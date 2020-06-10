@@ -37,9 +37,6 @@ export default class Panel extends DB.DataBindComponent {
     }
     protected onCloseBtnClick(){
         if(this.panelStack){
-            if(this.closeCallback){
-                this.closeCallback();
-            }
             SceneManager.ins.popPanel();
         }
         if(this.panelQueue){
