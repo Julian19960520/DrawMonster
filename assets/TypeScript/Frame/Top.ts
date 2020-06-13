@@ -77,10 +77,11 @@ export default class Top extends DB.DataBindComponent {
         ).start();
         return label;
     }
-    public static bezierSprite(data:{url:string, from:cc.Vec2, to:cc.Vec2, onBegin?, onEnd?, cnt?:number, time?:number, scale?:number}){
+    public static bezierSprite(data:{url:string, from:cc.Vec2, to:cc.Vec2, duration?:number, cnt?:number, flyTime?:number, scale?:number, onBegin?, onEnd?}){
         data.cnt = data.cnt || 1;
-        data.time = data.time || 1;
+        data.flyTime = data.flyTime || 1;
         data.scale = data.scale || 1;
+        data.duration = data.duration || 1;
         cc.loader.loadRes(data.url, cc.SpriteFrame, (err, sf)=>{
             for(let i=0; i<data.cnt; i++){
                 setTimeout(() => {
@@ -95,13 +96,13 @@ export default class Top extends DB.DataBindComponent {
                     if(data.onBegin){
                         data.onBegin(i==data.cnt-1)
                     }
-                    node.runAction(cc.sequence(cc.bezierTo(data.time, [data.from, ctrlPos, data.to]), cc.callFunc(()=>{
+                    node.runAction(cc.sequence(cc.bezierTo(data.flyTime, [data.from, ctrlPos, data.to]), cc.callFunc(()=>{
                         node.removeFromParent();
                         if(data.onEnd){
                             data.onEnd(i==data.cnt-1)
                         }
                     })));
-                }, i*50);                
+                }, 1000*i*data.duration/data.cnt);                
             }
         });
     }

@@ -49,20 +49,35 @@ export namespace Game{
     export function loadTexture(path, callback){
         if(path.includes("/pixels/")){
             let texture = textureCache.get(path);
-            if(!texture){
+            if(texture){
+                callback(texture);
+            }else{
                 texture = new cc.RenderTexture();
                 let compData:any = compDataCache.get(path);
-                if(!compData){
-                    let fm = crossPlatform.getFileSystemManager();
-                    let arrayBuffer:any = fm.readFileSync(path);
-                    compData = new Uint8Array(arrayBuffer); 
-                    compDataCache.set(path, compData);
+                let deelCompData = (compData)=>{
+                    let pixels:any = decompressionPixels(compData);
+                    texture.initWithData(pixels, cc.Texture2D.PixelFormat.RGBA8888, 512, 512);
+                    textureCache.set(path, texture);
+                    callback(texture);
                 }
-                let pixels:any = decompressionPixels(compData);
-                texture.initWithData(pixels, cc.Texture2D.PixelFormat.RGBA8888, 512, 512);
-                textureCache.set(path, texture);
+                if(compData){
+                    deelCompData(compData);
+                }else{
+                    let fm = crossPlatform.getFileSystemManager();
+                    fm.readFile({filePath:path, success:(res)=>{
+                        console.log(res);
+                        compData = new Uint8Array(res.data); 
+                        compDataCache.set(path, compData);
+                        deelCompData(compData);
+                    }, 
+                    fail:(res)=>{
+                        Util.loadRes("Atlas/Single/PixelError",cc.Texture2D).then((res:cc.Texture2D)=>{
+                            callback(res);
+                        }).catch((res)=>{
+                        })
+                    }});
+                }
             }
-            callback(texture);
         }
         else{
             cc.loader.loadRes(path, (err, asset) => {

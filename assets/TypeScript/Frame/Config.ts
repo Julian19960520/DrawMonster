@@ -1,5 +1,5 @@
 import { ColorData, ThemeData, MonsterConfig } from "./dts";
-import { GashaRewardType } from "../Panel/GashaPanel/GashaRewardItem";
+import { GashaRewardType } from "../Scene/GashaScene/GashaRewardItem";
 export enum PrefabPath{
     heart = "Prefab/Prop/Heart",
     shield = "Prefab/Prop/Shield",
@@ -52,6 +52,35 @@ export namespace Config{
         "画箭？请箭头指向右边，并选C",
         "蘸水棉签 + 保鲜膜 = 自制触控笔！",
         "分享绘画过程，可以获得【钻石】哦！",
+    ];
+    export let dailyTask = [
+        {
+            detail:"领取每日签到奖励",
+        },
+        {
+            detail:"复活一次",
+        },
+        {
+            detail:"完成2局游戏",
+        },
+        {
+            detail:"达成20秒",
+        },
+        {
+            detail:"达成30秒",
+        },
+        {
+            detail:"达成40秒",
+        },
+        {
+            detail:"花费500金币",
+        },
+        {
+            detail:"启动扭蛋3次",
+        },
+        {
+            detail:"累计看广告5次",
+        },
     ];
     export let heartLvlConf = [
         {max:1, initCnt:0},

@@ -6,25 +6,29 @@ import Top from "../../Frame/Top";
 import { DB } from "../../Frame/DataBind";
 import { Key } from "../../Game/Key";
 import { Config } from "../../Frame/Config";
-import GashaRewardItem, { GashaRewardType } from "./GashaRewardItem";
 import { Game } from "../../Game/Game";
-import PanelStack from "../../Frame/PanelStack";
 import PanelQueue from "../../Frame/PanelQueue";
-import RewardPanel from "../RewardPanel/RewardPanel";
 import { AD, AdUnitId } from "../../Frame/AD";
 import { Sound } from "../../Frame/Sound";
 import { GameRecorder } from "../../Frame/GameRecorder";
-import SceneManager from "../../Frame/SceneManager";
+import SceneManager, { ShiftAnima } from "../../Frame/SceneManager";
 import MessageBox from "../../Frame/MessageBox";
 import { crossPlatform } from "../../Frame/CrossPlatform";
+import Scene from "../../Frame/Scene";
+import RewardPanel from "../../Panel/RewardPanel/RewardPanel";
+import { TweenUtil } from "../../Frame/TweenUtil";
+import GashaRewardItem, { GashaRewardType } from "./GashaRewardItem";
+import { OperationFlow } from "../../Game/OperationFlow";
 
 
 const {ccclass, menu, property} = cc._decorator;
 
 @ccclass
-@menu("面板/GashaPanel")
-export default class GashaPanel extends Panel {
+@menu("场景/GashaScene")
+export default class GashaScene extends Scene {
 
+    @property(Button)
+    backBtn: Button = null;
     @property(Button)
     insertCoinBtn: Button = null;
     @property(Button)
@@ -63,6 +67,11 @@ export default class GashaPanel extends Panel {
     @property(cc.Label)
     recodeLabel:cc.Label = null;
 
+    @property(cc.Node)
+    coinPos: cc.Node = null;
+    @property(cc.Node)
+    diamondPos: cc.Node = null;
+
     cnt:200;
     oriPos:cc.Vec2 = null;
     oriHeight = 30;
@@ -71,16 +80,26 @@ export default class GashaPanel extends Panel {
     gotRewards = [];
     ballCnt = 0;
     onLoad(){
-        super.onLoad();
+        let  rigis = this.getComponentsInChildren(cc.RigidBody);
+        for(let i=0;i<rigis.length;i++){
+            rigis[i].node.active = false;
+        }
         cc.director.getPhysicsManager().enabled = true;
         // cc.director.getPhysicsManager().debugDrawFlags = 1;
         this.node.on("holeIn",this.onHoleIn, this);
+        this.backBtn.node.on("click", this.onBackBtnTap, this);
         this.playBtn.node.on(cc.Node.EventType.TOUCH_START, this.ready, this);
         this.playBtn.node.on(cc.Node.EventType.TOUCH_END, this.go, this);
         this.playBtn.node.on(cc.Node.EventType.TOUCH_CANCEL, this.go, this);
         this.recordBtn.node.on("click", this.onRecordBtnTap, this);
         this.insertCoinBtn.node.on("click",this.onInsertCoinTap, this);
         this.refreshBtn.node.on("click",this.onRefreshBtnTap, this);
+        this.node.on("gainCoin", (evt:cc.Event.EventCustom)=>{
+            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.coinPos);
+        }, this);
+        this.node.on("gainDiamond", (evt:cc.Event.EventCustom)=>{
+            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.diamondPos);
+        }, this);
         this.oriPos = this.board.position;
         this.oriHeight = this.spring.height;
         this.ballPrefab.active = false;
@@ -91,7 +110,18 @@ export default class GashaPanel extends Panel {
         this.addInitBall();
         this.initTipLabel();
     }
-
+    onEnterAnimaEnd(){
+        let  rigis = this.getComponentsInChildren(cc.RigidBody);
+        for(let i=0;i<rigis.length;i++){
+            let node = rigis[i].node;
+            if(node!=this.ballPrefab){
+                node.active = true;
+                TweenUtil.applyAppear({
+                    node:node,
+                });
+            }
+        }
+    }
     //初始化
     initRewards(){
         let rewards:any[] = DB.Get(Key.gashaRewards);
@@ -436,7 +466,9 @@ export default class GashaPanel extends Panel {
         this.gotRewards = [];
         this.balls.removeAllChildren();
     }
-
+    onBackBtnTap(){
+        SceneManager.ins.Back(ShiftAnima.moveRightShift);
+    }
     onRecordBtnTap(){
         if(!GameRecorder.recordering){
             GameRecorder.start(300);
@@ -447,7 +479,7 @@ export default class GashaPanel extends Panel {
             }else{
                 GameRecorder.stop();
                 crossPlatform.reportAnalytics("GameRecorder",{
-                    location:"GashaPanel",
+                    location:"GashaScene",
                     step:"show"
                 })
                 GameRecorder.createGameRecorderShareButton({
@@ -456,7 +488,7 @@ export default class GashaPanel extends Panel {
                     onSucc:()=>{
                         Top.showToast("分享成功");
                         crossPlatform.reportAnalytics("GameRecorder",{
-                            location:"GashaPanel",
+                            location:"GashaScene",
                             step:"succ"
                         })
                     },
@@ -495,10 +527,9 @@ export default class GashaPanel extends Panel {
             this.recodeLabel.string = "录屏有奖";
         }
     }
-    onCloseBtnClick(){
+    onExitScene(){
         if(GameRecorder.recordering){
             GameRecorder.stop();
         }
-        super.onCloseBtnClick();
     }
 }

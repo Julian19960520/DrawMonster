@@ -3,13 +3,9 @@ import { Game } from "../../Game/Game";
 import { DB } from "../../Frame/DataBind";
 import { RankData } from "../../Frame/dts";
 import { Util } from "../../Frame/Util";
-import { Sound } from "../../Frame/Sound";
-import SceneManager from "../../Frame/SceneManager";
-import LoadingScene from "../LoadingScene/LoadingScene";
-import { PrefabPath, Config } from "../../Frame/Config";
-import PlayScene from "../PlayScene/PlayScene";
+import SceneManager, { ShiftAnima } from "../../Frame/SceneManager";
+import {Config } from "../../Frame/Config";
 import MessageBox from "../../Frame/MessageBox";
-import PaintPanel from "../../Panel/PaintPanel/PaintPanel";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import EditThemePanel from "../../Panel/EditThemePanel/EditThemePanel";
@@ -17,7 +13,6 @@ import { crossPlatform } from "../../Frame/CrossPlatform";
 import ThemeCell from "./ThemeCell";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import Top from "../../Frame/Top";
-import PreviewPanel from "../../Panel/PreviewPanel/PreviewPanel";
 import { OperationFlow } from "../../Game/OperationFlow";
 
 const {ccclass, menu, property} = cc._decorator;
@@ -25,7 +20,6 @@ const {ccclass, menu, property} = cc._decorator;
 @ccclass
 @menu("场景/MenuScene")
 export default class MenuScene extends Scene {
-
     @property(Button)
     playBtn: Button = null;
     @property(Button)
@@ -34,7 +28,7 @@ export default class MenuScene extends Scene {
     drawBtn: Button = null;
 
     @property(Button)
-    downloadBtn: Button = null;
+    shopBtn: Button = null;
     @property(Button)
     balloonBtn: Button = null;
     @property(Button)
@@ -75,7 +69,7 @@ export default class MenuScene extends Scene {
         this.buyBtn.node.on("click", this.onBuyBtnTap, this);
         this.rankBtn.node.on("click", this.onRankBtnTap, this);
 
-        this.downloadBtn.node.on("click", this.onDownloadBtnTap, this);
+        this.shopBtn.node.on("click", this.onShopBtnTap, this);
         this.balloonBtn.node.on("click", this.onBalloonBtnTap, this);
         this.upgradeBtn.node.on("click", this.onUpgradeBtnTap, this);
 
@@ -90,8 +84,13 @@ export default class MenuScene extends Scene {
             this.themesContent.addChild(cell,0);
         }
         this.node.on("updateThemeList", this.updateThemeList, this);
-        this.node.on("gainCoin", this.onGainCoin, this);
-        this.node.on("gainDiamond", this.onGainDiamond, this);
+        this.node.on("gainCoin", (evt:cc.Event.EventCustom)=>{
+            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.coinPos);
+        }, this);
+        this.node.on("gainDiamond", (evt:cc.Event.EventCustom)=>{
+            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.diamondPos);
+        }, this);
+        this.updateThemeList();
     }
 
     public updateThemeList(){
@@ -163,7 +162,7 @@ export default class MenuScene extends Scene {
         }
     }
     onEnterScene(){
-        this.updateThemeList();
+        // this.updateThemeList();
         let btnAnim = (node:cc.Node, delay, callback = null)=>{
             node.scale = 0;
             node.angle = 20;
@@ -183,7 +182,7 @@ export default class MenuScene extends Scene {
             }
         });
         btnAnim(this.buyBtn.node, 0.4);
-        btnAnim(this.rankBtn.node, 0.4);
+        btnAnim(this.rankBtn.node, 0.5);
         btnAnim(this.balloonBtn.node, 0.4);
         btnAnim(this.leftTriangle.node, 0.5);
         btnAnim(this.rightTriangle.node, 0.5);
@@ -192,7 +191,7 @@ export default class MenuScene extends Scene {
                 TweenUtil.applyBreath(this.drawBtn.node);
             }
         });
-        btnAnim(this.downloadBtn.node, 0.5);
+        btnAnim(this.shopBtn.node, 0.4);
         btnAnim(this.upgradeBtn.node, 0.5);
         btnAnim(this.buyBtn.node, 0.4);
         btnAnim(this.optionBtn.node, 0);
@@ -281,53 +280,16 @@ export default class MenuScene extends Scene {
         });
     }
 
-    onDownloadBtnTap(){
-        Top.showToast("【创意空间】紧急开发中");
-        // this.OpenPanelByName("CreativeSpacePanel");
+    onShopBtnTap(){
+        // Top.showToast("【创意空间】紧急开发中");
+        this.OpenPanelByName("CreativeSpacePanel");
     }
 
     onBalloonBtnTap(){
-        this.OpenPanelByName("GashaPanel");
+        SceneManager.ins.Enter("GashaScene",ShiftAnima.moveLeftShift);
     }
 
     onUpgradeBtnTap(){
         this.OpenPanelByName("UpgradePanel");
-    }
-
-    onGainCoin(evt:cc.Event.EventCustom){
-        let coinCnt = evt.detail.cnt;
-        Top.bezierSprite({
-            url:"Atlas/UI/coin",
-            from:Util.convertPosition(evt.target, Top.node),
-            to:Util.convertPosition(this.coinPos, Top.node),
-            cnt:coinCnt/5,
-            time:1.2,
-            scale:0.6,
-            onEnd:(finish)=>{
-                Sound.play("gainCoin");
-                let coin = DB.Get(Key.Coin);
-                DB.SetLoacl(Key.Coin, coin+5);
-            }
-        });
-    }
-
-    onGainDiamond(evt:cc.Event.EventCustom){
-        let diamondCnt = evt.detail.cnt;
-        Top.bezierSprite({
-            url:"Atlas/UI/diamond",
-            from:Util.convertPosition(evt.target, Top.node),
-            to:Util.convertPosition(this.diamondPos, Top.node),
-            cnt:diamondCnt,
-            time:1.5,
-            scale:1,
-            onBegin:()=>{
-                Sound.play("gainDiamond1");
-            },
-            onEnd:(finish)=>{
-                Sound.play("gainDiamond2");
-                let diamond = DB.Get(Key.Diamond);
-                DB.SetLoacl(Key.Diamond, diamond+1);
-            }
-        });
     }
 }

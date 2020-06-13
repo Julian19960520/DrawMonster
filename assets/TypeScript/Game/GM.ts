@@ -1,8 +1,12 @@
-import { crossPlatform, wx } from "../Frame/CrossPlatform";
+import { crossPlatform, wx, tt } from "../Frame/CrossPlatform";
 import { Util } from "../Frame/Util";
 import { ServerMsg, HTTP } from "../Frame/HTTP";
 import { DB } from "../Frame/DataBind";
 import { Key } from "./Key";
+import { Game } from "./Game";
+import { HeroConfig, MonsterConfig, ThemeData } from "../Frame/dts";
+import MonsterCell from "../Panel/EditThemePanel/MonsterCell";
+import Top from "../Frame/Top";
 
 const { ccclass, property } = cc._decorator;
 
@@ -17,94 +21,76 @@ export default class GM extends cc.Component {
     @property(cc.Node)
     content: cc.Node = null;
     onLoad() {
-        this.node.active = crossPlatform.isDebug;
+        // this.node.active = crossPlatform.isDebug;
         this.openBtn.node.on("click", () => {
             this.panel.active = !this.panel.active;
         }, this);
         this.buttonPrefab.active = false;
         this.panel.active = false;
-
-        this.addBtn("save", () => {
-            HTTP.POST(ServerMsg.save, {uid:"1",json:"asdfasdfa"},(res)=>{
-
-            },()=>{
-
+        this.addBtn("桌面", () => {
+            let t:any = tt;
+            t.addShortcut({
+                success: function (res) {
+                    console.log(res);
+                },
+                fail: function (res) {
+                    console.log(res);
+                }
             })
         });
-        this.addBtn("saveImg", () => {
-            HTTP.POST(ServerMsg.saveImg, {uid:"1",img:"image"},(res)=>{
-                
-            },()=>{})
-        });
-        this.addBtn("readOneImg", () => {
-            HTTP.POST(ServerMsg.readOneImg, {id:"9s"},(res)=>{
-                
-            },()=>{})
-        });
-        this.addBtn("加金币", () => {
-            DB.Set(Key.Coin, 100000);
-        });
-        this.addBtn("加钻石", () => {
-            DB.Set(Key.Diamond, 100000);
-        });
-        this.addBtn("大退", () => {
-            crossPlatform.exitMiniProgram();
-        });
-        this.addBtn("清空缓存大退", () => {
-            crossPlatform.clearStorageSync();
-            crossPlatform.exitMiniProgram();
-        });
-        this.addBtn("test1", () => {
-            crossPlatform.setUserCloudStorage({
-                KVDataList:[{key:"highScore",value:"1"}],
-                success:()=>{
-                    
+        this.addBtn("关注", () => {
+            let t:any = tt;
+            console.log(t);
+            t.followOfficialAccount({
+                success: function (res) {
+                    console.log(res);
                 },
-                complete:(res)=>{
-                    console.log("设置开放域最高分",res);
+                fail: function (res) {
+                    console.log(res);
                 }
-            });
-        });
-        this.addBtn("test1", () => {
-            setTimeout(() => {
-                crossPlatform.setUserCloudStorage({
-                    KVDataList:[{key:"highScore",value:"1"}],
-                    success:()=>{
-                        
-                    },
-                    complete:(res)=>{
-                        console.log("设置开放域最高分",res);
-                    }
-                });
-            }, 100);
-        });
-        this.addBtn("按钮", () => {
-            console.log(Util.rawUrl('resources/Atlas/Single/transparent.png'));
-            wx.createGameRecorderShareButton({
-                // text:"",
-                // icon:Util.rawUrl('resources/Atlas/Single/transparent.png'),
-                style:{left:0,top:0,height:70},
-                share:{
-                    query:"",
-                    title:{
-                        template:"default.score",
-                        data:{score:1},
-                    },
-                    bgm:"",
-                    timeRange:[[0,3000]],
-                }
-            });
+            })
         });
 
-        this.addBtn("start", () => {
-            wx.getGameRecorder().start({duration:15,hookBgm:false});
+        
+        this.addBtn("加金币", () => {
+            DB.SetLoacl(Key.Coin,100000);
         });
+        this.addBtn("修复", () => {
+            DB.SetLoacl(Key.ThemeId, 1);
+            DB.SetLoacl(Key.CustomMonsters,[]);
+            DB.SetLoacl(Key.CustomHeros,[]);
+            DB.SetLoacl(Key.CustomThemes,[]);
+            DB.SetLoacl(Key.OpenThemeIds,[1,2,3]);
+            crossPlatform.exitMiniProgram();
+        });
+        this.addBtn("log", () => {
+            let arr1:MonsterConfig[] = DB.Get(Key.CustomMonsters);
+            let arr2:HeroConfig[] = DB.Get(Key.CustomHeros);
+            let arr3:ThemeData[]= DB.Get(Key.CustomThemes);
+            console.log("=========玩家数据==========");
+            for(let i=0;i<arr1.length;i++){
+                console.log(arr1[i].id, arr1[i].url);
+            }
+            for(let i=0;i<arr2.length;i++){
+                console.log(arr2[i].id, arr2[i].url);
+            }
+            for(let i=0;i<arr3.length;i++){
+                console.log(arr3[i].id, arr3[i].heroId,JSON.stringify(arr3[i].monsterIds));
+            }
+            console.log("===========文件数据===========");
+            let rootPath = crossPlatform.env.USER_DATA_PATH+"/pixels/";
+            let fm = crossPlatform.getFileSystemManager();
 
-        this.addBtn("stop", () => {
-            wx.getGameRecorder().stop();
+            for(let i=0;i<arr2.length;i++){
+                let hero = arr2[i];
+                let path = rootPath+hero.id;  
+                fm.access({
+                    path:path,
+                    success:(res)=>{console.log("ok:", path, res);},
+                    fail:(res)=>{console.log("ok:", path, res);},
+                })
+            }
         });
-        
-        
     }
     addBtn(name, func) {
         let node = cc.instantiate(this.buttonPrefab);

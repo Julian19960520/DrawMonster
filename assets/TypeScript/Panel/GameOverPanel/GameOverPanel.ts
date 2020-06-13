@@ -57,7 +57,7 @@ export default class GameOverPanel extends Panel {
         this.giveupBtn.node.active = false;
         setTimeout(() => {
             this.giveupBtn.node.active = true;
-        }, crossPlatform.isDebug? 200:1000);
+        }, crossPlatform.isDebug? 200:1500);
         this.coinRebornBtn.getComponentInChildren(cc.Label).string = `x${Config.rebornCostCoin}复活`;
         if(GameRecorder.videoDuration>Config.minRecordTime){
             crossPlatform.reportAnalytics("GameRecorder",{

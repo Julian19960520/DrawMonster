@@ -46,7 +46,18 @@ export default class EditThemePanel extends Panel {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
         this.editBtn.node.on("click", this.onEditBtnTap, this);
         this.Bind(Key.CustomMonsters,()=>{
-            let arr:any[] = [{createNew:true}].concat(Game.allMonsters);
+            let arr:any[] = [{createNew:true}];
+            let openThemeIds:any[] = DB.Get(Key.OpenThemeIds);
+            for(let i=0;i<openThemeIds.length;i++){
+                let id = openThemeIds[i];
+                let theme = Game.findThemeConf(id);
+                for(let j=0;j<theme.monsterIds.length;j++){
+                    let monster = Game.findMonsterConf(theme.monsterIds[j]);
+                    if(arr.indexOf(monster)<=0){
+                        arr.push(monster);
+                    }
+                }
+            }
             this.allMonsterList.setDataArr(arr);
         });
         this.updateThemeHero();

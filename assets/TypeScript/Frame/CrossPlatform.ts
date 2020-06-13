@@ -93,7 +93,7 @@ export enum AppName{
     NewsLite = "news_article_lite", //	头条极速版
 }
 export class CrossPlatform{
-    isDebug:boolean = false;
+    isDebug:boolean = true;
     env = {
         USER_DATA_PATH:"Root:",
     }
@@ -151,6 +151,8 @@ export class CrossPlatform{
             saveFileSync(tempFilePath:string, filePath:string){
                 return filePath+":"+tempFilePath;
             },
+            access(data){},
+            readFile(data:{filePath:string, success:(data)=>void, fail:(res)=>void){},
             accessSync(path:string){},
             mkdirSync(dirPath:string, recursive:boolean){},
             writeFileSync(filePath:string, data:string|ArrayBuffer, encoding:string="binary"){},

@@ -2,7 +2,6 @@ import Scene from "../../Frame/Scene";
 import Hero from "./Hero";
 import MonsterFactory from "./MonsterFactory";
 import PropFactory from "./PropFactory";
-import CoinBar from "../../Game/CoinBar";
 import Music from "../../Frame/Music";
 import { Sound } from "../../Frame/Sound";
 import PausePanel from "../../Panel/PausePanel";
@@ -16,8 +15,8 @@ import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import { crossPlatform } from "../../Frame/CrossPlatform";
 import { DB } from "../../Frame/DataBind";
-import Top from "../../Frame/Top";
 import ScreenRect from "../../Frame/ScreenRect";
+import { OperationFlow } from "../../Game/OperationFlow";
 
 export enum GameState{
     play = "play",
@@ -87,8 +86,14 @@ export default class PlayScene extends Scene {
         this.touchNode.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.on("shakeScene", this.onShakeScene, this);
         this.node.on("gameOver", this.onGameOver, this);
-        this.node.on("gainCoin", this.onGainCoin, this);
-        this.node.on("gainDiamond", this.onGainDiamond, this);
+        this.node.on("gainCoin", (evt:cc.Event.EventCustom)=>{
+            this.setCoin(this.diamond+evt.detail.cnt);
+            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.bag);
+        }, this);
+        this.node.on("gainDiamond", (evt:cc.Event.EventCustom)=>{
+            this.setDiamond(this.diamond+evt.detail.cnt);
+            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.bag);
+        }, this);
         this.Bind(Key.Sensitivity, (sensitivity)=>{
             this.sensitivity = sensitivity;
         });
@@ -175,41 +180,7 @@ export default class PlayScene extends Scene {
             return current;
         }}).start();
     }
-    onGainCoin(evt:cc.Event.EventCustom){
-        let coinCnt = evt.detail.cnt;
-        Top.bezierSprite({
-            url:"Atlas/UI/coin",
-            from:Util.convertPosition(evt.target, Top.node),
-            to:Util.convertPosition(this.bag, Top.node),
-            cnt:coinCnt/5,
-            time:0.8,
-            scale:0.6,
-            onEnd:(finish)=>{
-                Sound.play("gainCoin");
-                this.setCoin(this.coin+5);
-            }
-        });
-    }
-    onGainDiamond(evt:cc.Event.EventCustom){
-        let diamondCnt = evt.detail.cnt;
-        Top.bezierSprite({
-            url:"Atlas/UI/diamond",
-            from:Util.convertPosition(evt.target, Top.node),
-            to:Util.convertPosition(this.bag, Top.node),
-            cnt:diamondCnt,
-            time:1.2,
-            scale:1,
-            onBegin:()=>{
-                Sound.play("gainDiamond1");
-            },
-            onEnd:(finish)=>{
-                Sound.play("gainDiamond2");
-                let diamond = DB.Get(Key.Diamond);
-                DB.SetLoacl(Key.Diamond, diamond+1);
-                this.setDiamond(this.diamond+1);
-            }
-        });
-    }
+    
     private onTouchMove(event:cc.Event.EventTouch){
         if(this.playing){
             this.targetPos.addSelf(event.getDelta().mul(this.sensitivity));

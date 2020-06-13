@@ -29,6 +29,8 @@ export default class Scene extends DB.DataBindComponent {
 
     public onExitScene(){}
     public onEnterScene(){}
+    public onEnterAnimaEnd(){}
+    public onExitAnimaEnd(){}
     //初始化PanelStack
     private initPanelStack(){
         return new Promise((resolve, reject)=>{

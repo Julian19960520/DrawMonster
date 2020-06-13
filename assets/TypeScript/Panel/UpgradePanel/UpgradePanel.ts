@@ -252,8 +252,8 @@ export default class UpgradePanel extends Panel {
                 SceneManager.ins.OpenPanelByName("MessageBox", (panel:MessageBox)=>{
                     panel.label.string = "确定购买？";
                     panel.onOk = ()=>{
-                        DB.Set(Key.Coin, coin - this.curCost.coin);
-                        DB.Set(Key.Diamond, diamond - this.curCost.diamond);
+                        DB.SetLoacl(Key.Coin, coin - this.curCost.coin);
+                        DB.SetLoacl(Key.Diamond, diamond - this.curCost.diamond);
                         if(this.curColumnIdx == 0){
                             let curLvl = DB.Get(Key.HeartLvl);
                             let heardCol = this.column.parent.children[0];
@@ -261,7 +261,7 @@ export default class UpgradePanel extends Panel {
                             curItem.color = cc.Color.WHITE;
                             
                             curLvl++;
-                            DB.Set(Key.HeartLvl, curLvl);
+                            DB.SetLoacl(Key.HeartLvl, curLvl);
                             let newItem = heardCol.children[curLvl-1];
                             if(newItem){
                                 this.initHeartItem(newItem);
@@ -282,7 +282,7 @@ export default class UpgradePanel extends Panel {
                             curItem.color = cc.Color.WHITE;
                             
                             curLvl++;
-                            DB.Set(Key.ShieldLvl, curLvl);
+                            DB.SetLoacl(Key.ShieldLvl, curLvl);
                             let newItem = shieldCol.children[curLvl-1];
                             if(newItem){
                                 this.initShieldItem(newItem);
@@ -303,7 +303,7 @@ export default class UpgradePanel extends Panel {
                             curItem.color = cc.Color.WHITE;
                             
                             curLvl++;
-                            DB.Set(Key.CoinBagLvl, curLvl);
+                            DB.SetLoacl(Key.CoinBagLvl, curLvl);
                             let newItem = coinbagCol.children[curLvl-1];
                             if(newItem){
                                 this.initCoinbagItem(newItem);

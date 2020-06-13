@@ -25,6 +25,7 @@ import RewardPanel from "../../Panel/FinishRewardPanel/FinishRewardPanel";
 import { GameRecorder } from "../../Frame/GameRecorder";
 import ScrollList from "../../CustomUI/ScrollList";
 import FinishRewardPanel from "../../Panel/FinishRewardPanel/FinishRewardPanel";
+import { OperationFlow } from "../../Game/OperationFlow";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -66,9 +67,12 @@ export default class FinishScene extends Scene {
     onLoad(){
         this.homeBtn.node.on("click",this.onHomeBtnTap, this);
         this.upgradeBtn.node.on("click",this.onUpgradeBtnTap, this);
-        
-        this.node.on("gainCoin", this.onGainCoin, this);
-        this.node.on("gainDiamond", this.onGainDiamond, this);
+        this.node.on("gainCoin", (evt:cc.Event.EventCustom)=>{
+            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.coinPos);
+        }, this);
+        this.node.on("gainDiamond", (evt:cc.Event.EventCustom)=>{
+            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.diamondPos);
+        }, this);
         if(tt){
             // this.setBtnType(Math.random()>0.2?"ad":"share");
         }else if(wx){
@@ -155,42 +159,5 @@ export default class FinishScene extends Scene {
         //     this.rankList.setDataArr(worldRanks);
         // })
         this.rankList.setDataArr(DB.Get(Key.RankDatas));
-    }
-
-    onGainCoin(evt:cc.Event.EventCustom){
-        let coinCnt = evt.detail.cnt;
-        Top.bezierSprite({
-            url:"Atlas/UI/coin",
-            from:Util.convertPosition(evt.target, Top.node),
-            to:Util.convertPosition(this.coinPos, Top.node),
-            cnt:coinCnt/5,
-            time:1.2,
-            scale:0.6,
-            onEnd:(finish)=>{
-                Sound.play("gainCoin");
-                let coin = DB.Get(Key.Coin);
-                DB.SetLoacl(Key.Coin, coin+5);
-            }
-        });
-    }
-
-    onGainDiamond(evt:cc.Event.EventCustom){
-        let diamondCnt = evt.detail.cnt;
-        Top.bezierSprite({
-            url:"Atlas/UI/diamond",
-            from:Util.convertPosition(evt.target, Top.node),
-            to:Util.convertPosition(this.diamondPos, Top.node),
-            cnt:diamondCnt,
-            time:1.5,
-            scale:1,
-            onBegin:()=>{
-                Sound.play("gainDiamond1");
-            },
-            onEnd:(finish)=>{
-                Sound.play("gainDiamond2");
-                let diamond = DB.Get(Key.Diamond);
-                DB.SetLoacl(Key.Diamond, diamond+1);
-            }
-        });
     }
 }

@@ -9,7 +9,7 @@ import SceneManager from "../../Frame/SceneManager";
 import { Key } from "../../Game/Key";
 import { Vibrate } from "../../Frame/Vibrate";
 import { HTTP, ServerMsg } from "../../Frame/HTTP";
-import { MonsterConfig } from "../../Frame/dts";
+import { MonsterConfig, ThemeData } from "../../Frame/dts";
 import LoadingHeart from "../../Game/LoadingHeart";
 
 const {ccclass, menu, property} = cc._decorator;
@@ -28,6 +28,7 @@ export default class LoginScene extends Scene {
         })
         if(crossPlatform.isDebug){
             this.login();
+            SceneManager.ins.Enter("MenuScene");
         }else{
             cc.tween(this).to(1, {progress1:1}, {progress:(start, end, current, ratio)=>{
                 current = start + (end-start) * cc.easing.quadInOut(ratio);

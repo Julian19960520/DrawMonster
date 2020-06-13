@@ -109,6 +109,7 @@ export default class SceneManager extends cc.Component {
                 resolve(newScene);
                 let oldScene = this.curScene;
                 this.curScene = newScene;
+                newScene.onEnterScene();
                 DB.Set(Key.curScene, this.curScene);
                 shiftAnima(oldScene, newScene, ()=>{
                     if(oldScene && oldScene.autoDestroy){
@@ -116,7 +117,7 @@ export default class SceneManager extends cc.Component {
                         oldScene.node.destroy();
                         // this.content.removeChild(oldScene.node);
                     }
-                    newScene.onEnterScene();
+                    newScene.onEnterAnimaEnd();
                     this.printState();
                     this.blockInput.node.active = false;
                 });
@@ -190,14 +191,14 @@ export default class SceneManager extends cc.Component {
 
 
 export namespace ShiftAnima{
-    export function simpleShift(curScene:Scene, newScene:Scene, finish){
+    export function simpleShift(curScene:Scene, newScene:Scene, onFinish){
         if(curScene){
             curScene.node.active = false;
         }
         if(newScene){
             newScene.node.active = true;
         }
-        finish();
+        onFinish();
     }
     export function moveLeftShift(curScene:Scene, newScene:Scene, finish){
         if(curScene){
