@@ -4360,12 +4360,12 @@
     "_offset": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 0
+      "y": -15
     },
     "_size": {
       "__type__": "cc.Size",
       "width": 27,
-      "height": 13
+      "height": 40
     },
     "_id": ""
   },
@@ -12344,7 +12344,7 @@
       "__id__": 258
     },
     "tipLabel": {
-      "__id__": 331
+      "__id__": 280
     },
     "panelQueue": {
       "__id__": 354

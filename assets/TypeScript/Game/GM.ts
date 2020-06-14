@@ -21,7 +21,7 @@ export default class GM extends cc.Component {
     @property(cc.Node)
     content: cc.Node = null;
     onLoad() {
-        // this.node.active = crossPlatform.isDebug;
+        this.node.active = crossPlatform.isDebug;
         this.openBtn.node.on("click", () => {
             this.panel.active = !this.panel.active;
         }, this);

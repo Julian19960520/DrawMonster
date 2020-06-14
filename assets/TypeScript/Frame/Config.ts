@@ -51,7 +51,8 @@ export namespace Config{
         "【蓝圈】即为碰撞区",
         "画箭？请箭头指向右边，并选C",
         "蘸水棉签 + 保鲜膜 = 自制触控笔！",
-        "分享绘画过程，可以获得【钻石】哦！",
+        "分享录屏！分分钟上热门不是梦！",
+        "可以吧你喜欢的动漫、游戏画出来哦！",
     ];
     export let dailyTask = [
         {
@@ -117,10 +118,17 @@ export namespace Config{
         {id:8, heroId:8, cost:2000, monsterIds:[81,82]},
 
         {id:9, heroId:9, cost:2000, monsterIds:[91]},
-        {id:10, heroId:10, cost:2000, monsterIds:[101]},
+        {id:10, heroId:10, cost:2000, monsterIds:[101,102]},
         {id:11, heroId:11, cost:2000, monsterIds:[111,112,113]},
         {id:12, heroId:12, cost:2000, monsterIds:[121,122]},
         {id:13, heroId:13, cost:2000, monsterIds:[131,132]},
+
+        {id:14, heroId:14, cost:3000, monsterIds:[141]},
+        {id:15, heroId:15, cost:3000, monsterIds:[151]},
+        {id:16, heroId:16, cost:3000, monsterIds:[161]},
+        {id:17, heroId:17, cost:3000, monsterIds:[171]},
+
+        {id:18, heroId:18, cost:4000, monsterIds:[181,182,183,184,185]},
     ]
     export let heros:any[] = [
         {id:1, name:"", url:"Atlas/Hero/fish" },
@@ -136,6 +144,13 @@ export namespace Config{
         {id:11, name:"", url:"Atlas/Hero/card3" },
         {id:12, name:"", url:"Atlas/Hero/castle" },
         {id:13, name:"", url:"Atlas/Hero/vampires" },
+
+        {id:14, name:"", url:"Atlas/Hero/cat" },
+        {id:15, name:"", url:"Atlas/Hero/dog" },
+        {id:16, name:"", url:"Atlas/Hero/rabbit" },
+        {id:17, name:"", url:"Atlas/Hero/panda" },
+
+        {id:18, name:"", url:"Atlas/Hero/boy" },
     ] 
     export let monsters:MonsterConfig[] = [
         {id:11, url:"Atlas/Monster/punk", name:"鲨鱼", dirType:DirType.Forwards, box:{size:cc.size(115,65)} },
@@ -171,6 +186,7 @@ export namespace Config{
         {id:91, url:"Atlas/Monster/aline", name:"外星人", dirType:DirType.Upward, circle:{radius:50} },
         
         {id:101, url:"Atlas/Monster/shit", name:"便便", dirType:DirType.Upward, box:{size:cc.size(60,60)} },
+        {id:102, url:"Atlas/Monster/toiletPaper", name:"厕纸", dirType:DirType.Rotate, box:{size:cc.size(60,60)}, angleSpeedRange:[[-150,-100],[100,150]]},
         
         {id:111, url:"Atlas/Monster/cardK", name:"K", dirType:DirType.Rotate, box:{size:cc.size(70,90)}, angleSpeedRange:[[-150,-100],[100,150]] },
         {id:112, url:"Atlas/Monster/cardA", name:"A", dirType:DirType.Rotate, box:{size:cc.size(70,90)}, angleSpeedRange:[[-150,-100],[100,150]] },
@@ -182,6 +198,16 @@ export namespace Config{
         {id:131, url:"Atlas/Monster/cross", name:"十字架", dirType:DirType.Upward, circle:{radius:50} },
         {id:132, url:"Atlas/Monster/rip", name:"墓碑", dirType:DirType.Upward, circle:{radius:50} },
 
+        {id:141, url:"Atlas/Monster/driedFish", name:"小鱼干", dirType:DirType.Forwards, box:{size:cc.size(90,20)} },
+        {id:151, url:"Atlas/Monster/bone", name:"骨头", dirType:DirType.Rotate, box:{size:cc.size(50,80)}, angleSpeedRange:[[-150,-100],[100,150]] },
+        {id:161, url:"Atlas/Monster/carrot", name:"胡萝卜", dirType:DirType.Rotate, box:{size:cc.size(70,100)}, angleSpeedRange:[[-150,-100],[100,150]] },
+        {id:171, url:"Atlas/Monster/bamboo", name:"竹子", dirType:DirType.Rotate, circle:{radius:45}, angleSpeedRange:[[-150,-100],[100,150]] },
+
+        {id:181, url:"Atlas/Monster/girl", name:"可爱女孩", dirType:DirType.Upward, box:{size:cc.size(50,80)} },
+        {id:182, url:"Atlas/Monster/pulsation", name:"迈冻", dirType:DirType.Rotate, box:{size:cc.size(50,80)}, angleSpeedRange:[[-150,-100],[100,150]] },
+        {id:183, url:"Atlas/Monster/greenJelly", name:"绿色果冻", dirType:DirType.Rotate, circle:{radius:50}, angleSpeedRange:[[-150,-100],[100,150]] },
+        {id:184, url:"Atlas/Monster/redJelly", name:"红色果冻", dirType:DirType.Rotate, circle:{radius:50}, angleSpeedRange:[[-150,-100],[100,150]] },
+        {id:185, url:"Atlas/Monster/blueJelly", name:"蓝色果冻", dirType:DirType.Rotate, circle:{radius:50}, angleSpeedRange:[[-150,-100],[100,150]] },
     ]
 
     export let colors:ColorData[] = [

@@ -10,7 +10,6 @@
 
 import ScrollList from "../../CustomUI/ScrollList";
 import SceneManager from "../../Frame/SceneManager";
-import PaintPanel from "../PaintPanel/PaintPanel";
 import { DB } from "../../Frame/DataBind";
 import { Game } from "../../Game/Game";
 import { Sound } from "../../Frame/Sound";
@@ -24,6 +23,7 @@ import Button from "../../CustomUI/Button";
 import MessageBox from "../../Frame/MessageBox";
 import { Util } from "../../Frame/Util";
 import { TweenUtil } from "../../Frame/TweenUtil";
+import PaintScene from "../PaintPanel/PaintScene";
 
 const {ccclass, property} = cc._decorator;
 
@@ -70,7 +70,7 @@ export default class HeroCell extends DB.DataBindComponent {
     }
 
     openPaintPanel(theme:ThemeData){
-        SceneManager.ins.OpenPanelByName("PaintPanel",(paintPanel:PaintPanel)=>{
+        SceneManager.ins.Enter("PaintScene").then((paintPanel:PaintScene)=>{
             paintPanel.beginTip(Config.monsterAdvises);
             paintPanel.saveCallback = (pixels)=>{
                 //点击画图面板的保存按钮时

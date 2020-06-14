@@ -5,11 +5,11 @@ import { PrefabPath, Config } from "../Frame/Config";
 import PlayScene from "../Scene/PlayScene/PlayScene";
 import { DB } from "../Frame/DataBind";
 import { Key } from "./Key";
-import PaintPanel from "../Panel/PaintPanel/PaintPanel";
 import PreviewPanel from "../Panel/PreviewPanel/PreviewPanel";
 import { Game } from "./Game";
 import Top from "../Frame/Top";
 import { Util } from "../Frame/Util";
+import PaintScene from "../Panel/PaintPanel/PaintScene";
 
 export namespace OperationFlow{
     export function enterPlayScene(callback){
@@ -33,30 +33,13 @@ export namespace OperationFlow{
 
     export function drawHeroFlow(callback:(hero, theme)=>void){
         DB.SetLoacl(Key.guideUnlockPaint, true);
-        SceneManager.ins.OpenPanelByName("PaintPanel",(paintPanel:PaintPanel)=>{
-            paintPanel.beginTip(Config.heroAdvises);
-            paintPanel.saveCallback = (pixels:Uint8Array)=>{
-                //点击画图面板的保存按钮时
-                SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{
-                    previewPanel.initHero(pixels);
-                    //点击取名面板的确定按钮时
-                    previewPanel.okCallback = (name)=>{
-                        DB.SetLoacl(Key.guideDrawFish, true);
-                        let path = Game.savePixels(pixels);
-                        let hero = Game.newHeroConf(name||"我的画作", path);
-                        let theme = Game.newThemeConf(hero.id);
-                        DB.SetLoacl(Key.ThemeId, theme.id);
-                        //连续关闭两个面板
-                        SceneManager.ins.popPanel();
-                        SceneManager.ins.popPanel();
-                        callback(hero, theme);
-                    };
-                }); 
-                      
-            }
+        SceneManager.ins.Enter("PaintScene").then((paintScene:PaintScene)=>{
+            paintScene.drawHero((name, )=>{
+
+            });
         });
     }
-    export function flyCoin(cnt, fromNode, toNode){
+    export function flyCoin(cnt, fromNode, toNode, autoAdd = true){
         let coinValue = 5;                       //每个硬币的价值
         let scale = 0.6;
         //如果获得太多，则转换成大硬币
@@ -88,14 +71,16 @@ export namespace OperationFlow{
             flyTime:0.8,
             onEnd:(finish)=>{
                 Sound.play("gainCoin");
-                DB.Set(Key.Coin, DB.Get(Key.Coin)+coinValue);
-                if(finish){
-                    DB.Set(Key.Coin, DB.Get(Key.Coin) + cnt-coinValue*coinNum);
+                if(autoAdd){
+                    DB.Set(Key.Coin, DB.Get(Key.Coin)+coinValue);
+                    if(finish){
+                        DB.Set(Key.Coin, DB.Get(Key.Coin) + cnt-coinValue*coinNum);
+                    }
                 }
             }
         });
     }
-    export function flyDiamond(cnt, fromNode, toNode){
+    export function flyDiamond(cnt, fromNode, toNode, autoAdd = true){
         Top.bezierSprite({
             url:"Atlas/UI/diamond",
             from:Util.convertPosition(fromNode, Top.node),
@@ -108,8 +93,10 @@ export namespace OperationFlow{
             },
             onEnd:(finish)=>{
                 Sound.play("gainDiamond2");
-                let diamond = DB.Get(Key.Diamond);
-                DB.SetLoacl(Key.Diamond, diamond+1);
+                if(autoAdd){
+                    let diamond = DB.Get(Key.Diamond);
+                    DB.SetLoacl(Key.Diamond, diamond+1);
+                }
             }
         });
     }

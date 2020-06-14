@@ -13,6 +13,9 @@ import { Util } from "../../Frame/Util";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import { GameRecorder } from "../../Frame/GameRecorder";
 import Top from "../../Frame/Top";
+import Scene from "../../Frame/Scene";
+import PreviewPanel from "../PreviewPanel/PreviewPanel";
+import { Game } from "../../Game/Game";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -24,7 +27,9 @@ enum State{
 }
 @ccclass
 @menu("面板/PaintPanel")
-export default class PaintPanel extends Panel {
+export default class PaintScene extends Scene {
+    @property(Button)
+    backBtn:Button = null;
 
     @property(ScrollList)
     colorList:ScrollList = null;
@@ -69,11 +74,14 @@ export default class PaintPanel extends Panel {
     shareVideoPos:cc.Node = null;
 
     state:State = State.Pencil;
-    saveCallback = null;
+
     private pencilColor:cc.Color = null;
+    callback = null;
+    isDrawHero = false;
     public static hasRecordVideo = false;
     onLoad () {
         super.onLoad();
+        this.backBtn.node.on("click",this.onBackBtnTap, this);
         this.graphics.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.graphics.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.graphics.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
@@ -92,18 +100,22 @@ export default class PaintPanel extends Panel {
         this.bucketTool.active = false;
         this.eraserTool.active = false;
         this.state = State.Pencil;
-        PaintPanel.hasRecordVideo = false;
+        PaintScene.hasRecordVideo = false;
     }
 
     initColorBtns(){
         let colorIds = DB.Get(Key.ColorIds);
-        this.colorList.node.on(ScrollList.SELECT_CHILD, this.selectColorChild, this)
+        this.colorList.node.on(ScrollList.SELECT_CHILD, this.selectColorChild, this);
+        // this.colorList.node.width = Math.ceil(colorIds.length/2)*50;
         this.colorList.setDataArr(colorIds);
         this.colorList.selectItemByData(Config.getColorDataByID(1));
     }
 
     selectColorChild(item, data){
         this.pencilColor = Config.getColorDataByID(data).color;
+    }
+    onBackBtnTap(){
+        SceneManager.ins.Back();
     }
     onPencilTap(){
         this.highLightBtn(this.pencilBtn);
@@ -129,11 +141,10 @@ export default class PaintPanel extends Panel {
         });
     }
     
-    onCloseBtnClick(){
+    onExitScene(){
         if(GameRecorder.recordering){
             GameRecorder.stop();
         }
-        super.onCloseBtnClick();
     }
 
     onSaveBtnTap(){
@@ -142,14 +153,40 @@ export default class PaintPanel extends Panel {
                 messageBox.toOkStyle("多画几笔吧（最少1笔）")
             });
         }else{
+            let hasRecordVideo = false;
             if(GameRecorder.recordering){
                 GameRecorder.stop();
-                PaintPanel.hasRecordVideo = true;
+                hasRecordVideo = true;
                 DB.Set(Key.screenShotTextures, [Util.screenShot()]);
             }
-            if(this.saveCallback){
-                this.saveCallback(this.graphics.pixels);
-            }
+            //点击画图面板的保存按钮时
+            SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{
+                let pixels = this.graphics.pixels;
+                if(this.isDrawHero){
+                    previewPanel.initHero(pixels);
+                    previewPanel.okCallback = (name)=>{
+                        DB.SetLoacl(Key.guideDrawFish, true);
+                        let path = Game.savePixels(pixels);
+                        let hero = Game.newHeroConf(name||"我的画作", path);
+                        let theme = Game.newThemeConf(hero.id);
+                        DB.SetLoacl(Key.ThemeId, theme.id);
+                        SceneManager.ins.Back();
+                        if(this.callback)
+                            this.callback();
+                    };
+                }else{
+                    previewPanel.initMonster(pixels);
+                    previewPanel.okCallback = (name, dirType)=>{
+                        DB.SetLoacl(Key.guideDrawFish, true);
+                        let path = Game.savePixels(pixels);
+                        let monster = Game.newMonsterConf(name||"我的画作", path, dirType);
+                        DB.Invoke(Key.CustomMonsters);
+                        SceneManager.ins.Back();
+                        if(this.callback)
+                            this.callback(monster);
+                    };
+                }
+            }); 
         }
     }
     
@@ -271,4 +308,14 @@ export default class PaintPanel extends Panel {
             } 
         }
     } 
+    drawHero(callback){
+        this.isDrawHero = true;
+        this.beginTip(Config.heroAdvises);
+        this.callback = callback;
+    }
+    draMonster(callback){
+        this.isDrawHero = false;
+        this.beginTip(Config.monsterAdvises);
+        this.callback = callback;
+    }
 }

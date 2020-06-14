@@ -109,11 +109,14 @@ export default class SceneManager extends cc.Component {
                 resolve(newScene);
                 let oldScene = this.curScene;
                 this.curScene = newScene;
+                if(oldScene){
+                    oldScene.onExitScene();
+                }
                 newScene.onEnterScene();
                 DB.Set(Key.curScene, this.curScene);
                 shiftAnima(oldScene, newScene, ()=>{
                     if(oldScene && oldScene.autoDestroy){
-                        oldScene.onExitScene();
+                        oldScene.onExitAnimaEnd();
                         oldScene.node.destroy();
                         // this.content.removeChild(oldScene.node);
                     }

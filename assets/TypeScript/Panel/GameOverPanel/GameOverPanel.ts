@@ -3,7 +3,7 @@ import SceneManager from "../../Frame/SceneManager";
 import { Util } from "../../Frame/Util";
 import { Game } from "../../Game/Game";
 import Top from "../../Frame/Top";
-import { tt, wx, crossPlatform, VideoAd } from "../../Frame/CrossPlatform";
+import { tt, wx, crossPlatform } from "../../Frame/CrossPlatform";
 import Button from "../../CustomUI/Button";
 import { AdUnitId, AD } from "../../Frame/AD";
 import { Key } from "../../Game/Key";
@@ -34,10 +34,7 @@ export default class GameOverPanel extends Panel {
 
     @property(cc.Sprite)
     heroSprite:cc.Sprite = null;
-
-    @property(cc.Sprite)
-    screenImg:cc.Sprite = null;
-
+ 
     @property(cc.Animation)
     starAnim:cc.Animation = null;
 
@@ -57,7 +54,7 @@ export default class GameOverPanel extends Panel {
         this.giveupBtn.node.active = false;
         setTimeout(() => {
             this.giveupBtn.node.active = true;
-        }, crossPlatform.isDebug? 200:1500);
+        }, crossPlatform.isDebug? 200:2000);
         this.coinRebornBtn.getComponentInChildren(cc.Label).string = `x${Config.rebornCostCoin}复活`;
         if(GameRecorder.videoDuration>Config.minRecordTime){
             crossPlatform.reportAnalytics("GameRecorder",{

@@ -10,7 +10,6 @@
 
 import ScrollList from "../../CustomUI/ScrollList";
 import SceneManager from "../../Frame/SceneManager";
-import PaintPanel from "../PaintPanel/PaintPanel";
 import { DB } from "../../Frame/DataBind";
 import { Game } from "../../Game/Game";
 import { Sound } from "../../Frame/Sound";
@@ -24,6 +23,7 @@ import Button from "../../CustomUI/Button";
 import MessageBox from "../../Frame/MessageBox";
 import { Util } from "../../Frame/Util";
 import { TweenUtil } from "../../Frame/TweenUtil";
+import PaintScene from "../PaintPanel/PaintScene";
 
 const {ccclass, property} = cc._decorator;
 
@@ -107,31 +107,16 @@ export default class MonsterCell extends DB.DataBindComponent {
     }
 
     openPaintPanel(theme:ThemeData){
-        SceneManager.ins.OpenPanelByName("PaintPanel",(paintPanel:PaintPanel)=>{
-            paintPanel.beginTip(Config.monsterAdvises);
-            paintPanel.saveCallback = (pixels)=>{
-                //点击画图面板的保存按钮时
-                SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{
-                    previewPanel.initMonster(pixels);
-                    //点击取名面板的确定按钮时
-                    previewPanel.okCallback = (name, dirType)=>{
-                        let path = Game.savePixels(pixels);
-                        let monster = Game.newMonsterConf(name||"我的画作", path, dirType);
-                        if(theme.monsterIds.length<5){
-                            theme.monsterIds.push(monster.id);
-                        }else{
-                            Top.showToast("最多选择5个");
-                        }
-                        DB.Invoke(Key.ThemeId);
-                        DB.Invoke(Key.CustomMonsters);
-                        Local.setDirty(Key.CustomThemes);
-                        //连续关闭两个面板
-                        SceneManager.ins.popPanel();    
-                        SceneManager.ins.popPanel();
-                    };
-                }); 
-                      
-            }
+        DB.SetLoacl(Key.guideUnlockPaint, true);
+        SceneManager.ins.Enter("PaintScene").then((paintScene:PaintScene)=>{
+            paintScene.draMonster((monster)=>{
+                if(theme.monsterIds.length<5){
+                    theme.monsterIds.push(monster.id);
+                }else{
+                    Top.showToast("最多选择5个");
+                }
+                // DB.Invoke(Key.ThemeId);
+            });
         });
     }
     setUsingState(b){

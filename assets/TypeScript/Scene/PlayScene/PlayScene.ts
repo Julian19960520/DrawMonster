@@ -88,11 +88,11 @@ export default class PlayScene extends Scene {
         this.node.on("gameOver", this.onGameOver, this);
         this.node.on("gainCoin", (evt:cc.Event.EventCustom)=>{
             this.setCoin(this.diamond+evt.detail.cnt);
-            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.bag);
+            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.bag, false);
         }, this);
         this.node.on("gainDiamond", (evt:cc.Event.EventCustom)=>{
             this.setDiamond(this.diamond+evt.detail.cnt);
-            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.bag);
+            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.bag, false);
         }, this);
         this.Bind(Key.Sensitivity, (sensitivity)=>{
             this.sensitivity = sensitivity;

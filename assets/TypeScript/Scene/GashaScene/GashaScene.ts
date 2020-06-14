@@ -105,9 +105,6 @@ export default class GashaScene extends Scene {
         this.ballPrefab.active = false;
         this.initRewards();
         this.updateRefreshBtn();
-        this.randomAngularVelocity();
-        this.beginMoveDot();
-        this.addInitBall();
         this.initTipLabel();
     }
     onEnterAnimaEnd(){
@@ -118,8 +115,24 @@ export default class GashaScene extends Scene {
                 node.active = true;
                 TweenUtil.applyAppear({
                     node:node,
+                    duration:0.3
                 });
             }
+        }
+        this.randomAngularVelocity();
+        this.beginMoveDot();
+        this.scheduleOnce(()=>{
+            this.addInitBall();
+        },0.3)
+    }
+    onExitScene(){
+        if(GameRecorder.recordering){
+            GameRecorder.stop();
+        }
+        let  rigis = this.getComponentsInChildren(cc.RigidBody);
+        for(let i=0;i<rigis.length;i++){
+            let node = rigis[i].node;
+            node.active = false;
         }
     }
     //初始化
@@ -525,11 +538,6 @@ export default class GashaScene extends Scene {
             this.recodeLabel.string = res;
         }else{
             this.recodeLabel.string = "录屏有奖";
-        }
-    }
-    onExitScene(){
-        if(GameRecorder.recordering){
-            GameRecorder.stop();
         }
     }
 }

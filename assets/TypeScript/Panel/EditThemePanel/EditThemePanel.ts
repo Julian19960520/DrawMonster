@@ -17,6 +17,7 @@ import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import UsingMonsterCell from "./UsingMonsterCell";
 import HeroCell from "./HeroCell";
+import SceneManager from "../../Frame/SceneManager";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -47,6 +48,10 @@ export default class EditThemePanel extends Panel {
         this.editBtn.node.on("click", this.onEditBtnTap, this);
         this.Bind(Key.CustomMonsters,()=>{
             let arr:any[] = [{createNew:true}];
+            //自己画的怪物
+            let customMonsters:any[] = DB.Get(Key.CustomMonsters);
+            arr = arr.concat(customMonsters);
+            //已解锁主题的怪物
             let openThemeIds:any[] = DB.Get(Key.OpenThemeIds);
             for(let i=0;i<openThemeIds.length;i++){
                 let id = openThemeIds[i];
@@ -98,6 +103,7 @@ export default class EditThemePanel extends Panel {
         let theme = Game.findThemeConf(themeId);
         if(theme.monsterIds.length>0){
             if(this.playCallback){
+                SceneManager.ins.popPanel();
                 this.playCallback();
             }
         }else{

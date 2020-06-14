@@ -2529,7 +2529,9 @@
     },
     "_enabled": true,
     "autoHidePrePanel": true,
-    "closeBtn": null,
+    "closeBtn": {
+      "__id__": 29
+    },
     "giveupBtn": {
       "__id__": 29
     },
@@ -2548,7 +2550,6 @@
     "heroSprite": {
       "__id__": 14
     },
-    "screenImg": null,
     "starAnim": {
       "__id__": 18
     },

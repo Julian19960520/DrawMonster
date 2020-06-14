@@ -21,8 +21,8 @@ import { Util } from "../../Frame/Util";
 import Top from "../../Frame/Top";
 import { DB } from "../../Frame/DataBind";
 import { Key } from "../../Game/Key";
-import PaintPanel from "../PaintPanel/PaintPanel";
 import { crossPlatform } from "../../Frame/CrossPlatform";
+import PaintScene from "../PaintPanel/PaintScene";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -60,7 +60,7 @@ export default class PreviewPanel extends Panel {
         this.okBtn.node.on("click", this.onOkBtnTap, this);
         this.cancelBtn.node.on("click", this.onCloseBtnClick, this);
         this.dirToggle.node.on(ToggleGroup.TOGGLE_CHANGE, this.onToggleChange, this);
-        if(PaintPanel.hasRecordVideo && GameRecorder.videoDuration > Config.minRecordTime){
+        if(PaintScene.hasRecordVideo && GameRecorder.videoDuration > Config.minRecordTime){
             crossPlatform.reportAnalytics("GameRecorder",{
                 location:"PreviewPanel",
                 step:"show",

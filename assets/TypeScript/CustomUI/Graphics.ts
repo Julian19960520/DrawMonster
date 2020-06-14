@@ -17,8 +17,8 @@ export default class Graphics extends cc.Component {
     sprite:cc.Sprite = null;
     renderTexture:cc.RenderTexture = null;
     pixels:Uint8Array = null;
-    width = 0;
-    height = 0;
+    width = 512;
+    height = 512;
     color = cc.Color.BLACK;
     private _lineWidth = 5;
     set lineWidth(value){

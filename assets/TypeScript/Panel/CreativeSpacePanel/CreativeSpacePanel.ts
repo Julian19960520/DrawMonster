@@ -8,7 +8,6 @@ import { HeroConfig, MonsterConfig, ThemeData } from "../../Frame/dts";
 import { CreativeSpace } from "../../Game/CreativeSpace";
 import Button from "../../CustomUI/Button";
 import SceneManager from "../../Frame/SceneManager";
-import PaintPanel from "../PaintPanel/PaintPanel";
 import { Config } from "../../Frame/Config";
 import PreviewPanel from "../PreviewPanel/PreviewPanel";
 import { Game } from "../../Game/Game";

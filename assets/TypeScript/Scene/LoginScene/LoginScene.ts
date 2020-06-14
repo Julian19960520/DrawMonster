@@ -11,22 +11,25 @@ import { Vibrate } from "../../Frame/Vibrate";
 import { HTTP, ServerMsg } from "../../Frame/HTTP";
 import { MonsterConfig, ThemeData } from "../../Frame/dts";
 import LoadingHeart from "../../Game/LoadingHeart";
+import { TweenUtil } from "../../Frame/TweenUtil";
 
 const {ccclass, menu, property} = cc._decorator;
 
 @ccclass
 @menu('场景/LoginScene') 
 export default class LoginScene extends Scene {
-
+    @property(cc.Node)
+    logo: cc.Node = null;
     @property(LoadingHeart)
     loadingHeart: LoadingHeart = null;
     progress1 = 0;
     progress2 = 0;
     onLoad () {
+        this.logo.active = false;
         crossPlatform.onHide(()=>{
             Local.Save();
         })
-        if(crossPlatform.isDebug){
+        if(crossPlatform.isDebug && false){
             this.login();
             SceneManager.ins.Enter("MenuScene");
         }else{
@@ -35,12 +38,13 @@ export default class LoginScene extends Scene {
                 this.loadingHeart.setProgress(current);
                 return ratio;
             }}).delay(0.5).call(()=>{
+                this.logo.active = true;
                 this.loadingHeart.boom();
             })
             .delay(0.2).call(()=>{
                 this.login();
             })
-            .delay(0.3).call(()=>{
+            .delay(0.7).call(()=>{
                 SceneManager.ins.Enter("MenuScene");
             }).start();
         }
@@ -65,7 +69,7 @@ export default class LoginScene extends Scene {
         //     crossPlatform.clearStorageSync();
         // }
         //
-        DB.SetLoacl(Key.Version, "0.2.3");
+        DB.SetLoacl(Key.Version, "0.2.4");
         this.loadValue("uuid", 1000);
 
         //用户属性

@@ -14,6 +14,7 @@ import ThemeCell from "./ThemeCell";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import Top from "../../Frame/Top";
 import { OperationFlow } from "../../Game/OperationFlow";
+import PaintScene from "../../Panel/PaintPanel/PaintScene";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -77,8 +78,7 @@ export default class MenuScene extends Scene {
         this.drawBtn.node.on("click", this.onDrawBtnTap, this);
         this.leftTriangle.node.on("click", this.moveLeft, this);
         this.rightTriangle.node.on("click", this.moveRight, this);
-        this.initHighScoreLabel();
-
+        this.Bind(Key.RankDatas,this.initHighScoreLabel);
         while(this.themesContent.childrenCount<4){
             let cell = cc.instantiate(this.themesCell);
             this.themesContent.addChild(cell,0);
@@ -175,11 +175,12 @@ export default class MenuScene extends Scene {
         this.playTitleAnim();
         let playTimes = DB.Get(Key.PlayTimes);
         this.drawBtn.node.active = playTimes >= Config.unlockPaintTimes;  //新玩家，不显示画笔按钮
+        btnAnim(this.highScoreLabel.node, 0.2);
         btnAnim(this.themesContent, 0.2);
         btnAnim(this.playBtn.node, 0.4, ()=>{
-            if(playTimes < 1){
-                TweenUtil.applyBreath(this.playBtn.node);
-            }
+            // if(playTimes < 1){
+            //     TweenUtil.applyBreath(this.playBtn.node);
+            // }
         });
         btnAnim(this.buyBtn.node, 0.4);
         btnAnim(this.rankBtn.node, 0.5);
@@ -187,9 +188,9 @@ export default class MenuScene extends Scene {
         btnAnim(this.leftTriangle.node, 0.5);
         btnAnim(this.rightTriangle.node, 0.5);
         btnAnim(this.drawBtn.node, 0.5, ()=>{
-            if(playTimes >= Config.unlockPaintTimes && DB.Get(Key.CustomHeros).length < 1){
-                TweenUtil.applyBreath(this.drawBtn.node);
-            }
+            // if(playTimes >= Config.unlockPaintTimes && DB.Get(Key.CustomHeros).length < 1){
+            //     TweenUtil.applyBreath(this.drawBtn.node);
+            // }
         });
         btnAnim(this.shopBtn.node, 0.4);
         btnAnim(this.upgradeBtn.node, 0.5);
@@ -218,8 +219,8 @@ export default class MenuScene extends Scene {
         }
     }
 
-    private initHighScoreLabel(){
-        let rankDatas:RankData[] = DB.Get(Key.RankDatas);
+    private initHighScoreLabel(rankDatas:RankData[]){
+        // let rankDatas:RankData[] = DB.Get(Key.RankDatas);
         if(rankDatas.length == 0){
             this.highScoreLabel.node.active = false;
         }else{
@@ -233,7 +234,9 @@ export default class MenuScene extends Scene {
         let conf = Game.findThemeConf(themeId);
         if(conf.isCustom){
             this.OpenPanelByName("EditThemePanel",(panel:EditThemePanel)=>{
-                panel.playCallback = this.enterPlayScene;
+                panel.playCallback = ()=>{
+                    this.enterPlayScene();
+                };
             });
         }else{
             this.enterPlayScene();
@@ -273,16 +276,18 @@ export default class MenuScene extends Scene {
     }
     public onDrawBtnTap(){
         DB.SetLoacl(Key.guideUnlockPaint, true);
-        OperationFlow.drawHeroFlow((hero,theme)=>{
-            this.updateThemeList();
-            this.drawBtn.node.stopAllActions();
-            this.drawBtn.node.scale = 1;
+        SceneManager.ins.Enter("PaintScene").then((paintScene:PaintScene)=>{
+            paintScene.drawHero(()=>{
+                this.updateThemeList();
+                this.drawBtn.node.stopAllActions();
+                this.drawBtn.node.scale = 1;
+            });
         });
     }
 
     onShopBtnTap(){
-        // Top.showToast("【创意空间】紧急开发中");
-        this.OpenPanelByName("CreativeSpacePanel");
+        Top.showToast("【创意空间】紧急开发中");
+        // this.OpenPanelByName("CreativeSpacePanel");
     }
 
     onBalloonBtnTap(){
