@@ -43,6 +43,7 @@ export default class GameOverPanel extends Panel {
 
     private type:"share"|"video"|"ad" = "share";
 
+    shareVideoSucc = false;
     onLoad(){
         super.onLoad();
         this.coinRebornBtn.node.on("click", this.onCoinRebornBtnTap, this);
@@ -70,7 +71,8 @@ export default class GameOverPanel extends Panel {
                         step:"succ",
                     })
                     Top.showToast("分享成功");
-                    GameRecorder.clearVideo();
+                    this.shareVideoSucc = true;
+                    // GameRecorder.clearVideo();
                 },
                 onFail:()=>{
                     Top.showToast("分享失败");
@@ -92,6 +94,9 @@ export default class GameOverPanel extends Panel {
         super.onDestroy();
         this.onRebornCallback = null;
         this.onGiveUpCallback = null;
+        if(this.shareVideoSucc){
+            GameRecorder.clearVideo();
+        }
     }
     initRebornBtn(){
         if(tt){
@@ -165,7 +170,8 @@ export default class GameOverPanel extends Panel {
         }else if(this.type == "video"){
             GameRecorder.share(()=>{
                 Top.showToast("分享成功");
-                GameRecorder.clearVideo();
+                this.shareVideoSucc = true;
+                // GameRecorder.clearVideo();
                 SceneManager.ins.popPanel();
                 if(this.onRebornCallback){
                     this.onRebornCallback();

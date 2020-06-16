@@ -285,6 +285,7 @@ export default class GashaScene extends Scene {
         DB.SetLoacl(Key.gashaRefreshIdx, 0);
         DB.SetLoacl(Key.gashaRewards, null);
         this.initRewards();
+        this.updateRefreshBtn();
     }
     canFreeRefresh(){
         let cnt = 0;
