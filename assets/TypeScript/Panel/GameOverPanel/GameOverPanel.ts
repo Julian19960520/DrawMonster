@@ -53,9 +53,9 @@ export default class GameOverPanel extends Panel {
         this.initHeroSprite();
         this.initRebornBtn();
         this.giveupBtn.node.active = false;
-        setTimeout(() => {
+        this.scheduleOnce(() => {
             this.giveupBtn.node.active = true;
-        }, crossPlatform.isDebug? 200:2000);
+        }, crossPlatform.isDebug? 0.2:2);
         this.coinRebornBtn.getComponentInChildren(cc.Label).string = `x${Config.rebornCostCoin}复活`;
         if(GameRecorder.videoDuration>Config.minRecordTime){
             crossPlatform.reportAnalytics("GameRecorder",{
@@ -132,11 +132,11 @@ export default class GameOverPanel extends Panel {
                 fontSize:40,
                 duration:2,
             });
-            setTimeout(() => {
+            this.scheduleOnce(() => {
                 DB.Set(Key.Coin ,coin-Config.rebornCostCoin);
                 this.onRebornCallback();
                 SceneManager.ins.popPanel();
-            }, 1000);
+            }, 1);
             
         }
     }

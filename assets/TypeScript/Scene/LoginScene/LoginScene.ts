@@ -12,6 +12,8 @@ import { HTTP, ServerMsg } from "../../Frame/HTTP";
 import { MonsterConfig, ThemeData } from "../../Frame/dts";
 import LoadingHeart from "../../Game/LoadingHeart";
 import { TweenUtil } from "../../Frame/TweenUtil";
+import MenuScene from "../MenuScene/MenuScene";
+import { Util } from "../../Frame/Util";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -45,31 +47,17 @@ export default class LoginScene extends Scene {
                 this.login();
             })
             .delay(0.7).call(()=>{
-                SceneManager.ins.Enter("MenuScene");
+                SceneManager.ins.Enter("MenuScene").then((menuScene:MenuScene)=>{
+                    console.log("LaunchOptions", crossPlatform.getLaunchOptionsSync());
+                    menuScene.onShow(crossPlatform.getLaunchOptionsSync());
+                });
             }).start();
         }
     }
     
     login(){
-        // crossPlatform.login({success:(res1)=>{
-        //     console.log("res1",res1);
-        //     // HTTP.POST(ServerMsg.wxLogin,{code:res1.code},(res2)=>{
-        //     //     console.log("res2",res2);
-        //     //     HTTP.POST(ServerMsg.login,{openId:res2.openId},(res3)=>{
-        //     //         console.log("res3",res3);
-        //     //     },()=>{
-    
-        //     //     })
-        //     // },()=>{
-
-        //     // })
-        // }});
         let version = Local.Get(Key.Version) || 0;
-        // if(version != "0.2.0"){
-        //     crossPlatform.clearStorageSync();
-        // }
-        //
-        DB.SetLoacl(Key.Version, "0.2.4");
+        DB.Set(Key.Version, "0.2.4");
         this.loadValue("uuid", 1000);
 
         //用户属性
@@ -92,7 +80,7 @@ export default class LoginScene extends Scene {
         this.loadValue(Key.gashaBallCnt, 0);
         this.loadValue(Key.gashaRewards, null);
         this.loadValue(Key.gashaRefreshIdx, 0);
-
+        this.loadValue(Key.luckyCatBeginStamp, -1);
         //设置
         Sound.volume = this.loadValue(Key.Sound, 0.5);
         Music.volume = this.loadValue(Key.Music, 0.5);
@@ -102,7 +90,7 @@ export default class LoginScene extends Scene {
         //引导变量
         this.loadBoolValue(Key.guideUnlockPaint, false);
         this.loadBoolValue(Key.guideDrawFish, false);
-
+        this.loadBoolValue(Key.guideCollectGameBegin, 0);
         this.updateVersion();
         Game.Init();
     }

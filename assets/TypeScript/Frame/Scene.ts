@@ -27,10 +27,6 @@ export default class Scene extends DB.DataBindComponent {
     public showCoinBar:boolean = false;
     public panelStack:PanelStack = null;
 
-    public onExitScene(){}
-    public onEnterScene(){}
-    public onEnterAnimaEnd(){}
-    public onExitAnimaEnd(){}
     onLoad(){
         
     }
@@ -73,4 +69,11 @@ export default class Scene extends DB.DataBindComponent {
     public instantPrefab(name:string){
         return Util.instantPrefab(`Scene/${this.node.name}/${name}`);
     }
+
+    public onExitBegin(){}
+    public onEnterBegin(){}
+    public onEnterEnd(){}
+    public onExitEnd(){}
+    public onShow(data){}
+    public onHide(){}
 }

@@ -71,18 +71,18 @@ export default class OptionPanel extends Panel {
     }
     onSoundSliderMove(value){
         Sound.volume = value;
-        DB.SetLoacl(Key.Sound, value);
+        DB.Set(Key.Sound, value);
     }
     onMusicSliderMove(value){
         Music.volume = value;
-        DB.SetLoacl(Key.Music, value);
+        DB.Set(Key.Music, value);
     }
     onSensitivitySliderMove(value){
-        DB.SetLoacl(Key.Sensitivity, value);
+        DB.Set(Key.Sensitivity, value);
     }
     onVibrateToggleChange(b, click){
         if(click){
-            DB.SetLoacl(Key.Vibrate, b);
+            DB.Set(Key.Vibrate, b);
             Vibrate.enable = b;
         }
     }

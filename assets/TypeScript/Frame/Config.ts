@@ -32,9 +32,11 @@ export namespace Config{
         // {type:GashaRewardType.none, probability:10},
     ]
     export let rebornCostCoin = 150;
-    export let gashaCostCoin = 250;
+    export let gashaCostCoin = 300;
     export let freeGashaTime = 4*60*60*1000;
     export let unlockPaintTimes = 0;
+    export let collectGameDiamodCnt = 5;
+    export let luckyCatCoinBet = 3;
     export let themeToCoinCnt = 50;
     export let minRecordTime = 4*1000;
     export let heroAdvises = [
@@ -108,27 +110,32 @@ export namespace Config{
         {coin:100, diamond:3, detail:"金币+25，钻石+1", cost:{coin:12000,diamond:200}},
     ]
     export let themes:ThemeData[]=[
-        {id:1, heroId:1, cost:0, monsterIds:[11,12,13,14]},
-        {id:2, heroId:2, cost:0, monsterIds:[21,22,23]},
-        {id:3, heroId:3, cost:0, monsterIds:[31,32,33]},
-        {id:4, heroId:4, cost:500, monsterIds:[41]},
-        {id:5, heroId:5, cost:1000, monsterIds:[51,52]},
-        {id:6, heroId:6, cost:1500, monsterIds:[61,62,63]},
-        {id:7, heroId:7, cost:2000, monsterIds:[71,72]},
-        {id:8, heroId:8, cost:2000, monsterIds:[81,82]},
+        {id:1, heroId:1, cost:{coin:500,diamond:5}, monsterIds:[11,12,13,14]},//咸鱼
+        {id:2, heroId:2, cost:{coin:1000,diamond:5}, monsterIds:[21,22,23]},   //孤独小人
+        {id:3, heroId:3, cost:{coin:1000,diamond:0}, monsterIds:[31,32,33]},   //飞机
+        {id:4, heroId:4, cost:{coin:1000,diamond:5}, monsterIds:[41]},         //雪人
+        {id:5, heroId:5, cost:{coin:2000,diamond:5}, monsterIds:[51,52]},      //忍者
+        {id:6, heroId:6, cost:{coin:2000,diamond:5}, monsterIds:[61,62,63]},   //胖女孩
+        {id:7, heroId:7, cost:{coin:1500,diamond:5}, monsterIds:[71,72]},      //地球
+        {id:8, heroId:8, cost:{coin:1500,diamond:5}, monsterIds:[81,82]},      //树
 
-        {id:9, heroId:9, cost:2000, monsterIds:[91]},
-        {id:10, heroId:10, cost:2000, monsterIds:[101,102]},
-        {id:11, heroId:11, cost:2000, monsterIds:[111,112,113]},
-        {id:12, heroId:12, cost:2000, monsterIds:[121,122]},
-        {id:13, heroId:13, cost:2000, monsterIds:[131,132]},
+        {id:9, heroId:9, cost:{coin:500,diamond:0}, monsterIds:[91]},         //奶牛
+        {id:10, heroId:10, cost:{coin:1500,diamond:5}, monsterIds:[101,102]},  //马桶
+        {id:11, heroId:11, cost:{coin:1500,diamond:5}, monsterIds:[111,112,113]},//纸牌
+        {id:12, heroId:12, cost:{coin:1500,diamond:5}, monsterIds:[121,122]},  //城堡
+        {id:13, heroId:13, cost:{coin:3000,diamond:5}, monsterIds:[131,132]},  //吸血鬼
 
-        {id:14, heroId:14, cost:3000, monsterIds:[141]},
-        {id:15, heroId:15, cost:3000, monsterIds:[151]},
-        {id:16, heroId:16, cost:3000, monsterIds:[161]},
-        {id:17, heroId:17, cost:3000, monsterIds:[171]},
+        {id:14, heroId:14, cost:{coin:1000,diamond:5}, monsterIds:[141]},      //猫
+        {id:15, heroId:15, cost:{coin:2000,diamond:5}, monsterIds:[151]},      //狗
+        {id:16, heroId:16, cost:{coin:3000,diamond:5}, monsterIds:[161]},      //兔子
+        {id:17, heroId:17, cost:{coin:4000,diamond:5}, monsterIds:[171]},      //熊猫
 
-        {id:18, heroId:18, cost:4000, monsterIds:[181,182,183,184,185]},
+        {id:18, heroId:18, cost:{coin:4000,diamond:5}, monsterIds:[181,182,183,184,185]},  //果冻男孩
+    ]
+    export let shopPages = [
+        {name:"可爱小动物", themeIds:[1,9,14,15,16,17]},
+        {name:"角色扮演", themeIds:[2,4,5,6,13,18]},
+        {name:"新奇", themeIds:[3,7,8,10,11,12]},
     ]
     export let heros:any[] = [
         {id:1, name:"", url:"Atlas/Hero/fish" },

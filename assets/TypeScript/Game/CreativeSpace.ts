@@ -22,14 +22,14 @@ export namespace CreativeSpace{
             setTimeout(() => {
                 _dynamicThemesStamp = Util.getTimeStamp();
                 dynamicThemes = [
-                    {id:1, heroId:1, cost:0, monsterIds:[11,12,13,14]},
-                    {id:2, heroId:2, cost:0, monsterIds:[21,22,23]},
-                    {id:3, heroId:3, cost:0, monsterIds:[31,32,33]},
-                    {id:4, heroId:4, cost:500, monsterIds:[41]},
-                    {id:5, heroId:5, cost:1000, monsterIds:[51,52]},
-                    {id:6, heroId:6, cost:1500, monsterIds:[61,62,63]},
-                    {id:7, heroId:7, cost:2000, monsterIds:[71,72]},
-                    {id:8, heroId:8, cost:2500, monsterIds:[81,82]},
+                    {id:1, heroId:1, cost:{coin:0,diamond:0}, monsterIds:[11,12,13,14]},
+                    {id:2, heroId:2, cost:{coin:0,diamond:0}, monsterIds:[21,22,23]},
+                    {id:3, heroId:3, cost:{coin:0,diamond:0}, monsterIds:[31,32,33]},
+                    {id:4, heroId:4, cost:{coin:0,diamond:0}, monsterIds:[41]},
+                    {id:5, heroId:5, cost:{coin:0,diamond:0}, monsterIds:[51,52]},
+                    {id:6, heroId:6, cost:{coin:0,diamond:0}, monsterIds:[61,62,63]},
+                    {id:7, heroId:7, cost:{coin:0,diamond:0}, monsterIds:[71,72]},
+                    {id:8, heroId:8, cost:{coin:0,diamond:0}, monsterIds:[81,82]},
                 ];
                 DB.Set(Key.dynamicThemes, dynamicThemes);
                 callback(dynamicThemes);

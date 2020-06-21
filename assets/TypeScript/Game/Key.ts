@@ -24,6 +24,7 @@ export enum Key{
     gashaRewards = "user/gashaRewards",
     gashaRewardsRefreshStamp = "user/gashaRewardsRefreshStamp",
     gashaRefreshIdx = "user/gashaRefreshIdx",
+    luckyCatBeginStamp = "user/luckyCatBeginStamp",     //招财喵开始时间戳，等于0时代表未开启
     //设置
     Sound = "option/sound",
     Music = "option/music",
@@ -33,6 +34,7 @@ export enum Key{
     //引导变量
     guideUnlockPaint = "guide/unlockPaint",
     guideDrawFish = "guide/drawFish",
+    guideCollectGameBegin = "guide/collectGameBegin",       //等于0时未开启任务，等于1时开启任务，等于2时完成任务
 
     //临时变量
     curScene = "temp/curScene",

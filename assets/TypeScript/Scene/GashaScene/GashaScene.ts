@@ -19,6 +19,7 @@ import RewardPanel from "../../Panel/RewardPanel/RewardPanel";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import GashaRewardItem, { GashaRewardType } from "./GashaRewardItem";
 import { OperationFlow } from "../../Game/OperationFlow";
+import MenuScene from "../MenuScene/MenuScene";
 
 
 const {ccclass, menu, property} = cc._decorator;
@@ -95,19 +96,34 @@ export default class GashaScene extends Scene {
         this.insertCoinBtn.node.on("click",this.onInsertCoinTap, this);
         this.refreshBtn.node.on("click",this.onRefreshBtnTap, this);
         this.node.on("gainCoin", (evt:cc.Event.EventCustom)=>{
-            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.coinPos);
+            OperationFlow.flyCoin({
+                cnt:evt.detail.cnt,
+                fromNode:evt.target,
+                toNode:this.coinPos,
+                onArrive:(addCnt)=>{
+                    Game.addCoin(addCnt);
+                }
+            });
         }, this);
         this.node.on("gainDiamond", (evt:cc.Event.EventCustom)=>{
-            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.diamondPos);
+            OperationFlow.flyDiamond({
+                cnt:evt.detail.cnt,
+                fromNode:evt.target,
+                toNode:this.diamondPos,
+                onArrive:(addCnt)=>{
+                    Game.addDiamond(addCnt);
+                }
+            });
         }, this);
         this.oriPos = this.board.position;
         this.oriHeight = this.spring.height;
         this.ballPrefab.active = false;
+        Util.searchChild(this.insertCoinBtn.node, "costCoinLabel").getComponent(cc.Label).string = Config.gashaCostCoin.toString();
         this.initRewards();
         this.updateRefreshBtn();
         this.initTipLabel();
     }
-    onEnterAnimaEnd(){
+    onEnterEnd(){
         let  rigis = this.getComponentsInChildren(cc.RigidBody);
         for(let i=0;i<rigis.length;i++){
             let node = rigis[i].node;
@@ -125,7 +141,7 @@ export default class GashaScene extends Scene {
             this.addInitBall();
         },0.3)
     }
-    onExitScene(){
+    onExitBegin(){
         if(GameRecorder.recordering){
             GameRecorder.stop();
         }
@@ -178,8 +194,8 @@ export default class GashaScene extends Scene {
             rewards.sort((a,b)=>{
                 return Math.random()-0.5;
             })
-            DB.SetLoacl(Key.gashaRefreshIdx, newIdx);
-            DB.SetLoacl(Key.gashaRewards, rewards);   
+            DB.Set(Key.gashaRefreshIdx, newIdx);
+            DB.Set(Key.gashaRewards, rewards);   
         }
         this.rewards = rewards;
         let parent = this.gashaRewardItem.node.parent;
@@ -272,9 +288,9 @@ export default class GashaScene extends Scene {
             this.doRefresh();
         }else{
             AD.showVideoAd(AdUnitId.RefreshGasha, ()=>{
-                setTimeout(() => {
+                this.scheduleOnce(() => {
                     this.doRefresh();
-                }, 500);
+                }, 0.5);
             },(err)=>{
                 Top.showToast("播放失败");
             })
@@ -282,8 +298,8 @@ export default class GashaScene extends Scene {
     }
     doRefresh(){
         Top.showToast("奖品已刷新");
-        DB.SetLoacl(Key.gashaRefreshIdx, 0);
-        DB.SetLoacl(Key.gashaRewards, null);
+        DB.Set(Key.gashaRefreshIdx, 0);
+        DB.Set(Key.gashaRewards, null);
         this.initRewards();
         this.updateRefreshBtn();
     }
@@ -308,7 +324,7 @@ export default class GashaScene extends Scene {
                 crossPlatform.reportAnalytics("gasha",{
                     type:"free"
                 })
-                DB.SetLoacl(Key.lastFreeBallStamp, Util.getTimeStamp());
+                DB.Set(Key.lastFreeBallStamp, Util.getTimeStamp());
                 this.addBall();
                 this.beginFreeCountDown();
                 return;
@@ -328,7 +344,7 @@ export default class GashaScene extends Scene {
                 crossPlatform.reportAnalytics("gasha",{
                     type:"costCoin"
                 })
-                DB.SetLoacl(Key.Coin, coin-Config.gashaCostCoin);
+                DB.Set(Key.Coin, coin-Config.gashaCostCoin);
                 Top.showFloatLabel(`金币-${Config.gashaCostCoin}`, this.insertCoinBtn.node, {
                     offset:cc.v2(0, 180),
                     color:cc.color(235,235,70),
@@ -351,7 +367,7 @@ export default class GashaScene extends Scene {
         ball.active = true;
         this.forceArea.height = Math.min(this.balls.childrenCount, 5)*20;   
         this.ballCnt++;
-        DB.SetLoacl(Key.gashaBallCnt, this.ballCnt);
+        DB.Set(Key.gashaBallCnt, this.ballCnt);
     }
     t1:cc.Tween = null;
     t2:cc.Tween = null;
@@ -393,10 +409,10 @@ export default class GashaScene extends Scene {
         this.ballCnt--;
         if(this.ballCnt <= 0){
             Top.blockInput(true);
-            setTimeout(() => {
+            this.scheduleOnce(() => {
                 Top.blockInput(false);
                 this.openReward();
-            }, 1000);
+            }, 1);
         }
     }
     
@@ -441,8 +457,8 @@ export default class GashaScene extends Scene {
                         panel.loadThemeContent(one.id,()=>{
                             let hasTheme = Game.isThemeOpen(one.id);
                             if(!hasTheme){
+                                DB.Set(Key.ThemeId, one.id);
                                 Game.openTheme(one.id);
-                                this.node.dispatchEvent(Util.customEvent("updateThemeList",true));
                             }else{
                                 panel.node.dispatchEvent(Util.customEvent("gainCoin",true,{cnt:Config.themeToCoinCnt}));
                             }
@@ -453,9 +469,9 @@ export default class GashaScene extends Scene {
                 case GashaRewardType.ball:{
                     gain = true;
                     for(let i=0;i<one.cnt;i++){
-                        setTimeout(() => {
+                        this.scheduleOnce(() => {
                             this.addBall();
-                        }, 0.1*i);
+                        }, 0.01*i);
                     }
                     break;
                 }
@@ -474,14 +490,16 @@ export default class GashaScene extends Scene {
         }else{
             this.panelQueue.checkNext();  
         }
-        DB.SetLoacl(Key.gashaRewards, this.rewards);
-        DB.SetLoacl(Key.gashaBallCnt, 0);
+        DB.Set(Key.gashaRewards, this.rewards);
+        DB.Set(Key.gashaBallCnt, 0);
         this.updateRefreshBtn();
         this.gotRewards = [];
         this.balls.removeAllChildren();
     }
     onBackBtnTap(){
-        SceneManager.ins.Back(ShiftAnima.moveRightShift);
+        SceneManager.ins.Back(ShiftAnima.moveRightShift).then((menuScene:MenuScene)=>{
+            menuScene.updateThemeList();
+        });
     }
     onRecordBtnTap(){
         if(!GameRecorder.recordering){

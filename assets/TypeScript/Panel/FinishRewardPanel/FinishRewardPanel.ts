@@ -98,10 +98,10 @@ export default class FinishRewardPanel extends Panel {
         if(data.diamond>0){
             this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:data.diamond}));
         }
-        setTimeout(() => {
+        this.scheduleOnce(() => {
             Top.blockInput(false);
             SceneManager.ins.popPanel();
-        }, 500);
+        }, 0.5);
     }
 
     onDoubleBtnTap(){
@@ -164,10 +164,10 @@ export default class FinishRewardPanel extends Panel {
                 if(data.diamond>0){
                     this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:data.diamond}));
                 }
-                setTimeout(()=>{
+                this.scheduleOnce(()=>{
                     Top.blockInput(false);
                     SceneManager.ins.popPanel();
-                }, 500);
+                }, 0.5);
             });
         })
     }

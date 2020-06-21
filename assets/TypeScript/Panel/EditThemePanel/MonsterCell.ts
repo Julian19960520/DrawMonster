@@ -107,7 +107,7 @@ export default class MonsterCell extends DB.DataBindComponent {
     }
 
     openPaintPanel(theme:ThemeData){
-        DB.SetLoacl(Key.guideUnlockPaint, true);
+        DB.Set(Key.guideUnlockPaint, true);
         SceneManager.ins.Enter("PaintScene").then((paintScene:PaintScene)=>{
             paintScene.draMonster((monster)=>{
                 if(theme.monsterIds.length<5){
@@ -115,7 +115,8 @@ export default class MonsterCell extends DB.DataBindComponent {
                 }else{
                     Top.showToast("最多选择5个");
                 }
-                // DB.Invoke(Key.ThemeId);
+                DB.Invoke(Key.ThemeId);
+                DB.Invoke(Key.CustomMonsters);
             });
         });
     }

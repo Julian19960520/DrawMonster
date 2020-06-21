@@ -27,69 +27,22 @@ export default class GM extends cc.Component {
         }, this);
         this.buttonPrefab.active = false;
         this.panel.active = false;
-        this.addBtn("桌面", () => {
-            let t:any = tt;
-            t.addShortcut({
-                success: function (res) {
-                    console.log(res);
-                },
-                fail: function (res) {
-                    console.log(res);
-                }
-            })
-        });
-        this.addBtn("关注", () => {
-            let t:any = tt;
-            console.log(t);
-            t.followOfficialAccount({
-                success: function (res) {
-                    console.log(res);
-                },
-                fail: function (res) {
-                    console.log(res);
-                }
-            })
-        });
-
-        
-        this.addBtn("加金币", () => {
-            DB.SetLoacl(Key.Coin,100000);
-        });
-        this.addBtn("修复", () => {
-            DB.SetLoacl(Key.ThemeId, 1);
-            DB.SetLoacl(Key.CustomMonsters,[]);
-            DB.SetLoacl(Key.CustomHeros,[]);
-            DB.SetLoacl(Key.CustomThemes,[]);
-            DB.SetLoacl(Key.OpenThemeIds,[1,2,3]);
+        this.addBtn("删除存档！慎重！", () => {
+            crossPlatform.clearStorageSync();
             crossPlatform.exitMiniProgram();
+            this.panel.active = false;
         });
-        this.addBtn("log", () => {
-            let arr1:MonsterConfig[] = DB.Get(Key.CustomMonsters);
-            let arr2:HeroConfig[] = DB.Get(Key.CustomHeros);
-            let arr3:ThemeData[]= DB.Get(Key.CustomThemes);
-            console.log("=========玩家数据==========");
-            for(let i=0;i<arr1.length;i++){
-                console.log(arr1[i].id, arr1[i].url);
-            }
-            for(let i=0;i<arr2.length;i++){
-                console.log(arr2[i].id, arr2[i].url);
-            }
-            for(let i=0;i<arr3.length;i++){
-                console.log(arr3[i].id, arr3[i].heroId,JSON.stringify(arr3[i].monsterIds));
-            }
-            console.log("===========文件数据===========");
-            let rootPath = crossPlatform.env.USER_DATA_PATH+"/pixels/";
-            let fm = crossPlatform.getFileSystemManager();
-
-            for(let i=0;i<arr2.length;i++){
-                let hero = arr2[i];
-                let path = rootPath+hero.id;  
-                fm.access({
-                    path:path,
-                    success:(res)=>{console.log("ok:", path, res);},
-                    fail:(res)=>{console.log("ok:", path, res);},
-                })
-            }
+        this.addBtn("加金币", () => {
+            DB.Set(Key.Coin, DB.Get(Key.Coin)+1000);
+            this.panel.active = false;
+        });
+        this.addBtn("加钻石", () => {
+            DB.Set(Key.Diamond, DB.Get(Key.Diamond)+1000);
+            this.panel.active = false;
+        });
+        this.addBtn("重置招财猫", () => {
+            Game.resetLuckyCat();
+            this.panel.active = false;
         });
     }
     addBtn(name, func) {

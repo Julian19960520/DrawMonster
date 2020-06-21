@@ -119,6 +119,18 @@ export namespace Util{
     export function toChineseNum(num){
         return "零一双三四五六七八九十"[num];
     }
+    export function toMagnitudeNum(num:number){
+        let idx = 0;
+        while(num>=1000){
+            num /= 1000;
+            idx++;
+        }
+        if(idx == 0){
+            return num;
+        }else{
+            return num.toFixed(1)+["","k","m","g","t","p","e","z","y"][idx];
+        }
+    }
     export function lerp(cur, tar, ratio){
         return (tar-cur)*ratio+cur;
     }

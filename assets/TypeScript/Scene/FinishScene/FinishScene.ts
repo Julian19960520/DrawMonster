@@ -68,10 +68,24 @@ export default class FinishScene extends Scene {
         this.homeBtn.node.on("click",this.onHomeBtnTap, this);
         this.upgradeBtn.node.on("click",this.onUpgradeBtnTap, this);
         this.node.on("gainCoin", (evt:cc.Event.EventCustom)=>{
-            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.coinPos);
+            OperationFlow.flyCoin({
+                cnt:evt.detail.cnt,
+                fromNode:evt.target,
+                toNode:this.coinPos,
+                onArrive:(addCnt)=>{
+                    Game.addCoin(addCnt);
+                }
+            });
         }, this);
         this.node.on("gainDiamond", (evt:cc.Event.EventCustom)=>{
-            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.diamondPos);
+            OperationFlow.flyDiamond({
+                cnt:evt.detail.cnt,
+                fromNode:evt.target,
+                toNode:this.diamondPos,
+                onArrive:(addCnt)=>{
+                    Game.addDiamond(addCnt);
+                }
+            });
         }, this);
         if(tt){
             // this.setBtnType(Math.random()>0.2?"ad":"share");
@@ -102,7 +116,7 @@ export default class FinishScene extends Scene {
             });
         }
     }
-    onExitScene(){
+    onExitBegin(){
         if(this.bannerAd){
             this.bannerAd.hide();
             this.bannerAd.destroy();

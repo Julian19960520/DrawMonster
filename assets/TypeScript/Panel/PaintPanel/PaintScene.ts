@@ -141,7 +141,7 @@ export default class PaintScene extends Scene {
         });
     }
     
-    onExitScene(){
+    onExitBegin(){
         if(GameRecorder.recordering){
             GameRecorder.stop();
         }
@@ -165,11 +165,11 @@ export default class PaintScene extends Scene {
                 if(this.isDrawHero){
                     previewPanel.initHero(pixels);
                     previewPanel.okCallback = (name)=>{
-                        DB.SetLoacl(Key.guideDrawFish, true);
+                        DB.Set(Key.guideDrawFish, true);
                         let path = Game.savePixels(pixels);
                         let hero = Game.newHeroConf(name||"我的画作", path);
                         let theme = Game.newThemeConf(hero.id);
-                        DB.SetLoacl(Key.ThemeId, theme.id);
+                        DB.Set(Key.ThemeId, theme.id);
                         SceneManager.ins.Back();
                         if(this.callback)
                             this.callback();
@@ -177,7 +177,7 @@ export default class PaintScene extends Scene {
                 }else{
                     previewPanel.initMonster(pixels);
                     previewPanel.okCallback = (name, dirType)=>{
-                        DB.SetLoacl(Key.guideDrawFish, true);
+                        DB.Set(Key.guideDrawFish, true);
                         let path = Game.savePixels(pixels);
                         let monster = Game.newMonsterConf(name||"我的画作", path, dirType);
                         DB.Invoke(Key.CustomMonsters);

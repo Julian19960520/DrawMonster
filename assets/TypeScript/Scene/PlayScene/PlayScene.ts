@@ -87,12 +87,24 @@ export default class PlayScene extends Scene {
         this.node.on("shakeScene", this.onShakeScene, this);
         this.node.on("gameOver", this.onGameOver, this);
         this.node.on("gainCoin", (evt:cc.Event.EventCustom)=>{
-            this.setCoin(this.diamond+evt.detail.cnt);
-            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.bag, false);
+            OperationFlow.flyCoin({
+                cnt:evt.detail.cnt,
+                fromNode:evt.target,
+                toNode:this.bag,
+                onArrive:(addCnt)=>{
+                    this.setCoin(this.coin+addCnt);
+                }
+            });
         }, this);
         this.node.on("gainDiamond", (evt:cc.Event.EventCustom)=>{
-            this.setDiamond(this.diamond+evt.detail.cnt);
-            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.bag, false);
+            OperationFlow.flyDiamond({
+                cnt:evt.detail.cnt,
+                fromNode:evt.target,
+                toNode:this.bag,
+                onArrive:(addCnt)=>{
+                    this.setDiamond(this.diamond+addCnt);
+                }
+            });
         }, this);
         this.Bind(Key.Sensitivity, (sensitivity)=>{
             this.sensitivity = sensitivity;
@@ -138,10 +150,10 @@ export default class PlayScene extends Scene {
         //死亡截图
         let textures = [];
         for(let i=0;i<4;i++){
-            setTimeout(() => {
+            this.scheduleOnce(() => {
                 let texture = Util.screenShot();
                 textures.push(texture);
-            }, 400*i);
+            }, 0.4*i);
         }
         DB.Set(Key.screenShotTextures, textures);
         //时间突然变慢，然后慢慢恢复
@@ -281,7 +293,7 @@ export default class PlayScene extends Scene {
             coin:this.coin,
             diamond:this.diamond,
         })
-        DB.SetLoacl(Key.PlayTimes, DB.Get(Key.PlayTimes)+1);
+        DB.Set(Key.PlayTimes, DB.Get(Key.PlayTimes)+1);
         SceneManager.ins.findScene(PlayScene).savelyExit(()=>{
             SceneManager.ins.Enter("FinishScene").then((finish:FinishScene)=>{
                 finish.setData({

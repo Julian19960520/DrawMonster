@@ -61,6 +61,9 @@ export namespace DB{
     }
     //设置数据的值，如果数据改变，则触发监听该数据的所有监听器
     export function Set(key:string, value, saveMode:boolean = false){
+        if(!key.startsWith("temp/")){
+            Local.Set(key, value);
+        }
         let data = map.get(key);
         if(!data){
             data = new Data();
@@ -76,12 +79,6 @@ export namespace DB{
         if(data){
             return data.value;
         }else return null;
-    }
-
-    //设置到DB时，同时保存到Loacl中
-    export function SetLoacl(key:string, value, saveMode:boolean = false){
-        Set(key, value, saveMode);
-        Local.Set(key, value);
     }
     
     //触发监听该数据的所有监听器

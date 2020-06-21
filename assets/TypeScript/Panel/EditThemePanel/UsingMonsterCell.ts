@@ -52,7 +52,7 @@ export default class UsingMonsterCell extends cc.Component {
         let theme = Game.findThemeConf(themeId);
         let idx = theme.monsterIds.indexOf(this.id);
         theme.monsterIds.splice(idx, 1);
-        DB.SetLoacl(Key.ThemeId,themeId);
+        DB.Set(Key.ThemeId,themeId);
         DB.Invoke(Key.CustomMonsters);
         Local.setDirty(Key.CustomThemes);
     }

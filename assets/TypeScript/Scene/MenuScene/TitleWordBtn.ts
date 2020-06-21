@@ -47,9 +47,9 @@ export default class TitleWordBtn extends cc.Component {
             if(this.diamond>0){
                 this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:this.diamond}));
             }
-            setTimeout(() => {
+            this.scheduleOnce(() => {
                 this.node.removeFromParent();
-            }, 3000);
+            }, 3);
         }
     }
 }

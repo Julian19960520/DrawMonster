@@ -1,3 +1,5 @@
+import { AD } from "./AD";
+
 export class VideoAd{
     show(){
         return new Promise((resolve, reject)=>{
@@ -97,10 +99,15 @@ export class CrossPlatform{
     env = {
         USER_DATA_PATH:"Root:",
     }
-    onShow(callback){
-
-    }
+    onShow(callback){}
     onHide(callback){}
+    offShow(callback){}
+    offHide(callback){}
+    getLaunchOptionsSync(){
+        return {
+            query:{},
+        }
+    }
     share(obj:{
         title?: string, 
         imageUrl?:string, 
@@ -152,7 +159,7 @@ export class CrossPlatform{
                 return filePath+":"+tempFilePath;
             },
             access(data){},
-            readFile(data:{filePath:string, success:(data)=>void, fail:(res)=>void){},
+            readFile(data:{filePath:string, success:(data)=>void, fail:(res)=>void}){},
             accessSync(path:string){},
             mkdirSync(dirPath:string, recursive:boolean){},
             writeFileSync(filePath:string, data:string|ArrayBuffer, encoding:string="binary"){},

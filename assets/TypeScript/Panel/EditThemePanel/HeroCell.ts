@@ -107,7 +107,7 @@ export default class HeroCell extends DB.DataBindComponent {
                 if(theme){
                     Game.deleteThemeConf(theme.id);
                     if(DB.Get(Key.ThemeId) == theme.id){
-                        DB.SetLoacl(Key.ThemeId, 1);
+                        DB.Set(Key.ThemeId, 1);
                     }
                     this.node.dispatchEvent(Util.customEvent("updateThemeList",true))
                 }

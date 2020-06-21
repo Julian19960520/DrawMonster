@@ -13,15 +13,12 @@ export default class AddCoinPanel extends Panel {
     @property(Button)
     gainCoinBtn:Button = null;
     @property(Button)
-    gainDiamondBtn:Button = null;
-    @property(Button)
-    exchangeDiamondBtn:Button = null;
+    exchangeBtn:Button = null;
     
     onLoad(){
         super.onLoad();
         this.gainCoinBtn.node.on("click",this.onGainCoinBtnClick ,this)
-        this.gainDiamondBtn.node.on("click",this.onGainDiamondBtnClick ,this)
-        this.exchangeDiamondBtn.node.on("click",this.onExchageCoinBtnClick ,this)
+        this.exchangeBtn.node.on("click",this.onExchageCoinBtnClick ,this)
     }
     onGainCoinBtnClick(){
         AD.showVideoAd(AdUnitId.GetCoin, ()=>{
@@ -30,17 +27,11 @@ export default class AddCoinPanel extends Panel {
             Top.showToast("播放失败");
         })
     }
-    onGainDiamondBtnClick(){
-        AD.showVideoAd(AdUnitId.GetDiamond, ()=>{
-            this.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:5}));
-        },(err)=>{
-            Top.showToast("播放失败");
-        })
-    }
+
     onExchageCoinBtnClick(){
         let diamond = DB.Get(Key.Diamond);
-        if(diamond>0){
-            Top.showFloatLabel("钻石-1", this.exchangeDiamondBtn.node, {
+        if(diamond>=1){
+            Top.showFloatLabel("钻石-1", this.exchangeBtn.node, {
                 offset:cc.v2(0, 80),
                 color:cc.color(235,235,70),
                 stroke:2,

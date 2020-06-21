@@ -19,7 +19,7 @@ export namespace Game{
     //得到一个不重复的ID
     export function newUuid(){
         let uuid = DB.Get("uuid");
-        DB.SetLoacl("uuid", uuid+1);
+        DB.Set("uuid", uuid+1);
         return uuid;
     }
 
@@ -256,7 +256,7 @@ export namespace Game{
         let customHeros:any[] = DB.Get(Key.CustomHeros);
         customHeros.unshift(hero);
         allHeros.unshift(hero);
-        DB.SetLoacl(Key.CustomHeros, customHeros);
+        DB.Set(Key.CustomHeros, customHeros);
         return hero;
     }
     export function newMonsterConf(name, url, dirType){
@@ -275,7 +275,7 @@ export namespace Game{
         let customMonsters:any[] = DB.Get(Key.CustomMonsters);
         customMonsters.unshift(monster);
         allMonsters.unshift(monster);
-        DB.SetLoacl(Key.CustomMonsters, customMonsters);
+        DB.Set(Key.CustomMonsters, customMonsters);
 
         return monster;
     }
@@ -286,14 +286,14 @@ export namespace Game{
         monsterIds.push(allMonsters[0].id);
         monsterIds.push(allMonsters[1].id);
         monsterIds.push(allMonsters[2].id);
-        let theme:ThemeData = {id:id, heroId:heroId, monsterIds:monsterIds, isCustom:true, cost:0};
+        let theme:ThemeData = {id:id, heroId:heroId, monsterIds:monsterIds, isCustom:true, cost:{coin:0,diamond:0}};
         themeConfigMap.set(id, theme);
 
         let customThemes:any[] = DB.Get(Key.CustomThemes);
         customThemes.unshift(theme);
         allThemes.unshift(theme);
         DB.Set(Key.allThemes, allThemes);
-        DB.SetLoacl(Key.CustomThemes, customThemes);
+        DB.Set(Key.CustomThemes, customThemes);
         return theme;
     }
 
@@ -313,7 +313,7 @@ export namespace Game{
         if(idx>=0){
             allMonsters.splice(idx, 1);
         }
-        DB.SetLoacl(Key.CustomMonsters, customMonsters);
+        DB.Set(Key.CustomMonsters, customMonsters);
     }
 
     export function deleteHeroConf(id){
@@ -331,7 +331,7 @@ export namespace Game{
         if(idx>=0){
             allHeros.splice(idx, 1);
         }
-        DB.SetLoacl(Key.CustomHeros, customHeros);
+        DB.Set(Key.CustomHeros, customHeros);
     }
 
     export function deleteThemeConf(id){
@@ -350,7 +350,7 @@ export namespace Game{
             allThemes.splice(idx, 1);
             DB.Set(Key.allThemes, allThemes);
         }
-        DB.SetLoacl(Key.CustomThemes, customThemes);
+        DB.Set(Key.CustomThemes, customThemes);
     }
 
     export function isThemeOpen(id){
@@ -360,7 +360,7 @@ export namespace Game{
     export function openTheme(id){
         let openIds:number[] = DB.Get(Key.OpenThemeIds);
         openIds.push(id);
-        DB.SetLoacl(Key.OpenThemeIds, openIds);
+        DB.Set(Key.OpenThemeIds, openIds);
     }
     /*****************************
      * 排行榜
@@ -413,7 +413,7 @@ export namespace Game{
         if(rankDatas.length>10){
             rankDatas.splice(10, rankDatas.length-10);
         }
-        DB.SetLoacl(Key.RankDatas, rankDatas);
+        DB.Set(Key.RankDatas, rankDatas);
         //更新开放域最高分数据
         if(time>oldHighScore){
             crossPlatform.setUserCloudStorage({
@@ -499,5 +499,31 @@ export namespace Game{
         }else{
             return Util.randomInt(2, 8);
         }
+    }
+    //离线收益
+    
+    export function getLuckyCatCoin(){
+        let beginStamp = DB.Get(Key.luckyCatBeginStamp);
+        if(beginStamp == 0){
+            return 0;
+        }else{
+            let stamp = Util.getTimeStamp();
+            let time = stamp - beginStamp;
+            time = Math.min(time, 2*60*60*1000);    //最多4小时
+            let step = Math.floor(time/1000/5); //每5秒获得一次
+            return step * 1;    //每次1个
+        }
+    }
+    export function resetLuckyCat(){
+        DB.Set(Key.luckyCatBeginStamp, Util.getTimeStamp());
+    }
+    export function isLuckyCatOpen(){
+        return DB.Get(Key.luckyCatBeginStamp) != -1;
+    }
+    export function addCoin(addCnt){
+        DB.Set(Key.Coin, DB.Get(Key.Coin) + addCnt);
+    }
+    export function addDiamond(addCnt){
+        DB.Set(Key.Diamond, DB.Get(Key.Diamond) + addCnt);
     }
 }

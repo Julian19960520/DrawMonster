@@ -1,7 +1,7 @@
 import Scene from "../../Frame/Scene";
 import { Game } from "../../Game/Game";
 import { DB } from "../../Frame/DataBind";
-import { RankData } from "../../Frame/dts";
+import { RankData, ThemeData } from "../../Frame/dts";
 import { Util } from "../../Frame/Util";
 import SceneManager, { ShiftAnima } from "../../Frame/SceneManager";
 import {Config } from "../../Frame/Config";
@@ -9,12 +9,17 @@ import MessageBox from "../../Frame/MessageBox";
 import Button from "../../CustomUI/Button";
 import { Key } from "../../Game/Key";
 import EditThemePanel from "../../Panel/EditThemePanel/EditThemePanel";
-import { crossPlatform } from "../../Frame/CrossPlatform";
+import { crossPlatform, AppName, systemInfo } from "../../Frame/CrossPlatform";
 import ThemeCell from "./ThemeCell";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import Top from "../../Frame/Top";
 import { OperationFlow } from "../../Game/OperationFlow";
 import PaintScene from "../../Panel/PaintPanel/PaintScene";
+import PanelStack from "../../Frame/PanelStack";
+import PanelQueue from "../../Frame/PanelQueue";
+import RewardPanel from "../../Panel/RewardPanel/RewardPanel";
+import LuckyCatPanel from "../../Panel/LuckyCatPanel/LuckyCatPanel";
+import LuckyCatBtn from "./LuckyCatBtn";
 
 const {ccclass, menu, property} = cc._decorator;
 
@@ -24,14 +29,17 @@ export default class MenuScene extends Scene {
     @property(Button)
     playBtn: Button = null;
     @property(Button)
-    buyBtn: Button = null;
-    @property(Button)
     drawBtn: Button = null;
 
     @property(Button)
     shopBtn: Button = null;
     @property(Button)
-    balloonBtn: Button = null;
+    spaceBtn: Button = null;
+    @property(Button)
+    collectGameBtn: Button = null;
+
+    @property(Button)
+    gashaBtn: Button = null;
     @property(Button)
     upgradeBtn: Button = null;
 
@@ -40,6 +48,9 @@ export default class MenuScene extends Scene {
 
     @property(Button)
     rankBtn: Button = null;
+
+    @property(LuckyCatBtn)
+    luckyCatBtn: LuckyCatBtn = null;
 
     @property(cc.Label)
     highScoreLabel: cc.Label = null;
@@ -65,13 +76,19 @@ export default class MenuScene extends Scene {
     @property(cc.Node)
     diamondPos: cc.Node = null;
 
+    @property(PanelQueue)
+    panelQueue: PanelQueue = null;
+
     onLoad () {
         this.playBtn.node.on("click", this.onPlayBtnTap, this);
-        this.buyBtn.node.on("click", this.onBuyBtnTap, this);
         this.rankBtn.node.on("click", this.onRankBtnTap, this);
 
         this.shopBtn.node.on("click", this.onShopBtnTap, this);
-        this.balloonBtn.node.on("click", this.onBalloonBtnTap, this);
+        this.spaceBtn.node.on("click", this.onSpaceBtnTap, this);
+        this.collectGameBtn.node.on("click", this.onCollectGameBtnTap, this);
+
+        
+        this.gashaBtn.node.on("click", this.onGashaBtnTap, this);
         this.upgradeBtn.node.on("click", this.onUpgradeBtnTap, this);
 
         this.optionBtn.node.on("click", this.onOptionBtnTap, this);
@@ -85,18 +102,43 @@ export default class MenuScene extends Scene {
         }
         this.node.on("updateThemeList", this.updateThemeList, this);
         this.node.on("gainCoin", (evt:cc.Event.EventCustom)=>{
-            OperationFlow.flyCoin(evt.detail.cnt, evt.target, this.coinPos);
+            OperationFlow.flyCoin({
+                cnt:evt.detail.cnt,
+                fromNode:evt.target,
+                toNode:this.coinPos,
+                onArrive:(addCnt)=>{
+                    console.log(addCnt);
+                    Game.addCoin(addCnt);
+                }
+            });
         }, this);
         this.node.on("gainDiamond", (evt:cc.Event.EventCustom)=>{
-            OperationFlow.flyDiamond(evt.detail.cnt, evt.target, this.diamondPos);
+            OperationFlow.flyDiamond({
+                cnt:evt.detail.cnt,
+                fromNode:evt.target,
+                toNode:this.diamondPos,
+                onArrive:(addCnt)=>{
+                    Game.addDiamond(addCnt);
+                }
+            });
         }, this);
         this.updateThemeList();
+        this.Bind(Key.guideCollectGameBegin, (state)=>{
+            this.collectGameBtn.node.active = (state!=2) && AppName.Douyin == systemInfo.appName;
+        });
     }
 
     public updateThemeList(){
+        let themes:ThemeData[] = DB.Get(Key.CustomThemes);
+        for(let i=0; i<Config.themes.length; i++){
+            let theme = Config.themes[i];
+            if(Game.isThemeOpen(theme.id)){
+                themes.push(theme);
+            }
+        }
         let themeId = DB.Get(Key.ThemeId);
         let theme = Game.findThemeConf(themeId);
-        let centerIdx = Game.allThemes.findIndex((theme)=>{
+        let centerIdx = themes.findIndex((theme)=>{
             return theme.id == themeId;
         });
         let func = (centerOffset)=>{
@@ -104,8 +146,8 @@ export default class MenuScene extends Scene {
             let scale = (centerOffset == 0? 1.2 : 0.5);
             let x = centerOffset * 150;
             let cell = this.themesContent.children[childIdx].getComponent(ThemeCell);
-            let idx = (centerIdx+centerOffset+Game.allThemes.length)%Game.allThemes.length;
-            let conf = Game.allThemes[idx];
+            let idx = (centerIdx+centerOffset+themes.length)%themes.length;
+            let conf = themes[idx];
             cell.setData(conf);
             cell.node.scale = scale;
             cell.node.x = x;
@@ -116,7 +158,6 @@ export default class MenuScene extends Scene {
         func(2);
         let open = Game.isThemeOpen(themeId);
         this.playBtn.node.active = open || theme.isCustom;
-        this.buyBtn.node.active = !open && !theme.isCustom;
     }
     public moveRight(){
         this.move(1);
@@ -127,23 +168,29 @@ export default class MenuScene extends Scene {
     public move(dir){
         Top.blockInput(true);
         let themeId = DB.Get(Key.ThemeId);
-        let idx = Game.allThemes.findIndex((theme)=>{
+        let themes:ThemeData[] = DB.Get(Key.CustomThemes);
+        for(let i=0; i<Config.themes.length; i++){
+            let theme = Config.themes[i];
+            if(Game.isThemeOpen(theme.id)){
+                themes.push(theme);
+            }
+        }
+        let idx = themes.findIndex((theme)=>{
             return theme.id == themeId;
         });
         //屏幕外移入的cell
-        let newIdx = (idx+dir*2+Game.allThemes.length)%Game.allThemes.length;
+        let newIdx = (idx+dir*2+themes.length)%themes.length;
         let temp = this.themesContent.children[3].getComponent(ThemeCell);
-        temp.setData(Game.allThemes[newIdx]);
+        temp.setData(themes[newIdx]);
         temp.node.scale = 0.5;
         temp.node.x = dir*2 * 150;
         //新的选择的cell
-        newIdx = (idx+dir+Game.allThemes.length)%Game.allThemes.length;
-        themeId = Game.allThemes[newIdx].id;
-        DB.SetLoacl(Key.ThemeId, themeId);
+        newIdx = (idx+dir+themes.length)%themes.length;
+        themeId = themes[newIdx].id;
+        DB.Set(Key.ThemeId, themeId);
         let open = Game.isThemeOpen(themeId);
         let theme = Game.findThemeConf(themeId);
         this.playBtn.node.active = open || theme.isCustom;
-        this.buyBtn.node.active = !open && !theme.isCustom;
 
         for(let i=0; i<this.themesContent.childrenCount; i++){
             let cellNode = this.themesContent.children[i];
@@ -161,7 +208,30 @@ export default class MenuScene extends Scene {
             tw.start();
         }
     }
-    onEnterScene(){
+    onShow(data){
+        //从我的-小程序进入奖励
+        if(data && data.scene == "021001" && DB.Get(Key.guideCollectGameBegin) == 1){
+            this.panelQueue.pushPanel("RewardPanel",(panel:RewardPanel)=>{
+                panel.setStyle({
+                    title:"收藏游戏奖励",
+                    btnText:"领取"
+                })
+                panel.loadDiamondContent(Config.collectGameDiamodCnt,()=>{
+                    panel.node.dispatchEvent(Util.customEvent("gainDiamond",true,{cnt:Config.collectGameDiamodCnt}));
+                    DB.Set(Key.guideCollectGameBegin, 2);
+                });
+            });
+        }
+        //离线收益
+        if(Game.isLuckyCatOpen() && !LuckyCatPanel.opening){
+            let coin = Game.getLuckyCatCoin();
+            if(coin >= 100){
+                this.panelQueue.pushPanel("LuckyCatPanel");
+            }
+        }
+        this.panelQueue.checkNext();
+    }
+    onEnterBegin(){
         // this.updateThemeList();
         let btnAnim = (node:cc.Node, delay, callback = null)=>{
             node.scale = 0;
@@ -175,28 +245,39 @@ export default class MenuScene extends Scene {
         this.playTitleAnim();
         let playTimes = DB.Get(Key.PlayTimes);
         this.drawBtn.node.active = playTimes >= Config.unlockPaintTimes;  //新玩家，不显示画笔按钮
+
         btnAnim(this.highScoreLabel.node, 0.2);
         btnAnim(this.themesContent, 0.2);
-        btnAnim(this.playBtn.node, 0.4, ()=>{
-            // if(playTimes < 1){
-            //     TweenUtil.applyBreath(this.playBtn.node);
-            // }
-        });
-        btnAnim(this.buyBtn.node, 0.4);
-        btnAnim(this.rankBtn.node, 0.5);
-        btnAnim(this.balloonBtn.node, 0.4);
+
         btnAnim(this.leftTriangle.node, 0.5);
         btnAnim(this.rightTriangle.node, 0.5);
-        btnAnim(this.drawBtn.node, 0.5, ()=>{
-            // if(playTimes >= Config.unlockPaintTimes && DB.Get(Key.CustomHeros).length < 1){
-            //     TweenUtil.applyBreath(this.drawBtn.node);
-            // }
-        });
-        btnAnim(this.shopBtn.node, 0.4);
-        btnAnim(this.upgradeBtn.node, 0.5);
-        btnAnim(this.buyBtn.node, 0.4);
+        //顶部按钮
         btnAnim(this.optionBtn.node, 0);
-        
+        btnAnim(this.rankBtn.node, 0.1);
+        btnAnim(this.collectGameBtn.node, 0.2);
+
+        //第一层
+        btnAnim(this.shopBtn.node, 0.4);
+        btnAnim(this.playBtn.node, 0.4);
+        btnAnim(this.gashaBtn.node, 0.4);
+
+        //第二层
+        btnAnim(this.drawBtn.node, 0.5);  
+        btnAnim(this.upgradeBtn.node, 0.5);
+        btnAnim(this.spaceBtn.node, 0.5);
+
+
+        let isLuckyCatOpen = Game.isLuckyCatOpen();
+        if(isLuckyCatOpen){
+            this.luckyCatBtn.node.active = true;
+        }else{
+            if(DB.Get(Key.PlayTimes) > 2){
+                Game.resetLuckyCat();
+                this.luckyCatBtn.node.active = true;
+            }else{
+                this.luckyCatBtn.node.active = false;
+            }
+        }
     }
     public playTitleAnim(){
         let func = (node:cc.Node, delay)=>{
@@ -245,29 +326,7 @@ export default class MenuScene extends Scene {
     private enterPlayScene(){
         OperationFlow.enterPlayScene(()=>{});
     }
-    private onBuyBtnTap(){
-        let coin = DB.Get(Key.Coin);
-        let themeId = DB.Get(Key.ThemeId);
-        let conf = Game.findThemeConf(themeId);
-        if(coin < conf.cost){
-            SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
-                messageBox.label.string = "金币不足";
-            })
-        }else{
-            SceneManager.ins.OpenPanelByName("MessageBox",(messageBox:MessageBox)=>{
-                messageBox.label.string = "是否购买主题？";
-                messageBox.onOk = ()=>{
-                    DB.SetLoacl(Key.Coin, coin-conf.cost);
-                    Game.openTheme(conf.id);
-                    this.updateThemeList();
-                    crossPlatform.reportAnalytics('buyTheme', {
-                        timeStamp: new Date().getTime(),
-                        themeId: DB.Get(Key.ThemeId),
-                    });
-                }
-            })
-        }
-    }
+
     private onRankBtnTap(){
         this.OpenPanelByName("RankPanel");
     }
@@ -275,7 +334,7 @@ export default class MenuScene extends Scene {
         this.OpenPanelByName("OptionPanel");
     }
     public onDrawBtnTap(){
-        DB.SetLoacl(Key.guideUnlockPaint, true);
+        DB.Set(Key.guideUnlockPaint, true);
         SceneManager.ins.Enter("PaintScene").then((paintScene:PaintScene)=>{
             paintScene.drawHero(()=>{
                 this.updateThemeList();
@@ -285,15 +344,19 @@ export default class MenuScene extends Scene {
         });
     }
 
-    onShopBtnTap(){
+    onSpaceBtnTap(){
         Top.showToast("【创意空间】紧急开发中");
-        // this.OpenPanelByName("CreativeSpacePanel");
     }
-
-    onBalloonBtnTap(){
+    onShopBtnTap(){
+        SceneManager.ins.Enter("ShopScene",ShiftAnima.moveRightShift);
+    }
+    onGashaBtnTap(){
         SceneManager.ins.Enter("GashaScene",ShiftAnima.moveLeftShift);
     }
 
+    onCollectGameBtnTap(){
+        this.OpenPanelByName("CollectGamePanel");
+    }
     onUpgradeBtnTap(){
         this.OpenPanelByName("UpgradePanel");
     }

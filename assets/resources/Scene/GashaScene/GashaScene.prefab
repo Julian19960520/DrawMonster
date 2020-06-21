@@ -64,9 +64,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 244,
-      "g": 248,
-      "b": 216,
+      "r": 222,
+      "g": 239,
+      "b": 245,
       "a": 255
     },
     "_contentSize": {
@@ -254,9 +254,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 218,
-      "g": 231,
-      "b": 163,
+      "r": 208,
+      "g": 235,
+      "b": 240,
       "a": 255
     },
     "_contentSize": {
@@ -10054,7 +10054,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "label",
+    "_name": "costCoinLabel",
     "_objFlags": 0,
     "_parent": {
       "__id__": 286

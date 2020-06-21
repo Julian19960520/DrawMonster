@@ -3,6 +3,7 @@ import { DB } from "../Frame/DataBind";
 import { Key } from "./Key";
 import Button from "../CustomUI/Button";
 import SceneManager from "../Frame/SceneManager";
+import { Util } from "../Frame/Util";
 
 const {ccclass, property} = cc._decorator;
 
@@ -16,10 +17,10 @@ export default class DiamondBar extends DB.DataBindComponent {
     public iconPos: cc.Node = null;
     onLoad () {
         this.Bind(Key.Diamond,(diamond)=>{
-            this.label.string = diamond;
+            this.label.string = Util.toMagnitudeNum(diamond).toString();;
         });
         this.addBtn.node.on("click", ()=>{
-            SceneManager.ins.OpenPanelByName("AddCoinPanel");
+            SceneManager.ins.OpenPanelByName("AddDiamondPanel");
         }, this)
     }
 }

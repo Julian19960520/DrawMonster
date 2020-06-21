@@ -7,6 +7,7 @@ export enum AdUnitId{
     RewardBet = "2sf1naepapa1haaf9j",
     FinishBottom = "faa789b9d3d8nf7alm",
     GetCoin = "ba2t2qdmnlf92i1mae",
+    luckyCatBet = "1i61gd3jf73hd6h8fc",
     GetDiamond = "3kr08cvt49p1rcualq",
     RefreshGasha = "1lh22pmpo6b1kl35d5",
 }
@@ -15,7 +16,18 @@ export enum VideoError{
     NoAd,
 }
 export namespace AD{
+    export let videoAding = false;      //
+
+    crossPlatform.onShow((data)=>{
+        if(AD.videoAding){
+            setTimeout(() => {
+                AD.videoAding = false;
+            }, 100);
+        }
+    })
+    
     export function showVideoAd(id:AdUnitId, succ, fail){
+        videoAding = true;
         crossPlatform.reportAnalytics("rewardedVideoAd",{
             id:id,
             step:"click",

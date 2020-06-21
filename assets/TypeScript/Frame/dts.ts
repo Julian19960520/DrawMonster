@@ -31,7 +31,7 @@ export class ThemeData{
     author?:string;
     heroId:number|string;
     monsterIds:(number|string)[];
-    cost:number;
+    cost:{coin:number, diamond:number};
     isCustom?:boolean;
     isDynamic?:boolean;
 }

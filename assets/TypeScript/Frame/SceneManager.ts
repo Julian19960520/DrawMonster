@@ -4,6 +4,8 @@ import { DB } from "./DataBind";
 import ScreenRect from "./ScreenRect";
 import { Util } from "./Util";
 import { Key } from "../Game/Key";
+import { crossPlatform } from "./CrossPlatform";
+import { AD } from "./AD";
 @ccclass
 export default class SceneManager extends cc.Component {
     stack:string[] = [];
@@ -19,9 +21,24 @@ export default class SceneManager extends cc.Component {
     blockInput:cc.BlockInputEvents = null;
 
     onLoad(){
+        this.blockInput.node.active = false;
         SceneManager.ins = this;
         this.Enter(this.firstScene, ShiftAnima.simpleShift);
-        this.blockInput.node.active = false;
+        crossPlatform.onShow((data)=>{
+            if(AD.videoAding){
+                return;
+            }
+            console.log("onShow",data);
+            if(this.curScene){
+                this.curScene.onShow(data);
+            }
+        })
+        crossPlatform.onHide(()=>{
+            console.log("onHide");
+            if(this.curScene){
+                this.curScene.onHide();
+            }
+        })
     }
     //进入新场景
     public Enter(sceneName:string, shiftAnima = ShiftAnima.simpleShift){
@@ -110,17 +127,17 @@ export default class SceneManager extends cc.Component {
                 let oldScene = this.curScene;
                 this.curScene = newScene;
                 if(oldScene){
-                    oldScene.onExitScene();
+                    oldScene.onExitBegin();
                 }
-                newScene.onEnterScene();
+                newScene.onEnterBegin();
                 DB.Set(Key.curScene, this.curScene);
                 shiftAnima(oldScene, newScene, ()=>{
                     if(oldScene && oldScene.autoDestroy){
-                        oldScene.onExitAnimaEnd();
+                        oldScene.onExitEnd();
                         oldScene.node.destroy();
                         // this.content.removeChild(oldScene.node);
                     }
-                    newScene.onEnterAnimaEnd();
+                    newScene.onEnterEnd();
                     this.printState();
                     this.blockInput.node.active = false;
                 });

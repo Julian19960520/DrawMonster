@@ -188,9 +188,9 @@ export default class Hero extends DB.DataBindComponent {
         let phyObject = node.addComponent(PhyObject);
         phyObject.velocity = cc.v2( Util.randomInt(-100, 100), Util.randomInt(300, 500));
         phyObject.g = 1200;
-        setTimeout(() => {
+        this.scheduleOnce(() => {
             node.removeFromParent();
-        }, 3000);
+        }, 3);
     }
     beginDrop(dir){
         dir = Util.sign(dir);
