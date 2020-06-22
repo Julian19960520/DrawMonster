@@ -90,14 +90,6 @@ export default class GameOverPanel extends Panel {
             });
         }
     }
-    onDestroy(){
-        super.onDestroy();
-        this.onRebornCallback = null;
-        this.onGiveUpCallback = null;
-        if(this.shareVideoSucc){
-            GameRecorder.clearVideo();
-        }
-    }
     initRebornBtn(){
         if(tt){
             if(Math.random()>0.5 && GameRecorder.videoDuration>Config.minRecordTime){
@@ -185,5 +177,9 @@ export default class GameOverPanel extends Panel {
         if(this.onGiveUpCallback){
             this.onGiveUpCallback();
         }
+        if(this.shareVideoSucc){
+            GameRecorder.clearVideo();
+        }
+        super.onCloseBtnClick();
     }
 }

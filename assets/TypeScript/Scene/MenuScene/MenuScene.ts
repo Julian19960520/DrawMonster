@@ -107,7 +107,6 @@ export default class MenuScene extends Scene {
                 fromNode:evt.target,
                 toNode:this.coinPos,
                 onArrive:(addCnt)=>{
-                    console.log(addCnt);
                     Game.addCoin(addCnt);
                 }
             });
@@ -130,6 +129,7 @@ export default class MenuScene extends Scene {
 
     public updateThemeList(){
         let themes:ThemeData[] = DB.Get(Key.CustomThemes);
+        themes = themes.concat();
         for(let i=0; i<Config.themes.length; i++){
             let theme = Config.themes[i];
             if(Game.isThemeOpen(theme.id)){
@@ -169,6 +169,7 @@ export default class MenuScene extends Scene {
         Top.blockInput(true);
         let themeId = DB.Get(Key.ThemeId);
         let themes:ThemeData[] = DB.Get(Key.CustomThemes);
+        themes = themes.concat();
         for(let i=0; i<Config.themes.length; i++){
             let theme = Config.themes[i];
             if(Game.isThemeOpen(theme.id)){
