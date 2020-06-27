@@ -57,6 +57,9 @@ export default class PlayScene extends Scene {
     @property(cc.Label)
     diamondLabel: cc.Label = null;
 
+    @property(cc.Sprite)
+    bg: cc.Sprite = null;
+
 
     private time = 0;
     private playing = false;
@@ -229,6 +232,19 @@ export default class PlayScene extends Scene {
         this.playing = true;
         this.reborned = false;
         let themeId = DB.Get(Key.ThemeId);
+        let themeConf = Game.findThemeConf(themeId);
+        if(themeConf.bgId){
+            let bgConf = Game.findBgConf(themeConf.bgId);
+            // Util.loadRes(bgConf.url,cc.SpriteFrame).then((sf)=>{
+            //     this.bg.spriteFrame = sf;
+            //     this.bg.node.color = bgConf.color;
+            // });
+            Game.loadTexture(bgConf.url, "bg", (texture)=>{
+                let sf = new cc.SpriteFrame(texture);
+                this.bg.spriteFrame = sf;
+                this.bg.node.color = bgConf.color || cc.Color.WHITE;
+            });
+        }
         this.scheduleOnce(()=>{
             console.log("开始录屏");
             GameRecorder.start(300);

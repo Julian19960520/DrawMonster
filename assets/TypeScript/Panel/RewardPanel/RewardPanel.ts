@@ -96,7 +96,7 @@ export default class RewardPanel extends Panel {
             this.rewardPos.addChild(node);
             let theme = Game.findThemeConf(themeId);
             let hero = Game.findHeroConf(theme.heroId);
-            Game.loadTexture(hero.url, (texture)=>{
+            Game.loadTexture(hero.url, "hero",(texture)=>{
                 Util.searchChild(node,"hero").getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(texture);
             });
             let hasTheme = Game.isThemeOpen(themeId);

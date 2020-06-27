@@ -52,7 +52,7 @@ export default class GashaRewardItem extends cc.Component {
                 let theme = Game.findThemeConf(data.id);
                 let hero = Game.findHeroConf(theme.heroId);
                 this.icon.node.scale = 0.35;
-                Game.loadTexture(hero.url, (texture)=>{
+                Game.loadTexture(hero.url, "hero",(texture)=>{
                     this.icon.spriteFrame = new cc.SpriteFrame(texture);
                 });
                 break;

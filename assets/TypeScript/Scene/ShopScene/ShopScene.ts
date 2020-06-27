@@ -179,7 +179,7 @@ export default class ShopScene extends Scene {
             this.obtainedNode.active = have;
             this.buyBtn.node.active = !have;
             let hero = Game.findHeroConf(theme.heroId);
-            Game.loadTexture(hero.url, (texture)=>{
+            Game.loadTexture(hero.url, "hero", (texture)=>{
                 let spriteFrame = new cc.SpriteFrame();
                 spriteFrame.setTexture(texture);
                 this.sprite.spriteFrame = spriteFrame;

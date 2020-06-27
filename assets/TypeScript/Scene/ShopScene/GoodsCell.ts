@@ -37,7 +37,7 @@ export default class GoodsCell extends cc.Component {
     setData(theme:ThemeData){
         this.theme = theme;
         let hero = Game.findHeroConf(theme.heroId);
-        Game.loadTexture(hero.url, (texture)=>{
+        Game.loadTexture(hero.url, "hero",(texture)=>{
             this.setTexture(texture);
         });
         this.obtainedNode.active = Game.isThemeOpen(theme.id);

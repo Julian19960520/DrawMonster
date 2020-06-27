@@ -49,7 +49,7 @@ export default class ThemeCell extends cc.Component {
         let hero = Game.findHeroConf(data.heroId);
         this.nameLabel.string = hero.name;
         this.sprite.node.active = false;
-        Game.loadTexture(hero.url,(texture)=>{
+        Game.loadTexture(hero.url,"hero",(texture)=>{
             this.sprite.node.active = true;
             let frame = new cc.SpriteFrame();
             frame.setTexture(texture);

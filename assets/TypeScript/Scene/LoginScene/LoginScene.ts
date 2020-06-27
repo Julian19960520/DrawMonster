@@ -56,6 +56,7 @@ export default class LoginScene extends Scene {
     }
     
     login(){
+        console.log(JSON.stringify(cc.color(1,1,1)))
         let version = Local.Get(Key.Version) || 0;
         DB.Set(Key.Version, "0.2.4");
         this.loadValue("uuid", 1000);
@@ -70,6 +71,9 @@ export default class LoginScene extends Scene {
         this.loadValue(Key.CustomMonsters, []);
         this.loadValue(Key.CustomHeros, []);
         this.loadValue(Key.CustomThemes, []);
+        this.loadValue(Key.CustomHearts, []);
+        this.loadValue(Key.CustomShields, []);
+        this.loadValue(Key.CustomBgs, []);
         this.loadValue(Key.OpenThemeIds, [1,2,3]);
         this.loadValue(Key.PlayTimes, 0);
         this.loadValue(Key.HeartLvl, 1);

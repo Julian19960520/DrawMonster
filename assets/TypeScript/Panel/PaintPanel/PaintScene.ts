@@ -1,4 +1,3 @@
-import Panel from "../../Frame/Panel";
 import Graphics from "../../CustomUI/Graphics";
 import ScrollList from "../../CustomUI/ScrollList";
 import Slider from "../../CustomUI/Slider";
@@ -77,8 +76,7 @@ export default class PaintScene extends Scene {
 
     private pencilColor:cc.Color = null;
     callback = null;
-    isDrawHero = false;
-    public static hasRecordVideo = false;
+    type:"hero"|"monster"|"heart"|"shield"|"bg" = "hero";
     onLoad () {
         super.onLoad();
         this.backBtn.node.on("click",this.onBackBtnTap, this);
@@ -97,10 +95,10 @@ export default class PaintScene extends Scene {
         this.initColorBtns();
         this.highLightBtn(this.pencilBtn);
         this.drawColliderSize();
+        this.beginTip();
         this.bucketTool.active = false;
         this.eraserTool.active = false;
         this.state = State.Pencil;
-        PaintScene.hasRecordVideo = false;
     }
 
     initColorBtns(){
@@ -153,43 +151,83 @@ export default class PaintScene extends Scene {
                 messageBox.toOkStyle("多画几笔吧（最少1笔）")
             });
         }else{
-            let hasRecordVideo = false;
-            if(GameRecorder.recordering){
-                GameRecorder.stop();
-                hasRecordVideo = true;
-                DB.Set(Key.screenShotTextures, [Util.screenShot()]);
-            }
-            //点击画图面板的保存按钮时
-            SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{
-                let pixels = this.graphics.pixels;
-                if(this.isDrawHero){
+            this.openPreviewPanel();
+        }
+    }
+    
+    openPreviewPanel(){
+        if(GameRecorder.recordering){
+            GameRecorder.stop();
+            DB.Set(Key.screenShotTextures, [Util.screenShot()]);
+        }
+        //点击画图面板的保存按钮时
+        SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{
+            let pixels = this.graphics.pixels;
+            switch(this.type){
+                case "hero":{
                     previewPanel.initHero(pixels);
                     previewPanel.okCallback = (name)=>{
                         DB.Set(Key.guideDrawFish, true);
                         let path = Game.savePixels(pixels);
-                        let hero = Game.newHeroConf(name||"我的画作", path);
+                        let hero = Game.newHeroConf(name||"我的角色", path);
                         let theme = Game.newThemeConf(hero.id);
                         DB.Set(Key.ThemeId, theme.id);
                         SceneManager.ins.Back();
                         if(this.callback)
                             this.callback();
                     };
-                }else{
+                    break;
+                }
+                case "monster":{
                     previewPanel.initMonster(pixels);
                     previewPanel.okCallback = (name, dirType)=>{
                         DB.Set(Key.guideDrawFish, true);
                         let path = Game.savePixels(pixels);
-                        let monster = Game.newMonsterConf(name||"我的画作", path, dirType);
+                        let monster = Game.newMonsterConf(name||"我的怪物", path, dirType);
                         DB.Invoke(Key.CustomMonsters);
                         SceneManager.ins.Back();
                         if(this.callback)
                             this.callback(monster);
                     };
+                    break;
                 }
-            }); 
-        }
+                case "heart":{
+                    previewPanel.initProp(pixels);
+                    previewPanel.okCallback = (name)=>{
+                        let path = Game.savePixels(pixels);
+                        let heart = Game.newHeartConf(name||"我的道具", path);
+                        SceneManager.ins.Back();
+                        if(this.callback)
+                            this.callback(heart);
+                    };
+                    break;
+                }
+                case "shield":{
+                    previewPanel.initProp(pixels);
+                    previewPanel.okCallback = (name)=>{
+                        let path = Game.savePixels(pixels);
+                        let shield = Game.newShieldConf(name||"我的道具", path);
+                        SceneManager.ins.Back();
+                        if(this.callback)
+                            this.callback(shield);
+                    };
+                    break;
+                }
+                case "bg":{
+                    previewPanel.initBg(pixels);
+                    previewPanel.okCallback = (name)=>{
+                        let path = Game.savePixels(pixels);
+                        let bg = Game.newBgConf(name||"我的道具", path);
+                        SceneManager.ins.Back();
+                        if(this.callback)
+                            this.callback(bg);
+                    };
+                    break;
+                }
+
+            }
+        });
     }
-    
     highLightBtn(targetBtn:Button){
         let btns = [this.pencilBtn, this.eraserBtn, this.bucketBtn];
         for(let i=0; i<btns.length; i++){
@@ -214,18 +252,10 @@ export default class PaintScene extends Scene {
         this.colliderSize.stroke();
     }
 
-    beginTip(advises:string[]){
-        let b = false;
-        let advise = advises[Util.randomIdx(advises.length)];
-        this.tipLabel.string = `没想好画什么？试试：【${advise}】`;
+    beginTip(){
         let func = ()=>{
             TweenUtil.applyScaleBounce(this.tipLabel.node,1, 0.2, ()=>{
-                b = !b;
-                if(b){
-                    this.tipLabel.string = Config.paintTips[Util.randomIdx(Config.paintTips.length)];
-                }else{
-                    this.tipLabel.string = `没想好画什么？试试：【${advise}】`;
-                }
+                this.tipLabel.string = Config.paintTips[Util.randomIdx(Config.paintTips.length)];
             })
         }
         this.schedule(func, 10);
@@ -309,13 +339,29 @@ export default class PaintScene extends Scene {
         }
     } 
     drawHero(callback){
-        this.isDrawHero = true;
-        this.beginTip(Config.heroAdvises);
+        this.graphics.init(512, 512);
+        this.type = "hero";
         this.callback = callback;
     }
-    draMonster(callback){
-        this.isDrawHero = false;
-        this.beginTip(Config.monsterAdvises);
+    drawMonster(callback){
+        this.graphics.init(512, 512);
+        this.type = "monster";
+        this.callback = callback;
+    }
+    drawBg(callback){
+        this.graphics.init(288, 512);
+        this.type = "bg";
+        this.beginTip();
+        this.callback = callback;
+    }
+    drawShield(callback){
+        this.graphics.init(128, 128);
+        this.type = "shield";
+        this.callback = callback;
+    }
+    drawHeart(callback){
+        this.graphics.init(128, 128);
+        this.type = "heart";
         this.callback = callback;
     }
 }

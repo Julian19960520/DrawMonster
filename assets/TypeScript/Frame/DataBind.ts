@@ -80,7 +80,14 @@ export namespace DB{
             return data.value;
         }else return null;
     }
-    
+    export function Save(key:string){
+        if(!key.startsWith("temp/")){
+            let data = map.get(key);
+            if(data){
+                Local.Set(key, data.value);
+            }
+        }
+    }
     //触发监听该数据的所有监听器
     export function Invoke(key:string, saveMode:boolean = false){
         let data = map.get(key);

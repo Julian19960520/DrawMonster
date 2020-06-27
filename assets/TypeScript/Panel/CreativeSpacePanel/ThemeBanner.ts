@@ -43,7 +43,7 @@ export default class ThemeBanner extends cc.Component {
         //主角
         let hero = Game.findHeroConf(data.heroId);
         this.heroSprite.spriteFrame = null;
-        Game.loadTexture(hero.url,(texture)=>{
+        Game.loadTexture(hero.url, "hero", (texture)=>{
             let frame = new cc.SpriteFrame();
             frame.setTexture(texture);
             this.heroSprite.spriteFrame = frame;
@@ -60,7 +60,7 @@ export default class ThemeBanner extends cc.Component {
                 let monster = Game.findMonsterConf(data.monsterIds[i]);
                 let sprite = child.getComponentInChildren(cc.Sprite);
                 sprite.spriteFrame = null;
-                Game.loadTexture(monster.url, (texture)=>{
+                Game.loadTexture(monster.url, "monster", (texture)=>{
                     let frame = new cc.SpriteFrame();
                     frame.setTexture(texture);
                     sprite.spriteFrame = frame;

@@ -1,12 +1,8 @@
-import { RankData, ThemeData, MonsterConfig, HeroConfig } from "../Frame/dts";
+import { RankData, ThemeData, MonsterConfig, HeroConfig, BgData, HeartData, ShieldData } from "../Frame/dts";
 import { DB } from "../Frame/DataBind";
 import { Config, DirType, PrefabPath } from "../Frame/Config";
 import { crossPlatform } from "../Frame/CrossPlatform";
 import { Key } from "./Key";
-import { Sound } from "../Frame/Sound";
-import SceneManager from "../Frame/SceneManager";
-import LoadingScene from "../Scene/LoadingScene/LoadingScene";
-import PlayScene from "../Scene/PlayScene/PlayScene";
 import { Util } from "../Frame/Util";
 import { HTTP, ServerMsg } from "../Frame/HTTP";
 
@@ -46,7 +42,7 @@ export namespace Game{
     }
 
     //读取texture，可以传入资源名、或者像素文件路径
-    export function loadTexture(path, callback){
+    export function loadTexture(path, type, callback){
         if(path.includes("/pixels/")){
             let texture = textureCache.get(path);
             if(texture){
@@ -56,7 +52,17 @@ export namespace Game{
                 let compData:any = compDataCache.get(path);
                 let deelCompData = (compData)=>{
                     let pixels:any = decompressionPixels(compData);
-                    texture.initWithData(pixels, cc.Texture2D.PixelFormat.RGBA8888, 512, 512);
+                    let w = 512;
+                    let h = 512;
+                    if(type == "hero" || type == "monster"){
+                        w = h = 512;
+                    }else if(type == "shield" || type == "heart"){
+                        w = h = 128;
+                    }else if(type == "bg"){
+                        w = 288;
+                        h = 512;
+                    }
+                    texture.initWithData(pixels, cc.Texture2D.PixelFormat.RGBA8888, w, h);
                     textureCache.set(path, texture);
                     callback(texture);
                 }
@@ -215,26 +221,53 @@ export namespace Game{
     let heroConfigMap = new Map<number|string, HeroConfig>();
     let monsterConfigMap = new Map<number|string, MonsterConfig>();
     let themeConfigMap = new Map<number|string, ThemeData>();
+    let bgConfigMap = new Map<number|string, BgData>();
+    let heartConfigMap = new Map<number|string, HeartData>();
+    let shieldConfigMap = new Map<number|string, ShieldData>();
     export let allHeros:HeroConfig[] = [];
     export let allMonsters:MonsterConfig[] = [];
     export let allThemes:ThemeData[] = [];
+    export let allBgs:BgData[] = [];
+    export let allHearts:HeartData[] = [];
+    export let allShields:ShieldData[] = [];
     //初始化
     function initHeroAndMonsterConfig(){
+        //所有主角
         allHeros = DB.Get(Key.CustomHeros).concat(Config.heros);
         for(let i=0; i<allHeros.length; i++){
             let hero = allHeros[i];
             heroConfigMap.set(hero.id, hero);
         }
+        //所有怪物
         allMonsters = DB.Get(Key.CustomMonsters).concat(Config.monsters);
         for(let i=0; i<allMonsters.length; i++){
             let monster = allMonsters[i];
             monsterConfigMap.set(monster.id, monster);
         }
+        //所有主题
         allThemes = DB.Get(Key.CustomThemes).concat(Config.themes);
         DB.Set(Key.allThemes, allThemes);
         for(let i=0; i<allThemes.length; i++){
             let theme = allThemes[i];
             themeConfigMap.set(theme.id, theme);
+        }
+        //所有背景
+        allBgs = DB.Get(Key.CustomBgs).concat(Config.bgs);
+        for(let i=0; i<allBgs.length; i++){
+            let bg = allBgs[i];
+            bgConfigMap.set(bg.id, bg);
+        }
+        //所有背景
+        allHearts = DB.Get(Key.CustomHearts).concat(Config.hearts);
+        for(let i=0; i<allHearts.length; i++){
+            let heart = allHearts[i];
+            heartConfigMap.set(heart.id, heart);
+        }
+        //所有背景
+        allShields = DB.Get(Key.CustomShields).concat(Config.shields);
+        for(let i=0; i<allShields.length; i++){
+            let shield = allShields[i];
+            shieldConfigMap.set(shield.id, shield);
         }
     }
     //找到配置
@@ -246,6 +279,15 @@ export namespace Game{
     }
     export function findThemeConf(id){
         return themeConfigMap.get(id);
+    }
+    export function findBgConf(id){
+        return bgConfigMap.get(id);
+    }
+    export function findHeartConf(id){
+        return heartConfigMap.get(id);
+    }
+    export function findShieldConf(id){
+        return shieldConfigMap.get(id);
     }
     //新建配置
     export function newHeroConf(name, url){
@@ -286,7 +328,16 @@ export namespace Game{
         monsterIds.push(allMonsters[0].id);
         monsterIds.push(allMonsters[1].id);
         monsterIds.push(allMonsters[2].id);
-        let theme:ThemeData = {id:id, heroId:heroId, monsterIds:monsterIds, isCustom:true, cost:{coin:0,diamond:0}};
+        let theme:ThemeData = {
+            id:id, 
+            heroId:heroId, 
+            monsterIds:monsterIds, 
+            bgId:1, 
+            heartId:1,
+            shieldId:1, 
+            isCustom:true, 
+            cost:{coin:0,diamond:0}
+        };
         themeConfigMap.set(id, theme);
 
         let customThemes:any[] = DB.Get(Key.CustomThemes);
@@ -295,6 +346,57 @@ export namespace Game{
         DB.Set(Key.allThemes, allThemes);
         DB.Set(Key.CustomThemes, customThemes);
         return theme;
+    }
+
+    export function newBgConf(name, url){
+        let id = newUuid();
+        let bgData:BgData = {
+            id:id, 
+            name:name,
+            url:url,
+            isCustom:true,
+        };
+        bgConfigMap.set(id, bgData);
+
+        let customBgs:any[] = DB.Get(Key.CustomBgs);
+        customBgs.unshift(bgData);
+        allBgs.unshift(bgData);
+        DB.Set(Key.CustomBgs, customBgs);
+        return bgData;
+    }
+
+    export function newHeartConf(name, url){
+        let id = newUuid();
+        let heartData:HeartData = {
+            id:id, 
+            name:name,
+            url:url,
+            isCustom:true,
+        };
+        heartConfigMap.set(id, heartData);
+
+        let customHearts:any[] = DB.Get(Key.CustomHearts);
+        customHearts.unshift(heartData);
+        allHearts.unshift(heartData);
+        DB.Set(Key.CustomHearts, customHearts);
+        return heartData;
+    }
+
+    export function newShieldConf(name, url){
+        let id = newUuid();
+        let shieldData:ShieldData = {
+            id:id, 
+            name:name,
+            url:url,
+            isCustom:true,
+        };
+        shieldConfigMap.set(id, shieldData);
+
+        let customShields:any[] = DB.Get(Key.CustomShields);
+        customShields.unshift(shieldData);
+        allShields.unshift(shieldData);
+        DB.Save(Key.CustomShields);
+        return shieldData;
     }
 
     //删除用户绘制英雄
@@ -314,6 +416,15 @@ export namespace Game{
             allMonsters.splice(idx, 1);
         }
         DB.Set(Key.CustomMonsters, customMonsters);
+        //删除包含此怪物主题的引用
+        for(let i=0;i<Game.allThemes.length;i++){
+            let theme = Game.allThemes[i];
+            let idx = theme.monsterIds.indexOf(id);
+            if(idx >= 0){
+                theme.monsterIds.splice(idx, 1);
+            }
+        }
+        DB.Save(Key.CustomThemes);
     }
 
     export function deleteHeroConf(id){
@@ -351,6 +462,84 @@ export namespace Game{
             DB.Set(Key.allThemes, allThemes);
         }
         DB.Set(Key.CustomThemes, customThemes);
+    }
+
+    export function deleteShieldConf(id){
+        shieldConfigMap.delete(id);
+        let customShields:ShieldData[] = DB.Get(Key.CustomShields);
+        let idx = customShields.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            customShields.splice(idx, 1);
+        }
+        idx = allShields.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            allShields.splice(idx, 1);
+        }
+        DB.Set(Key.CustomShields, customShields);
+        //删除包含此护盾主题的引用
+        for(let i=0;i<Game.allThemes.length;i++){
+            let theme = Game.allThemes[i];
+            if(theme.shieldId == id){
+                theme.shieldId = 1;
+            }
+        }
+        DB.Save(Key.CustomThemes);
+    }
+
+    export function deleteHeartConf(id){
+        heartConfigMap.delete(id);
+        let customHearts:HeartData[] = DB.Get(Key.CustomHearts);
+        let idx = customHearts.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            customHearts.splice(idx, 1);
+        }
+        idx = allHearts.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            allHearts.splice(idx, 1);
+        }
+        DB.Set(Key.CustomHearts, customHearts);
+        //删除包含此护盾主题的引用
+        for(let i=0;i<Game.allThemes.length;i++){
+            let theme = Game.allThemes[i];
+            if(theme.heartId == id){
+                theme.heartId = 1;
+            }
+        }
+        DB.Save(Key.CustomThemes);
+    }
+    
+    export function deleteBgConf(id){
+        bgConfigMap.delete(id);
+        let customBgs:BgData[] = DB.Get(Key.CustomBgs);
+        let idx = customBgs.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            customBgs.splice(idx, 1);
+        }
+        idx = allBgs.findIndex((conf)=>{
+            return conf.id == id
+        });
+        if(idx>=0){
+            allBgs.splice(idx, 1);
+        }
+        DB.Set(Key.CustomBgs, customBgs);
+        //删除包含此护盾主题的引用
+        for(let i=0;i<Game.allThemes.length;i++){
+            let theme = Game.allThemes[i];
+            if(theme.bgId == id){
+                theme.bgId = 1;
+            }
+        }
+        DB.Save(Key.CustomThemes);
     }
 
     export function isThemeOpen(id){

@@ -11,9 +11,8 @@
 import ScrollList from "../../CustomUI/ScrollList";
 import { DB } from "../../Frame/DataBind";
 import { Game } from "../../Game/Game";
-import { Sound } from "../../Frame/Sound";
-import { Local } from "../../Frame/Local";
 import { Key } from "../../Game/Key";
+import { Util } from "../../Frame/Util";
 
 const {ccclass, property} = cc._decorator;
 
@@ -28,7 +27,7 @@ export default class UsingMonsterCell extends cc.Component {
     id = null
     onLoad () {
         this.node.on(ScrollList.SET_DATA, this.setData, this);
-        this.node.on("click", this.onClick, this);
+        this.node.on("click", this.onTap, this);
     }
     setData(id){
         this.id = id;
@@ -40,20 +39,19 @@ export default class UsingMonsterCell extends cc.Component {
             });
         }else{
             let monster = Game.findMonsterConf(id);
-            Game.loadTexture(monster.url, (texture)=>{
+            Game.loadTexture(monster.url, "monster",(texture)=>{
                 let frame = new cc.SpriteFrame();
                 frame.setTexture(texture);
                 this.monsterSprite.spriteFrame = frame;
             });
         }
     }
-    onClick(){
+    onTap(){
         let themeId  = DB.Get(Key.ThemeId);
         let theme = Game.findThemeConf(themeId);
         let idx = theme.monsterIds.indexOf(this.id);
         theme.monsterIds.splice(idx, 1);
-        DB.Set(Key.ThemeId,themeId);
-        DB.Invoke(Key.CustomMonsters);
-        Local.setDirty(Key.CustomThemes);
+        DB.Set(Key.CustomMonsters, DB.Get(Key.CustomMonsters));
+        this.node.dispatchEvent(Util.customEvent("updateMonster", true));
     }
 }

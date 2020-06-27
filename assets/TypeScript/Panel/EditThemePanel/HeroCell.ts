@@ -62,7 +62,7 @@ export default class HeroCell extends DB.DataBindComponent {
     setData(data:HeroConfig){
         this.data = data;
         this.sprite.spriteFrame = null;
-        Game.loadTexture(data.url,(texture)=>{
+        Game.loadTexture(data.url,"hero",(texture)=>{
             let frame = new cc.SpriteFrame();
             frame.setTexture(texture);
             this.sprite.spriteFrame = frame;
@@ -71,7 +71,6 @@ export default class HeroCell extends DB.DataBindComponent {
 
     openPaintPanel(theme:ThemeData){
         SceneManager.ins.Enter("PaintScene").then((paintPanel:PaintScene)=>{
-            paintPanel.beginTip(Config.monsterAdvises);
             paintPanel.saveCallback = (pixels)=>{
                 //点击画图面板的保存按钮时
                 SceneManager.ins.OpenPanelByName("PreviewPanel",(previewPanel:PreviewPanel)=>{

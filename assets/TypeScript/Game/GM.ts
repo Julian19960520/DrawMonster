@@ -33,11 +33,11 @@ export default class GM extends cc.Component {
             this.panel.active = false;
         });
         this.addBtn("加金币", () => {
-            DB.Set(Key.Coin, DB.Get(Key.Coin)+1000);
+            DB.Set(Key.Coin, DB.Get(Key.Coin)+100000);
             this.panel.active = false;
         });
         this.addBtn("加钻石", () => {
-            DB.Set(Key.Diamond, DB.Get(Key.Diamond)+1000);
+            DB.Set(Key.Diamond, DB.Get(Key.Diamond)+100000);
             this.panel.active = false;
         });
         this.addBtn("重置招财猫", () => {

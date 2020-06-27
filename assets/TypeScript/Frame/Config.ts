@@ -1,4 +1,4 @@
-import { ColorData, ThemeData, MonsterConfig } from "./dts";
+import { ColorData, ThemeData, MonsterConfig, BgData, HeartData, ShieldData } from "./dts";
 import { GashaRewardType } from "../Scene/GashaScene/GashaRewardItem";
 export enum PrefabPath{
     heart = "Prefab/Prop/Heart",
@@ -39,22 +39,20 @@ export namespace Config{
     export let luckyCatCoinBet = 3;
     export let themeToCoinCnt = 50;
     export let minRecordTime = 4*1000;
-    export let heroAdvises = [
-        "猫咪🐱","狗🐶","鸭子🦆","树叶🍃","公鸡🐔","圣诞树🎄","蘑菇🍄","鱼🐟","仙人掌🌵",
-        "兔子🐰","猪头🐷","玫瑰🌹","火柴人","蛋糕🍰","奶酪🧀️","糖果🍬","彩虹🌈","独角兽🦄️",
-        "章鱼🐙","灯泡💡",
-    ];
-    export let monsterAdvises = [
-        "剑🗡️","恐龙🦖","仙人掌🌵","蜜蜂🐝","导弹🚀","箭🏹️","陨石","星星✨","水母"
-    ];
+
     export let paintTips = [
-        "【颜料桶】要点在封闭的圆圈内哦！",
+        "【颜料桶】要施放在封闭的区域内哦！",
         "使用【颜料桶】，快速填充色彩！",
         "【蓝圈】即为碰撞区",
         "画箭？请箭头指向右边，并选C",
+        "画完怪物后，别忘了选择方向哦！",
         "蘸水棉签 + 保鲜膜 = 自制触控笔！",
-        "分享录屏！分分钟上热门不是梦！",
-        "可以吧你喜欢的动漫、游戏画出来哦！",
+        "巧用橡皮擦，精准修图～",
+        "分享录屏！上热门不是梦！",
+        "没想好画什么？试试你喜欢的游戏动漫！",
+        "画出你喜欢的动漫、游戏！",
+        "分享录屏时选择加速，更魔性！",
+        "分享录屏时更换配乐，更容易火🔥",
     ];
     export let dailyTask = [
         {
@@ -110,25 +108,25 @@ export namespace Config{
         {coin:100, diamond:3, detail:"金币+25，钻石+1", cost:{coin:12000,diamond:200}},
     ]
     export let themes:ThemeData[]=[
-        {id:1, heroId:1, cost:{coin:500,diamond:5}, monsterIds:[11,12,13,14]},//咸鱼
-        {id:2, heroId:2, cost:{coin:1000,diamond:5}, monsterIds:[21,22,23]},   //孤独小人
-        {id:3, heroId:3, cost:{coin:1000,diamond:0}, monsterIds:[31,32,33]},   //飞机
-        {id:4, heroId:4, cost:{coin:1000,diamond:5}, monsterIds:[41]},         //雪人
-        {id:5, heroId:5, cost:{coin:2000,diamond:5}, monsterIds:[51,52]},      //忍者
-        {id:6, heroId:6, cost:{coin:2000,diamond:5}, monsterIds:[61,62,63]},   //胖女孩
-        {id:7, heroId:7, cost:{coin:1500,diamond:5}, monsterIds:[71,72]},      //地球
-        {id:8, heroId:8, cost:{coin:1500,diamond:5}, monsterIds:[81,82]},      //树
+        {id:1, heroId:1, cost:{coin:500,diamond:5}, bgId:1, monsterIds:[11,12,13,14]},//咸鱼
+        {id:2, heroId:2, cost:{coin:1000,diamond:5}, bgId:2, monsterIds:[21,22,23]},   //孤独小人
+        {id:3, heroId:3, cost:{coin:1000,diamond:0}, bgId:1, monsterIds:[31,32,33]},   //飞机
+        {id:4, heroId:4, cost:{coin:1000,diamond:5}, bgId:1, monsterIds:[41]},         //雪人
+        {id:5, heroId:5, cost:{coin:2000,diamond:5}, bgId:3, monsterIds:[51,52]},      //忍者
+        {id:6, heroId:6, cost:{coin:2000,diamond:5}, bgId:1, monsterIds:[61,62,63]},   //胖女孩
+        {id:7, heroId:7, cost:{coin:1500,diamond:5}, bgId:1, monsterIds:[71,72]},      //地球
+        {id:8, heroId:8, cost:{coin:1500,diamond:5}, bgId:1, monsterIds:[81,82]},      //树
 
-        {id:9, heroId:9, cost:{coin:500,diamond:0}, monsterIds:[91]},         //奶牛
-        {id:10, heroId:10, cost:{coin:1500,diamond:5}, monsterIds:[101,102]},  //马桶
-        {id:11, heroId:11, cost:{coin:1500,diamond:5}, monsterIds:[111,112,113]},//纸牌
-        {id:12, heroId:12, cost:{coin:1500,diamond:5}, monsterIds:[121,122]},  //城堡
-        {id:13, heroId:13, cost:{coin:3000,diamond:5}, monsterIds:[131,132]},  //吸血鬼
+        {id:9, heroId:9, cost:{coin:500,diamond:0}, bgId:1, monsterIds:[91]},         //奶牛
+        {id:10, heroId:10, cost:{coin:1500,diamond:5}, bgId:1, monsterIds:[101,102]},  //马桶
+        {id:11, heroId:11, cost:{coin:1500,diamond:5}, bgId:1, monsterIds:[111,112,113]},//纸牌
+        {id:12, heroId:12, cost:{coin:1500,diamond:5}, bgId:1, monsterIds:[121,122]},  //城堡
+        {id:13, heroId:13, cost:{coin:3000,diamond:5}, bgId:3, monsterIds:[131,132]},  //吸血鬼
 
-        {id:14, heroId:14, cost:{coin:1000,diamond:5}, monsterIds:[141]},      //猫
-        {id:15, heroId:15, cost:{coin:2000,diamond:5}, monsterIds:[151]},      //狗
-        {id:16, heroId:16, cost:{coin:3000,diamond:5}, monsterIds:[161]},      //兔子
-        {id:17, heroId:17, cost:{coin:4000,diamond:5}, monsterIds:[171]},      //熊猫
+        {id:14, heroId:14, cost:{coin:1000,diamond:5}, bgId:1, monsterIds:[141]},      //猫
+        {id:15, heroId:15, cost:{coin:2000,diamond:5}, bgId:1, monsterIds:[151]},      //狗
+        {id:16, heroId:16, cost:{coin:3000,diamond:5}, bgId:1, monsterIds:[161]},      //兔子
+        {id:17, heroId:17, cost:{coin:4000,diamond:5}, bgId:1, monsterIds:[171]},      //熊猫
 
         {id:18, heroId:18, cost:{coin:4000,diamond:5}, monsterIds:[181,182,183,184,185]},  //果冻男孩
     ]
@@ -216,7 +214,20 @@ export namespace Config{
         {id:184, url:"Atlas/Monster/redJelly", name:"红色果冻", dirType:DirType.Rotate, circle:{radius:50}, angleSpeedRange:[[-150,-100],[100,150]] },
         {id:185, url:"Atlas/Monster/blueJelly", name:"蓝色果冻", dirType:DirType.Rotate, circle:{radius:50}, angleSpeedRange:[[-150,-100],[100,150]] },
     ]
-
+    export let bgs:BgData[] = [
+        {id:1, name:'浅蓝', url:"Atlas/UI/white", color:cc.color(190,237,241)},
+        {id:2, name:'偏蓝银白', url:"Atlas/UI/white", color:cc.color(203,219,252)},
+        {id:3, name:'黑夜', url:"Atlas/UI/white", color:cc.color(34,32,52)},
+        {id:4, name:'黑色', url:"Atlas/UI/white", color:cc.color(102,57,49)},
+        {id:5, name:'黑色', url:"Atlas/UI/white", color:cc.color(143,86,59)},
+        {id:6, name:'黑色', url:"Atlas/UI/white", color:cc.color(223,113,38)},
+    ]
+    export let hearts:HeartData[] = [
+        {id:1, name:'桃心', url:"Atlas/Prop/heart"},
+    ]
+    export let shields:ShieldData[] = [
+        {id:1, name:'护盾', url:"Atlas/Prop/shield"},
+    ]
     export let colors:ColorData[] = [
         {id:1, name:'黑色', color:cc.color(0,0,0)},
         {id:2, name:'黑色', color:cc.color(34,32,52)},

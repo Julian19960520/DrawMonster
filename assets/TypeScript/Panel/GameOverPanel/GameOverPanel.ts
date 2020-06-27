@@ -85,7 +85,7 @@ export default class GameOverPanel extends Panel {
         let theme = Game.findThemeConf(themeId);
         let hero = Game.findHeroConf(theme.heroId);
         if(hero){
-            Game.loadTexture(hero.url, (texture)=>{
+            Game.loadTexture(hero.url, "hero", (texture)=>{
                 this.heroSprite.spriteFrame = new cc.SpriteFrame(texture);
             });
         }

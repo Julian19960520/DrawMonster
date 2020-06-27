@@ -27,7 +27,13 @@ export default class Graphics extends cc.Component {
     get lineWidth(){
         return this._lineWidth;
     }
-    onLoad(){
+
+    init(width, height){
+        this.node.width = width;
+        this.node.height = height;
+        this.width = width;
+        this.height = height;
+
         let node = this.sprite.node;
         node.anchorX = this.node.anchorX;
         node.anchorY = this.node.anchorY;

@@ -109,7 +109,7 @@ export default class Monster extends cc.Component {
             this.sprite.node.scale = 1;
         }
         this.sprite.spriteFrame = null;
-        Game.loadTexture(conf.url, (texture)=>{
+        Game.loadTexture(conf.url, "monster",(texture)=>{
             this.setTexture(texture);
         });  
         this.velocity = velocity;

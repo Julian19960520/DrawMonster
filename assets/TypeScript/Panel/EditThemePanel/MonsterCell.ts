@@ -1,29 +1,16 @@
-// Learn TypeScript:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-
 import ScrollList from "../../CustomUI/ScrollList";
 import SceneManager from "../../Frame/SceneManager";
 import { DB } from "../../Frame/DataBind";
 import { Game } from "../../Game/Game";
-import { Sound } from "../../Frame/Sound";
 import Top from "../../Frame/Top";
 import { Local } from "../../Frame/Local";
 import { Key } from "../../Game/Key";
-import PreviewPanel from "../PreviewPanel/PreviewPanel";
 import { ThemeData, MonsterConfig } from "../../Frame/dts";
-import { Config } from "../../Frame/Config";
 import Button from "../../CustomUI/Button";
 import MessageBox from "../../Frame/MessageBox";
-import { Util } from "../../Frame/Util";
 import { TweenUtil } from "../../Frame/TweenUtil";
 import PaintScene from "../PaintPanel/PaintScene";
+import { Util } from "../../Frame/Util";
 
 const {ccclass, property} = cc._decorator;
 
@@ -68,8 +55,7 @@ export default class MonsterCell extends DB.DataBindComponent {
         this.emptyNode.active = data["createNew"];
         this.showDeleteBtn(DB.Get(Key.editing) && data.isCustom);
         if(!data["createNew"]){
-            this.monsterSprite.spriteFrame = null;
-            Game.loadTexture(data.url,(texture)=>{
+            Game.loadTexture(data.url,"monster",(texture)=>{
                 let frame = new cc.SpriteFrame();
                 frame.setTexture(texture);
                 this.monsterSprite.spriteFrame = frame;
@@ -91,14 +77,14 @@ export default class MonsterCell extends DB.DataBindComponent {
             if(idx>=0){
                 theme.monsterIds.splice(idx, 1);
                 this.setUsingState(false);
-                DB.Invoke(Key.ThemeId);
-                Local.setDirty(Key.CustomThemes);
+                DB.Set(Key.CustomMonsters, DB.Get(Key.CustomMonsters));
+                this.node.dispatchEvent(Util.customEvent("updateMonster", true));
             }else{
                 if(theme.monsterIds.length<5){
                     theme.monsterIds.push(this.data.id);
-                    DB.Invoke(Key.ThemeId);
-                    Local.setDirty(Key.CustomThemes);
                     this.setUsingState(true);
+                    DB.Set(Key.CustomMonsters, DB.Get(Key.CustomMonsters));
+                    this.node.dispatchEvent(Util.customEvent("updateMonster", true));
                 }else{
                     Top.showToast("最多选择5个");
                 }
@@ -109,14 +95,13 @@ export default class MonsterCell extends DB.DataBindComponent {
     openPaintPanel(theme:ThemeData){
         DB.Set(Key.guideUnlockPaint, true);
         SceneManager.ins.Enter("PaintScene").then((paintScene:PaintScene)=>{
-            paintScene.draMonster((monster)=>{
+            paintScene.drawMonster((monster)=>{
                 if(theme.monsterIds.length<5){
                     theme.monsterIds.push(monster.id);
                 }else{
                     Top.showToast("最多选择5个");
                 }
-                DB.Invoke(Key.ThemeId);
-                DB.Invoke(Key.CustomMonsters);
+                DB.Set(Key.CustomMonsters, DB.Get(Key.CustomMonsters));
             });
         });
     }
@@ -129,18 +114,10 @@ export default class MonsterCell extends DB.DataBindComponent {
             messageBox.label.string = "是否删除该怪物？";
             messageBox.onOk = ()=>{
                 let monster = this.data;
-                for(let i=0;i<Game.allThemes.length;i++){
-                    let theme = Game.allThemes[i];
-                    let idx = theme.monsterIds.indexOf(monster.id);
-                    if(idx >= 0){
-                        theme.monsterIds.splice(idx, 1);
-                    }
-                }
-                DB.Invoke(Key.ThemeId);
                 Game.deleteTexture(monster.url);
                 Game.deleteMonsterConf(monster.id);
-                Top.showToast("怪物已删除");
-                
+                this.node.dispatchEvent(Util.customEvent("updateMonster", true));
+                Top.showToast("怪物已删除"); 
             }
         });
     }

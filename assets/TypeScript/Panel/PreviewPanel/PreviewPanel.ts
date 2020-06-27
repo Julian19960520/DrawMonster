@@ -60,7 +60,7 @@ export default class PreviewPanel extends Panel {
         this.okBtn.node.on("click", this.onOkBtnTap, this);
         this.cancelBtn.node.on("click", this.onCloseBtnClick, this);
         this.dirToggle.node.on(ToggleGroup.TOGGLE_CHANGE, this.onToggleChange, this);
-        if(PaintScene.hasRecordVideo && GameRecorder.videoDuration > Config.minRecordTime){
+        if(GameRecorder.videoDuration > Config.minRecordTime){
             crossPlatform.reportAnalytics("GameRecorder",{
                 location:"PreviewPanel",
                 step:"show",
@@ -94,6 +94,26 @@ export default class PreviewPanel extends Panel {
         let rt = new cc.RenderTexture();
         let dataView = pixels as any;
         rt.initWithData(dataView, cc.Texture2D.PixelFormat.RGBA8888, 512, 512);
+        sf.setTexture(rt);  
+        this.heroSprite.spriteFrame = sf;
+        TweenUtil.applyBubble(this.heroSprite.node);
+    }
+    initProp(pixels){
+        this.dirToggle.node.active = false;
+        let sf = new cc.SpriteFrame();
+        let rt = new cc.RenderTexture();
+        let dataView = pixels as any;
+        rt.initWithData(dataView, cc.Texture2D.PixelFormat.RGBA8888, 128, 128);
+        sf.setTexture(rt);  
+        this.heroSprite.spriteFrame = sf;
+        TweenUtil.applyBubble(this.heroSprite.node);
+    }
+    initBg(pixels){
+        this.dirToggle.node.active = false;
+        let sf = new cc.SpriteFrame();
+        let rt = new cc.RenderTexture();
+        let dataView = pixels as any;
+        rt.initWithData(dataView, cc.Texture2D.PixelFormat.RGBA8888, 288, 512);
         sf.setTexture(rt);  
         this.heroSprite.spriteFrame = sf;
         TweenUtil.applyBubble(this.heroSprite.node);

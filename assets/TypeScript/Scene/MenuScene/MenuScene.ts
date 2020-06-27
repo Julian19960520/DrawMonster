@@ -337,11 +337,7 @@ export default class MenuScene extends Scene {
     public onDrawBtnTap(){
         DB.Set(Key.guideUnlockPaint, true);
         SceneManager.ins.Enter("PaintScene").then((paintScene:PaintScene)=>{
-            paintScene.drawHero(()=>{
-                this.updateThemeList();
-                this.drawBtn.node.stopAllActions();
-                this.drawBtn.node.scale = 1;
-            });
+            paintScene.drawHero(()=>{});
         });
     }
 
@@ -352,7 +348,8 @@ export default class MenuScene extends Scene {
         SceneManager.ins.Enter("ShopScene",ShiftAnima.moveRightShift);
     }
     onGashaBtnTap(){
-        SceneManager.ins.Enter("GashaScene",ShiftAnima.moveLeftShift);
+        // SceneManager.ins.Enter("GashaScene",ShiftAnima.moveLeftShift);
+        SceneManager.ins.Enter("CameraGameScene",ShiftAnima.moveLeftShift);
     }
 
     onCollectGameBtnTap(){

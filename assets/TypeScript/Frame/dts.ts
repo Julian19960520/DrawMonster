@@ -31,6 +31,9 @@ export class ThemeData{
     author?:string;
     heroId:number|string;
     monsterIds:(number|string)[];
+    bgId?:number|string;
+    heartId?:number|string;
+    shieldId?:number|string;
     cost:{coin:number, diamond:number};
     isCustom?:boolean;
     isDynamic?:boolean;
@@ -54,4 +57,25 @@ export class ColorData{
     id:number|string;
     name:string;
     color:cc.Color;
+}
+export class HeartData{
+    id:number|string;
+    name:string;
+    url:string;
+    isCustom?:boolean;
+}
+
+export class ShieldData{
+    id:number|string;
+    name:string;
+    url:string;
+    isCustom?:boolean;
+}
+
+export class BgData{
+    id:number|string;
+    name:string;
+    url:string;
+    color?:cc.Color;
+    isCustom?:boolean;
 }

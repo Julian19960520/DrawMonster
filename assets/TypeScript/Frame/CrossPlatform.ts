@@ -1,4 +1,5 @@
 import { AD } from "./AD";
+import CameraGameScene from "../Scene/CameraGameScene/CameraGameScene";
 
 export class VideoAd{
     show(){
@@ -330,8 +331,18 @@ export class CrossPlatform{
     }){
         return new DownloadTask();
     }
+    setKeepScreenOn(){};
+    createCamera(){
+        return new Camera();
+    }
+    createFaceDetector(){};
 }
-
+export class Camera{
+    start(face:'front', beautify:boolean){
+        return new Promise<any>(()=>{});
+    };
+    setBeautifyParam(whiten, smoothen, enlargeEye, slimFace){};//美白、磨皮、大眼、瘦脸, 范围：[0, 1]
+}
 export let crossPlatform:CrossPlatform = new CrossPlatform();
 export let wx:CrossPlatform = window["wx"];
 export let tt:CrossPlatform = window["tt"];
